@@ -32,17 +32,28 @@
 <button type=button id="export_button">
     export
 </button>
+<button type=button id="load_button">
+    load
+</button>
 
 
 <script src="main.js" charset="UTF-8">
 </script>
 <script>
-    
-        document.getElementById("save_button").onclick = function () {
-        };
-        document.getElementById("export_button").onclick = function () {
 
-        };
+    document.getElementById("save_button").onclick = function () {
+        save_file();
+    };
+    document.getElementById("export_button").onclick = function () {
+
+    };
+    document.getElementById("load_button").onclick = function () {
+        load_data();
+    };
 </script>
-
+<style>
+    .jexcel tbody tr:nth-child(even) {
+        background-color: #EEE9F1 !important;
+    }
+</style>
 </html>
