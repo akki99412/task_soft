@@ -180,7 +180,7 @@
             ['encrypt', 'decrypt']
         );
 
-        console.log(secretKey);
+        // console.log(secretKey);
         // => CryptoKey { type: "secret", extractable: false, algorithm: {…}, usages: (2) […] }
 
         // saltの保存。
@@ -206,14 +206,14 @@
             // 鍵の用途。
             ['encrypt', 'decrypt']
         );
-        console.log(secretKey);
+        // console.log(secretKey);
         // => CryptoKey { type: 'secret', extractable: true, algorithm: Object, usages: Array[2] }
 
 
 
         // JSON Web Key（JWK）形式でのエクスポート。
         let exportedSecretKey = await crypto.subtle.exportKey('jwk', secretKey);
-        console.log(exportedSecretKey);
+        // console.log(exportedSecretKey);
         // => Object { alg: "A256GCM", ext: true, k: "DAvha1Scb8jTqk1KUTQlMRdffegdam0AylWRbQTOOfc", key_ops: (2) […], kty: "oct" }
         return exportedSecretKey;
     }
@@ -230,47 +230,103 @@
             // 鍵の用途。
             ['encrypt', 'decrypt']
         );
-        console.log(importedSecretKey);
+        // console.log(importedSecretKey);
         // => CryptoKey { type: 'secret', extractable: true, algorithm: Object, usages: Array[2] }
         return importedSecretKey;
+    }
+    async function getKey(passphrase, salt = null) {
+        passphrase = (new TextEncoder()).encode(passphrase);
+        let digest = await crypto.subtle.digest({ name: 'SHA-256' }, passphrase);
+        let keyMaterial = await crypto.subtle.importKey('raw', digest, { name: 'PBKDF2' }, false, ['deriveKey']);
+        if (!salt)
+            salt = crypto.getRandomValues(new Uint8Array(16));
+        let key = await crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt,
+                iterations: 100000,
+                hash: 'SHA-256'
+            },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt', 'decrypt']
+        );
+        return [key, salt];
+    }
+    function getFixedField() {
+        // 作成済みの値を取得する。
+        let value = localStorage.getItem('96bitIVFixedField');
+        // あれば、それを返す。
+        if (value)
+            return Uint8Array.from(JSON.parse(value));
+
+        // 無ければ、新しい値（長さ96bit）を作成して保存する。
+        // 96bitをUint8Arrayで表すため、96 / 8 = 12が桁数となる。
+        value = crypto.getRandomValues(new Uint8Array(12));
+        localStorage.setItem('96bitIVFixedField', JSON.stringify(Array.from(value)));
+        return value;
+    }
+    function getInvocationField() {
+        // 前回の値を取得。
+        let counter = localStorage.getItem('32bitLastCounter');
+        if (counter) { // あればそれを使う。
+            counter = Uint32Array.from(JSON.parse(counter));
+            // console.log("get local storage");
+        }
+        else{ // 無ければ新しいカウンタ（長さ32bit）を生成する。
+            counter = new Uint32Array(1);
+            counter[0] = 0;
+        }
+        // counter[0]=2**32-1;
+        counter[0]++; // 値を1増やす。
+
+        // 結果を保存する。
+        localStorage.setItem('32bitLastCounter', JSON.stringify(Array.from(counter)));
+        // console.log("set local storage");
+        // console.log(counter);
+        return counter;
     }
     async function encrypt_string(secretKey, src_string) {
 
         // データをTyped Arrayに変換。
         let inputData = (new TextEncoder()).encode(src_string);
-        console.log(inputData);
+        // console.log(inputData);
         // => Uint8Array(27) [ 230, 154, 151, 229, 143, 183, 229, 140, 150, 227, … ]
 
 
-
         // 初期ベクトルとして、8bit * 16桁 = 128bit分の領域を確保し、乱数で埋める。
-        let iv = crypto.getRandomValues(new Uint8Array(16));
+        // let iv = crypto.getRandomValues(new Uint8Array(16));
+        let fixedPart = getFixedField();
+        let invocationPart = getInvocationField();
+        // console.log(invocationPart);
+        let iv = Uint8Array.from([...fixedPart, ...new Uint8Array(invocationPart.buffer)]);
 
-
+        // console.log(iv);
 
         let encryptedArrayBuffer = await crypto.subtle.encrypt(
             // 暗号アルゴリズムの指定とパラメータ。
             {
                 name: 'AES-GCM',
-                iv
+                iv: iv
             },
             // 事前に用意しておいた鍵。
             secretKey,
             // ArrayBufferまたはTyped Arrayに変換した入力データ。
             inputData
         );
-        console.log(encryptedArrayBuffer);
+        // console.log(encryptedArrayBuffer);
         // => ArrayBuffer { byteLength: 27 }
 
 
         let encryptedBytes = Array.from(new Uint8Array(encryptedArrayBuffer), char => String.fromCharCode(char)).join('');
-        console.log(encryptedBytes);
+        // console.log(encryptedBytes);
         // => �����`Ù�¥ë�`û-Þm#þ'�¾��[�·�
 
 
 
         let encryptedBase64String = btoa(encryptedBytes);
-        console.log(encryptedBase64String);
+        // console.log(encryptedBase64String);
         // => YPgdHZgguUeHpt9FcYy2IaZTfbTNswbfn93e
 
 
@@ -278,23 +334,38 @@
         localStorage.setItem('encryptedData',
             JSON.stringify({
                 data: encryptedBase64String,
-                iv: Array.from(iv)
+                iv: invocationPart
             }));
+        // console.log("encrypt");
+        console.log(JSON.parse(localStorage.getItem('encryptedData')));
         return encryptedBase64String;
     }
 
-    async function decrypt_string() {
-        // let encryptedData = JSON.parse(localStorage.getItem('encryptedData'));
-        let encryptedBase64String = encryptedData.data;
-        // 通常のArrayとして保存しておいた初期ベクトルをUint8Arrayに戻す
-        let iv = Uint8Array.from(encryptedData.iv);
+    async function decrypt_string(secretKey) {
+        let encryptedResult = JSON.parse(localStorage.getItem('encryptedData'));
+        // let encryptedBase64String = encryptedData.data;
+        // // 通常のArrayとして保存しておいた初期ベクトルをUint8Arrayに戻す
+        // let iv = Uint8Array.from(encryptedData.iv);
+        // console.log(encryptedResult);
+
+        let encryptedBase64String = encryptedResult.data;
+        let invocationPart = encryptedResult.iv;
+        // console.log(invocationPart);
+        // let [key, _] = await getKey(passphrase, Uint8Array.from(salt));
+        let invocationPartTypedArray = new Uint32Array(1);
+        invocationPartTypedArray[0] = invocationPart[0];
+        // console.log(invocationPartTypedArray);
+        // 初期ベクトルを復元する。
+        let iv = Uint8Array.from([...getFixedField(), ...(new Uint8Array(invocationPartTypedArray.buffer))]);
+        
+        // console.log(iv);
 
         // Base64エンコードされた文字列→Binary String
-        let encryptedBytes = atob(encryptedBase64String);
+        encryptedBytes = atob(encryptedBase64String);
 
         // Binary String→Typed Array
-        let encryptedData = Uint8Array.from(encryptedBytes.split(''), char => char.charCodeAt(0));
-
+        encryptedData = Uint8Array.from(encryptedBytes.split(''), char => char.charCodeAt(0));
+        // console.log(encryptedData);
 
         let decryptedArrayBuffer = await crypto.subtle.decrypt(
             // 暗号アルゴリズムの指定とパラメータ。暗号化時と同じ内容を指定する。
@@ -307,16 +378,13 @@
             // ArrayBufferまたはTyped Arrayに変換した暗号化済みデータ。
             encryptedData
         );
-        console.log(decryptedArrayBuffer);
+        // console.log(decryptedArrayBuffer);
         // => ArrayBuffer { byteLength: 27 }
-
-
-
-
 
         let decryptedString = (new TextDecoder()).decode(new Uint8Array(decryptedArrayBuffer));
         console.log(decryptedString);
         // => '暗号化したい文字列'
+        // return decryptedString;
     }
     function saveTextToFile(text, filename) {
         const blob = new Blob([text], { type: 'text/plain' });
@@ -328,18 +396,20 @@
     }
     (async function () {
         if (secret_key_string == "") {
-            console.log("generate_key")
+            // console.log("generate_key")
             let generated_key = await auto_generate_key();
-            console.log("secret_key_string=\'" + JSON.stringify(generated_key) + "\'");
-            saveTextToFile("secret_key_string=\'" + JSON.stringify(generated_key) + "\'", "key_file.js")
+            // console.log("secret_key_string=\'" + JSON.stringify(generated_key) + "\'");
+            saveTextToFile("secret_key_string=\'" + JSON.stringify(generated_key) + "\'", "key_file.js");
+            secret_key = generated_key;
         } else {
-            import_secret_key(JSON.parse(secret_key_string));
+            secret_key = await import_secret_key(JSON.parse(secret_key_string));
         }
+        await encrypt_string(secret_key, "暗号化したいデータ");
+        await decrypt_string(secret_key);
     })();
 
 
     document.getElementById("save_button").onclick = function () {
-
     };
     document.getElementById("export_button").onclick = function () {
 
