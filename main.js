@@ -139,6 +139,7 @@ function load_data() {
     let is_construct = false;
     function data_change_callback() {
         if (is_construct) {
+            clearTimeout(timeoutID);
             console.log("stacked!");
             timeoutID = setTimeout(save_file, 10 * 1000);
         } else {
@@ -148,8 +149,44 @@ function load_data() {
     task_table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: table_data,
         columns: data_template.map(({ header, member, data_type, table_type, table_width, table_row_num, table_editor, table_source }) => ({ type: table_type, title: header, width: table_width, editor: table_editor, source: table_source })),
-        minDimensions: [2, 2],
-        columnDrag: true,
+        //パラメーター
+        allowComments: true,//セルへのコメント追加を許可するか(デフォルト: false)。
+        allowInsertColumn: false,//列追加を許可するか(デフォルト: true)。
+        allowInsertRow: true,//行追加を許可するか（デフォルト: true)。
+        allowManualInsertColumn: false,//タブキーで列追加を許可するか(デフォルト: true)。
+        allowManualInsertRow: true,//改行キーで行追加を許可するか(デフォルト: true)。
+        allowDeleteColumn: false,//列削除を許可するか(デフォルト: true)。
+        allowDeleteRow: true,//行削除を許可するか(デフォルト: true)。
+        allowDeletingAllRows: false,//すべての行を削除することを許可するか(デフォルト: false)。
+        autoCasting: false,//1,234 などのカンマ付き数値を数字と見なすか(デフォルト: true)。
+        autoIncrement: true,//数値ドラッグ時に自動インクリメントするか(デフォルト: true)。
+        columnDrag: true,//カラムのドラッグを許可するか(デフォルト: false)。
+        columnSorting: true,//ダブルクリックでカラムをソートするか(デフォルト: true)。
+        columnResize: true,//カラムのリサイズを可能とするか(デフォルト: true)。
+        defaultColAlign: "left",//デフォルトのカラムアライン(例: 'left')。
+        defaultColWidth: 100,//デフォルトのカラム横幅(例: 100)。
+        defaultRowHeight: 100,//デフォルトの行高さ(例: 100)。
+        editable: true,//セルを編集可能とするか（デフォルト: true)。
+        fullscreen: false,//フルスクリーンモードにする(デフォルト: false)。
+        lazyLoading: false,//遅延ローディングを行う(デフォルト: false)。
+        loadingSpin: true,//ロード中のスピンを表示する(デフォルト: false)。
+        minSpareRows: 2,//最小予備行数(例: 3)。
+        minSpareCols: 2,//最小予備列数(例: 3)。
+        pagination: 50,//ページネーション行数(例: 10)。
+        paginationOptions: [10, 50, 100],//ページネーション行数候補。search: true の時に有効(例: [10, 50, 100])。
+        parseFormulas: true,//計算式をサポートするか(デフォルト: true)。
+        rowDrag: true,//行ドラッグを許可するか(デフォルト: true)。
+        rowResize: true,//高さのリサイズを許可するか(デフォルト: false)。
+        search: true,//検索を可能とするか(デフォルト: false)。
+        selectionCopy: true,//セル選択時の右下の■ドラッグでコピーを許可するか(デフォルト: true)。
+        stripHTML: true,//セル内のHTMLを無効化する(デフォルト: true)。
+        stripHTMLOnCopy: false,//セルをコピーする際にHTMLもコピーするか(デフォルト: false)。
+        // tableHeight: "300px",//tableOverflow: true 時のテーブルの最大の高さ(例: "300px")。
+        // tableWidth: "200px",//tableOverflow: true 時のテーブルの最大の横幅(例: "200px")。
+        tableOverflow: true,//テーブルの高さや横幅を超えた場合にスクロールバーを表示するか(デフォルト: false)。
+        wordWrap: true,//ALT + Enterでセル内改行を許可するか(デフォルト: false)。
+
+        //イベント
         onchange: data_change_callback,
         oninsertrow: data_change_callback,
         oninsertcolumn: data_change_callback,
@@ -166,7 +203,7 @@ function load_data() {
     // task_table.setHeader(0, "test");
     // var values = task_table.setData();
     // type, editor, source
-    
+
 }
 // localStorage.setItem('localStrageSaveTestKey', 'localStrageSaveTestString');
 // var value = localStorage.getItem('localStrageSaveTestKey');
