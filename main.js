@@ -45,6 +45,7 @@ const TASK_STATE = Object.freeze({
     IN_PROGRESS: "実施中",
     COMPLETED_TODAY: "今日完了",
     COMPLETED: "完了",
+    POSTPONEMENT: "延期",
 });
 
 const LOCAL_STORAGE_KEY = Object.freeze({
@@ -81,32 +82,22 @@ var data_template = [
 var data_base = [];
 
 
+
 var task_table = jspreadsheet(document.getElementById('spreadsheet'), {
     data: data,
     columns: data_template.map(({ header, member, data_type, table_type, table_width, table_row_num, table_editor, table_source }) => ({ type: table_type, title: header, width: table_width, editor: table_editor, source: table_source })),
-
-    // [
-    //     { type: 'html', title: 'html_test', width: 120 , fadfadfadfs: "ssss"},
-    //     { type: 'text', title: 'Car', width: 120 },
-    //     { type: 'dropdown', title: 'Make', width: 200, source: ["Alfa Romeo", "Audi", "Bmw"] },
-    //     { type: 'calendar', title: 'Available', width: 200 },
-    //     { type: 'image', title: 'Photo', width: 120 },
-    //     { type: 'checkbox', title: 'Stock', width: 80 },
-    //     { type: 'numeric', title: 'Price', width: 100, mask: '$ #.##,00', decimal: ',' },
-    //     { type: 'color', width: 100, render: 'square', }
-    // ],
     minDimensions: [2, 2],
     columnDrag: true
 });
 
 // import { nameText } from './import.js';
+
+let timeoutID = 0;
 function save_file() {
+    clearTimeout(timeoutID);
     var headers = task_table.getHeaders().split(",");
     var values = task_table.getData();
     console.log(task_table.getJson());
-    // console.log(headers);
-    // console.log(values);
-    // var table_headers2database = [];
     headers.forEach((header, i) => {
         // console.log(header);
         data_template.find(template => template.header === header).table_row_num = i;
@@ -114,10 +105,6 @@ function save_file() {
     data_template.sort((a, b) => a.table_row_num - b.table_row_num);
     // console.log(data_template);
     data_base = [];
-    // data_base_row = {}
-    // data_template.forEach(template => {
-    //     data_base_row[template.member] = null;
-    // });
     values.forEach(value => {
         data_base_row = {};
         value.forEach((datum, i) => {
@@ -125,27 +112,17 @@ function save_file() {
         });
         data_base.push(data_base_row);
     });
-
-    // data_template.forEach(template => {
-    //     data_base_row[template.member] = null;
-    // });
     console.log(data_base);
     localStorage.setItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE,
         JSON.stringify(data_template));
     localStorage.setItem(LOCAL_STORAGE_KEY.DATA_BASE,
         JSON.stringify(data_base));
-    // console.log(`こんにちは${nameText}さん`);
-    // console.log(data_template.getStyle());
-    // console.log(data_template.getMeta(1, "ID"));
-
+    console.log("saved!");
 }
-
 function load_data() {
     data_base = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE));
     old_data_template = data_template;
     data_template = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE));
-    console.log(data_base);
-    console.log(data_base.values);
 
     let table_data = [];
     data_base.forEach(data => {
@@ -155,28 +132,36 @@ function load_data() {
         });
         table_data.push(table_row);
     });
-    // let data = [];
-    // data_template.forEach(template => { 
-    //     let datum = [];
-    //     data.push(data_base[template.member]);
-    // });
-    // var headers = task_table.setHeaders().split(",");
-
-    // var headers = task_table.getHeaders().split(",");
-    // data_template.forEach((template, i) => {
-    //     const found = headers.indexOf(template.header);
-    //     data_template.moveColumn(found, i);
-    //     console.log(found);
-    // });
     let element = document.getElementById('spreadsheet');
     while (element.firstChild) {
         element.removeChild(element.firstChild);
+    }
+    let is_construct = false;
+    function data_change_callback() {
+        if (is_construct) {
+            console.log("stacked!");
+            timeoutID = setTimeout(save_file, 10 * 1000);
+        } else {
+            is_construct = true;
+        }
     }
     task_table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: table_data,
         columns: data_template.map(({ header, member, data_type, table_type, table_width, table_row_num, table_editor, table_source }) => ({ type: table_type, title: header, width: table_width, editor: table_editor, source: table_source })),
         minDimensions: [2, 2],
-        columnDrag: true
+        columnDrag: true,
+        onchange: data_change_callback,
+        oninsertrow: data_change_callback,
+        oninsertcolumn: data_change_callback,
+        ondeleterow: data_change_callback,
+        ondeletecolumn: data_change_callback,
+        onsort: data_change_callback,
+        onresizerow: data_change_callback,
+        onresizecolumn: data_change_callback,
+        onmoverow: data_change_callback,
+        onmovecolumn: data_change_callback,
+        onload: data_change_callback,
+        onpaste: data_change_callback,
     });
     // task_table.setHeader(0, "test");
     // var values = task_table.setData();
@@ -205,6 +190,7 @@ function saveTextToFile(text, filename) {
     } else {
         secret_key = await import_secret_key(JSON.parse(secret_key_string));
     }
+    load_data();
     // await encrypt_string(secret_key, "暗号化したいデータ");
     // await decrypt_string(secret_key);
 })();
