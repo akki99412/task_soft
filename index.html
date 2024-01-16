@@ -18,7 +18,7 @@
 
 
 
-<link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.themes.css" type="text/css" />
+<!-- <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.themes.css" type="text/css" /> -->
 
 
 
@@ -42,6 +42,9 @@
 <button type=button id="load_button">
     load
 </button>
+<button type=button id="test_button">
+    test
+</button>
 
 
 <script src="main.js" charset="UTF-8">
@@ -56,9 +59,22 @@
     document.getElementById("load_button").onclick = function () {
         load_data();
     };
+    document.getElementById("test_button").onclick = function () {
+        let data_length = task_table.getData().length;
+        console.log(data_length);
+        // console.log(jspreadsheet.getColumnNameFromId([id_col_num, x1 + 1]));
+        // // if (data_length - 2 == x1) {
+        // //     console.log("enter");
+        // // } else {
+        // //     console.log("insert");
+        // // }sssss
+        task_table.setValueFromCoords(1, data_length - 1, "test", true);
+        // let value= task_table.getColumnNameFromId([1, data_length - 1]);
+        // console.log(value);
+    };
 
 </script>
-<style>
+<!-- <style>
     :root {
         --jexcel_header_color: #888;
         --jexcel_header_color_highlighted: #444;
@@ -77,5 +93,6 @@
         --jexcel_border_color_highlighted: #999;
         --active_color: #eee;
     }
-</style>
+</style> -->
+
 </html>
