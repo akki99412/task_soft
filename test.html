@@ -4,12 +4,84 @@
 <meta charset="UTF-8">
 <title>サンプル</title>
 </head>
+<script src="https://bossanova.uk/jspreadsheet/v4/jexcel.js"></script>
+<script src="https://jsuites.net/v4/jsuites.js"></script>
+<link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css" />
+<link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
+<link rel="stylesheet" type="text/css"
+    href="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
 <body>
 
-<div>
-    <input type="text" id="username" name="username"  autocomplete="username"/>
-    <input type="password" id="pass" name="password" minlength="8" autocomplete="password"/>
-</div>
+<div class="input-group clockpicker">
+    <input type="text" class="form-control" value="09:30">
+    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+    </span>
+</div><div id="custom"></div>
+<div id="clockpicker_buffer"></div>
+<script>
+    var data2 = [
+        ['PHP', '14:00'],
+        ['Javascript', '16:30'],
+    ];
+
+    var customColumn = {
+        // Methods
+        picked_time:"00:00",
+        closeEditor: function (cell, save) {
+            var value = cell.children[0].value;
+            cell.innerHTML = value;
+            return value;
+        },
+        openEditor: function (cell) {
+            // Create input
+            var element = document.createElement('input');
+            element.value = cell.innerHTML;
+            // Update cell
+            cell.classList.add('editor');
+            cell.innerHTML = '';
+            cell.appendChild(element);
+            $(element).clockpicker({
+                afterHide: function () {
+                    setTimeout(function () {
+                        // To avoid double call
+                        if (cell.children[0]) {
+                            myTable.closeEditor(cell, true);
+                        }
+                    });
+                },
+            }).change(function () {
+                picked_time=this.value;
+                console.log(picked_time);
+                cell.innerHTML = picked_time;
+            });;
+            // Focus on the element
+            element.focus();
+            // console.log(element);
+            // console.log(document.getSelection())
+            // console.log(document.body.children[document.body.children.length-1]);
+        },
+        getValue: function (cell) {
+            return cell.innerHTML;
+        },
+        setValue: function (cell, value) {
+            cell.innerHTML = value;
+        }
+    }
+
+    myTable = jspreadsheet(document.getElementById('custom'), {
+        data: data2,
+        columns: [
+            { type: 'text', title: 'Course Title', width: 300 },
+            { type: 'text', title: 'Time', width: 100, editor: customColumn },
+        ]
+    });
+</script>
+<script type="text/javascript">
+    $('.clockpicker').clockpicker();
+</script>
 
 <input type="submit" value="Sign in" />
 </html>

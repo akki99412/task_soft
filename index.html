@@ -14,8 +14,15 @@
     href="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
-
-
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.28.5/date_fns.min.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/customParseFormat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_utc);
+    dayjs.extend(window.dayjs_plugin_timezone);
+</script>
 
 
 <!-- <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.themes.css" type="text/css" /> -->
@@ -45,11 +52,15 @@
 <button type=button id="test_button">
     test
 </button>
-
+<div class="test_clockpicker">
+    <input type="text" value="09:30">
+</div>
 
 <script src="main.js" charset="UTF-8">
 </script>
 <script>
+
+    // $('.test_clockpicker').clockpicker();
     document.getElementById("save_button").onclick = function () {
         save_file();
     };
@@ -60,18 +71,43 @@
         load_data();
     };
     document.getElementById("test_button").onclick = function () {
-        let data_length = task_table.getData().length;
-        console.log(data_length);
-        // console.log(jspreadsheet.getColumnNameFromId([id_col_num, x1 + 1]));
-        // // if (data_length - 2 == x1) {
-        // //     console.log("enter");
-        // // } else {
-        // //     console.log("insert");
-        // // }sssss
-        task_table.setValueFromCoords(1, data_length - 1, "test", true);
-        // let value= task_table.getColumnNameFromId([1, data_length - 1]);
-        // console.log(value);
+        // console.log(Object.values(TASK_STATE).map((state, i) => {return {id:i, title:state}}));
+        // console.log(dayjs().format());
+
+        // test_function();
+        // var utc = require('dayjs/plugin/utc')
+        // dayjs.extend(utc);
+        // console.log(dayjs().format('YYYY/MM/DD HH:mm:ss'));
+        // console.log(dayjs(dayjs().format('YYYY/MM/DD') + "01:01:01", 'YYYY/MM/DD HH:mm:ss', time_zone).format('YYYY/MM/DD HH:mm:ss'));
+        // console.log(dayjs("2000/01/01" + dayjs().format('HH:mm:ss'), 'YYYY/MM/DD HH:mm:ss', time_zone).format('YYYY/MM/DD HH:mm:ss'));
+        // task_table.current.records[0][1].innerHTML = "test";
+        
+        console.log(task_table.records[0][1]);
+        task_table.records[0][1].innerHTML="test";
     };
+    // console.log("utc");
+    // console.log(dayjs.utc());
+    // console.log(dayjs.utc().hour());
+    // console.log();
+
+    // console.log(time_zone);
+    // console.log(dayjs().tz(time_zone));
+    // console.log(dayjs().tz(time_zone).hour());
+    // console.log();
+
+    // console.log("utc");
+    // console.log(dayjs.utc().tz(time_zone));
+    // console.log(dayjs.utc().tz(time_zone).hour());
+    // console.log();
+
+    console.log(dayjs().tz(time_zone).format("YYYY/MM/DD"));
+    console.log(dayjs().tz(time_zone).format("HH:mm:ss"));
+    task_table.setValue("I1", dayjs().tz(time_zone).format("HH:mm:ss"), true);
+    console.log("getvalue")
+    console.log(task_table.getValue("I1"));
+    console.log(jexcel.current);
+    jexcel.current.records[0][1].innerHTML="load";
+
 
 </script>
 <!-- <style>
