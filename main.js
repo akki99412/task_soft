@@ -194,7 +194,7 @@ function construct_table() {
 var data_base = [];
 const time_zone = "Asia/Tokyo";
 let tmp = data_template.map(data => ({ type: data.table_type, title: data.header, width: data.table_width, editor: data.table_editor, source: data.table_source, readOnly: data.table_read_only, options: data.table_options }));
-console.log(tmp);
+// console.log(tmp);
 
 
 let timeoutID = 0;
@@ -211,7 +211,7 @@ function data_change_callback() {
         update_data_base();
 
         clearTimeout(timeoutID);
-        console.log("stacked!");
+        // console.log("stacked!");
         timeoutID = setTimeout(save_file, 10 * 1000);
 
     } else {
@@ -266,13 +266,14 @@ function update_data_base() {
 function save_file() {
     clearTimeout(timeoutID);
     // console.log(task_table.getJson());
+    // console.log(data_template[0]);
     // console.log(data_template);
-    console.log(data_base);
+    // console.log(data_base);
     localStorage.setItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE,
         JSON.stringify(data_template));
     localStorage.setItem(LOCAL_STORAGE_KEY.DATA_BASE,
         JSON.stringify(data_base));
-    console.log("saved!");
+    // console.log("saved!");
 }
 
 
@@ -287,15 +288,21 @@ function load_data() {
     //     load_template.find(template => template.header === hae.header).default_value = hae.default_value;
     // });
     // console.log(load_template);
+    // console.log(load_template[0]);
     // data_template = load_template;
+    // Object.entries(load_template[0]).forEach(([key, value]) => {console.log(key+" "+value)})
     load_template.forEach((src, i) => {
-        Object.entries(src).forEach((key, value) => {
+        Object.entries(src).forEach(([key, value]) => {
             if (!["table_editor", "default_value"].includes(key)) {
-                data_template[key] = value;
+                // data_template[key] = value;
+                data_template.find(template => template.header === src.header)[key] = value;
             }
         }
         );
     });
+
+    data_template.sort((a, b) => a.table_col_num - b.table_col_num);
+    // console.log(data_template);
 
 
     data_base = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE));
@@ -325,11 +332,12 @@ function load_data() {
     // task_table.setHeader(0, "test");
     // var values = task_table.setData();
     // type, editor, source
+    data_change_callback();
 
 }
 
 function on_insert_row_callback(instance, x1, y1, x2, y2, origin) {
-    console.log("on_insert_row_callback");
+    // console.log("on_insert_row_callback");
     // let cellName1 = jspreadsheet.getColumnNameFromId([x1, y1]);
     // let cellName2 = jspreadsheet.getColumnNameFromId([x2, y2]);
     // console.log('selection ' + x1 + ' ' + y1);
@@ -352,7 +360,7 @@ function on_insert_row_callback(instance, x1, y1, x2, y2, origin) {
     data_template.forEach(template => {
         buffer_data.push(template.default_value);
     });
-    console.log(buffer_data);
+    // console.log(buffer_data);
     task_table.setRowData(input_row_num, buffer_data);
     
 
@@ -360,11 +368,11 @@ function on_insert_row_callback(instance, x1, y1, x2, y2, origin) {
     headers.forEach((header, i) => {
         // console.log(header);
         if (["ID"].includes(header)) {
-            console.log(data_template.find(template => template.header === header).default_value);
+            // console.log(data_template.find(template => template.header === header).default_value);
             task_table.setValueFromCoords(i, input_row_num, data_template.find(template => template.header === header).default_value, true);
             // task_table.setValueFromCoords(i, input_row_num, data_template.find(template => template.header === header).default_value, true);
         } else if (["着手予定時間", "完了予定時間"].includes(header)) {
-            console.log(data_template.find(template => template.header === header).default_value);
+            // console.log(data_template.find(template => template.header === header).default_value);
             task_table.setValueFromCoords(i, input_row_num, data_template.find(template => template.header === header).default_value, true);
             task_table.records[input_row_num][i].innerHTML = data_template.find(template => template.header === header).default_value;//htmlが更新されないため、強制入力
         }
