@@ -157,8 +157,11 @@ var data_template = [
                 task_table.setValueFromCoords(data_template.find(template => template.member == "implementation_date").table_col_num, x2, data.implementation_date.map((row) => row.ToString()).join("\n"), true);
             } else if (origin == TASK_STATE.IN_PROGRESS && y2 != TASK_STATE.IN_PROGRESS) {
                 let data = data_base[data_base.findIndex(data => data.table_row_num == x2)];
-                data.implementation_date[data.implementation_date.length-1].end=dayjs().tz(time_zone);
+                data.implementation_date[data.implementation_date.length - 1].end = dayjs().tz(time_zone);
                 task_table.setValueFromCoords(data_template.find(template => template.member == "implementation_date").table_col_num, x2, data.implementation_date.map((row) => row.ToString()).join("\n"), true);
+                task_table.setValueFromCoords(data_template.find(template => template.member == "table_implementation_time").table_col_num, x2, data.implementation_date.reduce(function (sum, element) {
+                    return sum + element.end.diff(element.start, 'hour');
+                }, 0), true);
                 // data_base.setValueFromCoords(y1, x2,);
             }
             data_change_callback();
@@ -171,6 +174,7 @@ var data_template = [
     { header: "内包タスクid", member: "connotative_task_id", data_type: "[string]", table_type: "hidden", table_width: 200, table_col_num: 19, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
     { header: "内包タスク", member: "connotative_task", data_type: "function", table_type: "text", table_width: 200, table_col_num: 20, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
     { header: "テーブル番号", member: "table_row_num", data_type: "numeric", table_type: "hidden", table_width: 200, table_col_num: 21, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "かかった時間", member: "table_implementation_time", data_type: "numeric", table_type: "text", table_width: 200, table_col_num: 21, table_editor: null, table_source: [], table_read_only: true, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
 ];
 
 function construct_table() {
