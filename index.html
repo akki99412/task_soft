@@ -19,6 +19,7 @@
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/customParseFormat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/duration.js"></script> -->
 <script>
     dayjs.extend(window.dayjs_plugin_utc);
     dayjs.extend(window.dayjs_plugin_timezone);
@@ -84,6 +85,7 @@
         
         console.log(task_table.records[0][1]);
         task_table.records[0][1].innerHTML="test";
+        console.log(dayjs("2020-01-05 05:30:30").diff(dayjs("2020-01-01 00:00:00"), "day"));
     };
     // console.log("utc");
     // console.log(dayjs.utc());
@@ -106,7 +108,10 @@
     console.log("getvalue")
     console.log(task_table.getValue("I1"));
     console.log(jexcel.current);
-    jexcel.current.records[0][1].innerHTML="load";
+    let test_string = dayjs().tz(time_zone).format() + "/";
+    console.log(test_string);
+    console.log(test_string.split("/"));
+    console.log(dayjs(test_string.split("/")[0]).format());
 
 
 </script>

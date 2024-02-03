@@ -9,7 +9,7 @@ var clock_editor = {
     picked_time: "00:00",
     closeEditor: function (cell, save) {
         var value = cell.children[0].value;
-;
+        ;
         cell.innerHTML = value;
         console.log(value);
         return value;
@@ -60,7 +60,7 @@ const TASK_STATE = Object.freeze({
     SCHEDULED: "計画中",
     SCHEDULED_TODAY: "今日の予定",
     IN_PROGRESS: "実施中",
-    COMPLETED_TODAY: "今日完了",
+    // COMPLETED_TODAY: "今日完了",
     COMPLETED: "完了",
     POSTPONEMENT: "延期",
 });
@@ -68,61 +68,136 @@ const TASK_STATE = Object.freeze({
 const LOCAL_STORAGE_KEY = Object.freeze({
     DATA_TEMPLATE: "data_template",
     DATA_BASE: "data_base",
-
 });
 
 const DEFAULT_FORMAT = Object.freeze({
     DATE: "YYYY/MM/DD",
     TIME: "HH:mm:ss",
-    get DATE_TIME() {return  this.DATE + " " + this.TIME },
-})
+    get DATE_TIME() { return this.DATE + " " + this.TIME },
+});
+
+class interval {
+    start = null;
+    end = null;
+
+    ToString = function () {
+        if (this.end == null) {
+            return this.start.format() + "/";
+        } else {
+            return this.start.format() + "/" + this.end.format();
+        }
+    }
+
+    constructor(start) {
+        let type_of_start = Object.prototype.toString.call(start);
+        if (type_of_start == "[object String]") {
+            this.start = dayjs(start.split("/")[0]);
+            this.end = dayjs(start.split("/")[1]);
+        } else if (type_of_start == "[object Array]") {
+            this.start = start[0];
+            this.end = start[1];
+        } else {
+            this.start = start;
+        }
+    }
+};
 
 var data_template = [
-    { header: "名前", member: "title", data_type: "string", table_type: "text", table_width: 200, table_col_num: 1, table_editor: null, table_source: [], table_read_only: false, default_value: "概要" ,table_options: null  },
+    { header: "名前", member: "title", data_type: "string", table_type: "text", table_width: 200, table_col_num: 1, table_editor: null, table_source: [], table_read_only: false, default_value: "概要", table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
     {
         header: "ID", member: "id", data_type: "string", table_type: "text", table_width: 200, table_col_num: 2, table_editor: null, table_source: [], table_read_only: true, get default_value() {
             return self.crypto.randomUUID();
         }
-    ,table_options: null  },
+        , table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { },
+    },
     {
         header: "受領日", member: "receipt", data_type: "date", table_type: "calendar", table_width: 200, table_col_num: 3, table_editor: null, table_source: [], table_read_only: false, get default_value() {
             return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME);
-        }, table_options: { format: DEFAULT_FORMAT.DATE }  },
-    { header: "メモ", member: "memo", data_type: "string", table_type: "html", table_width: 200, table_col_num: 4, table_editor: null, table_source: [], table_read_only: false, default_value: "詳細" ,table_options: null  },
-    { header: "タグ", member: "tag", data_type: "string", table_type: "text", table_width: 200, table_col_num: 5, table_editor: null, table_source: [], table_read_only: false, default_value: "#タグ" ,table_options: null  },
+        }, table_options: { format: DEFAULT_FORMAT.DATE }, table_changed_function: function (instance, x1, y1, x2, y2, origin) { },
+    },
+    { header: "メモ", member: "memo", data_type: "string", table_type: "html", table_width: 200, table_col_num: 4, table_editor: null, table_source: [], table_read_only: false, default_value: "詳細", table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "タグ", member: "tag", data_type: "string", table_type: "text", table_width: 200, table_col_num: 5, table_editor: null, table_source: [], table_read_only: false, default_value: "#タグ", table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
     {
         header: "期限", member: "limit", data_type: "date", table_type: "calendar", table_width: 200, table_col_num: 6, table_editor: null, table_source: [], table_read_only: false, get default_value() {
             return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE);
-        }, table_options: { format: DEFAULT_FORMAT.DATE }  },
-    { header: "予定工数", member: "man_hours", data_type: "numeric", table_type: "numeric", table_width: 200, table_col_num: 7, table_editor: null, table_source: [], table_read_only: false, default_value: 1 ,table_options: null  },
-    { header: "着手予定日時", member: "scheduled_date_time", data_type: "date", table_type: "hidden", table_width: 200, table_col_num: 8, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
+        }, table_options: { format: DEFAULT_FORMAT.DATE }, table_changed_function: function (instance, x1, y1, x2, y2, origin) { },
+    },
+    { header: "予定工数", member: "man_hours", data_type: "numeric", table_type: "numeric", table_width: 200, table_col_num: 7, table_editor: null, table_source: [], table_read_only: false, default_value: 1, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "着手予定日時", member: "scheduled_date_time", data_type: "date", table_type: "hidden", table_width: 200, table_col_num: 8, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
     {
         header: "着手予定日", member: "scheduled_date", data_type: "function", table_type: "calendar", table_width: 200, table_col_num: 9, table_editor: null, table_source: [], table_read_only: false, get default_value() {
             return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE);
-    }, table_options: { format: DEFAULT_FORMAT.DATE }  },
+        }, table_options: { format: DEFAULT_FORMAT.DATE }, table_changed_function: function (instance, x1, y1, x2, y2, origin) { },
+    },
     {
         header: "着手予定時間", member: "scheduled_time", data_type: "function", table_type: "text", table_width: 200, table_col_num: 9, table_editor: clock_editor, table_source: [], table_read_only: false, get default_value() {
             return dayjs().tz(time_zone).format(DEFAULT_FORMAT.TIME);
-        }, table_options: { format: DEFAULT_FORMAT.TIME }  },
-    { header: "完了予定日時", member: "completion_date_time", data_type: "date", table_type: "hidden", table_width: 200, table_col_num: 10, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
+        }, table_options: { format: DEFAULT_FORMAT.TIME }, table_changed_function: function (instance, x1, y1, x2, y2, origin) { },
+    },
+    { header: "完了予定日時", member: "completion_date_time", data_type: "date", table_type: "hidden", table_width: 200, table_col_num: 10, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
     {
         header: "完了予定日", member: "completion_date", data_type: "function", table_type: "calendar", table_width: 200, table_col_num: 11, table_editor: null, table_source: [], table_read_only: false, get default_value() {
             return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE);
-        }, table_options: { format: DEFAULT_FORMAT.DATE }  },
+        }, table_options: { format: DEFAULT_FORMAT.DATE }, table_changed_function: function (instance, x1, y1, x2, y2, origin) { },
+    },
     {
         header: "完了予定時間", member: "completion_time", data_type: "function", table_type: "text", table_width: 200, table_col_num: 12, table_editor: clock_editor, table_source: [], table_read_only: false, get default_value() {
             return dayjs().tz(time_zone).format(DEFAULT_FORMAT.TIME);
-        },table_options: null  },
-    { header: "実際の実施日時", member: "implementation_date", data_type: "[date]", table_type: "text", table_width: 200, table_col_num: 13, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
-    { header: "ステータス", member: "state", data_type: "STATE", table_type: "dropdown", table_width: 200, table_col_num: 14, table_editor: null, table_source: Object.values(TASK_STATE), table_read_only: false, default_value: TASK_STATE.SCHEDULED ,table_options: null  },
-    { header: "類似タスクid", member: "similar_tasks_id", data_type: "[string]", table_type: "hidden", table_width: 200, table_col_num: 15, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
-    { header: "類似タスク", member: "similar_tasks", data_type: "function", table_type: "text", table_width: 200, table_col_num: 16, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
-    { header: "後続タスクid", member: "successor_task_id", data_type: "[string]", table_type: "hidden", table_width: 200, table_col_num: 17, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
-    { header: "後続タスク", member: "successor_task", data_type: "function", table_type: "text", table_width: 200, table_col_num: 18, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
-    { header: "内包タスクid", member: "connotative_task_id", data_type: "[string]", table_type: "hidden", table_width: 200, table_col_num: 19, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
-    { header: "内包タスク", member: "connotative_task", data_type: "function", table_type: "text", table_width: 200, table_col_num: 20, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
-    { header: "テーブル番号", member: "table_row_num", data_type: "numeric", table_type: "hidden", table_width: 200, table_col_num: 21, table_editor: null, table_source: [], table_read_only: false, default_value: null ,table_options: null  },
+        }, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { },
+    },
+    { header: "実際の実施日時", member: "implementation_date", data_type: "[date]", table_type: "text", table_width: 200, table_col_num: 13, table_editor: null, table_source: [], table_read_only: false, default_value: [], table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    {
+        header: "ステータス", member: "state", data_type: "STATE", table_type: "dropdown", table_width: 200, table_col_num: 14, table_editor: null, table_source: Object.values(TASK_STATE), table_read_only: false, default_value: TASK_STATE.SCHEDULED, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) {
+            console.log("state changed")
+            console.log("instance");
+            console.log(instance);
+            console.log("x1");
+            console.log(x1);
+            console.log("y1");
+            console.log(y1);
+            console.log("x2");
+            console.log(x2);
+            console.log("y2");
+            console.log(y2);
+            console.log("origin");
+            console.log(origin);
+            console.log(data_base.find(data => data.table_row_num == x2));
+            data_change_callback();
+            if (y2 == null) {
+                return;
+            } else if (y2 == TASK_STATE.IN_PROGRESS) {
+                console.log("start");
+                console.log(data_base.find(data => data.table_row_num == x2));
+
+                let data = data_base[data_base.findIndex(data => data.table_row_num == x2)];
+                data.implementation_date.push(new interval(dayjs().tz(time_zone)));
+                console.log(data.implementation_date.map((row) => row.ToString()).join("\n"));
+                task_table.setValueFromCoords(data_template.find(template => template.member == "implementation_date").table_col_num, x2, data.implementation_date.map((row) => row.ToString()).join("\n"), true);
+                console.log(data_base.find(data => data.table_row_num == x2));
+            } else if (origin == TASK_STATE.IN_PROGRESS && y2 != TASK_STATE.IN_PROGRESS) {
+                console.log("end");
+
+                console.log(data_base.find(data => data.table_row_num == x2));
+                let data = data_base[data_base.findIndex(data => data.table_row_num == x2)];
+                data.implementation_date[data.implementation_date.length-1].end=dayjs().tz(time_zone);
+                console.log(data.implementation_date);
+                console.log(data.implementation_date.map((row) => row.ToString()).join("\n"));
+                task_table.setValueFromCoords(data_template.find(template => template.member == "implementation_date").table_col_num, x2, data.implementation_date.map((row) => row.ToString()).join("\n"), true);
+                // data_base.setValueFromCoords(y1, x2,);
+                console.log(data_base.find(data => data.table_row_num == x2));
+            }
+            data_change_callback();
+        }
+    },
+    { header: "類似タスクid", member: "similar_tasks_id", data_type: "[string]", table_type: "hidden", table_width: 200, table_col_num: 15, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "類似タスク", member: "similar_tasks", data_type: "function", table_type: "text", table_width: 200, table_col_num: 16, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "後続タスクid", member: "successor_task_id", data_type: "[string]", table_type: "hidden", table_width: 200, table_col_num: 17, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "後続タスク", member: "successor_task", data_type: "function", table_type: "text", table_width: 200, table_col_num: 18, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "内包タスクid", member: "connotative_task_id", data_type: "[string]", table_type: "hidden", table_width: 200, table_col_num: 19, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "内包タスク", member: "connotative_task", data_type: "function", table_type: "text", table_width: 200, table_col_num: 20, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
+    { header: "テーブル番号", member: "table_row_num", data_type: "numeric", table_type: "hidden", table_width: 200, table_col_num: 21, table_editor: null, table_source: [], table_read_only: false, default_value: null, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
 ];
+
 function construct_table() {
     return jspreadsheet(document.getElementById('spreadsheet'), {
         data: table_data,
@@ -166,7 +241,7 @@ function construct_table() {
         minDimensions: [2, 2],//最小列数・行数 (例：[5, 3])。
 
         //イベント
-        onchange: data_change_callback,
+        onchange: on_change_callback,
         oninsertrow: on_insert_row_callback,
         oninsertcolumn: data_change_callback,
         ondeleterow: data_change_callback,
@@ -229,8 +304,8 @@ function update_data_template() {
 function update_data_base() {
     update_data_template();
     var values = task_table.getData();
-    data_base = [];
-    values.forEach(value => {
+    // data_base = [];
+    values.forEach((value, j) => {
         data_base_row = {
             //     _scheduled_date_time:"",
             //     set scheduled_date_time(value) {
@@ -258,9 +333,19 @@ function update_data_base() {
         };
 
         value.forEach((datum, i) => {
-            data_base_row[data_template[i].member] = datum;
+            if (data_template[i].member == "implementation_date") {
+                if (datum == "") {
+                    data_base_row[data_template[i].member] = [];
+                } else {
+                    data_base_row[data_template[i].member] = datum.split("\n").map(time => new interval(time));
+                }
+                
+            } else {
+                data_base_row[data_template[i].member] = datum;
+            }
         });
-        data_base.push(data_base_row);
+        data_base_row.table_row_num = j;
+        data_base[j]=data_base_row;
     });
 }
 function save_file() {
@@ -273,7 +358,8 @@ function save_file() {
         JSON.stringify(data_template));
     localStorage.setItem(LOCAL_STORAGE_KEY.DATA_BASE,
         JSON.stringify(data_base));
-    // console.log("saved!");
+    console.log("saved!");
+    console.log(JSON.stringify(data_base));
 }
 
 
@@ -293,7 +379,7 @@ function load_data() {
     // Object.entries(load_template[0]).forEach(([key, value]) => {console.log(key+" "+value)})
     load_template.forEach((src, i) => {
         Object.entries(src).forEach(([key, value]) => {
-            if (!["table_editor", "default_value"].includes(key)) {
+            if (!["table_editor", "default_value", "table_changed_function"].includes(key)) {
                 // data_template[key] = value;
                 data_template.find(template => template.header === src.header)[key] = value;
             }
@@ -305,18 +391,44 @@ function load_data() {
     // console.log(data_template);
 
 
-    data_base = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE));
+    json_data_base = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE));
+    console.log(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE)));
     // old_data_template = data_template;
-
+    // Object.keys(json_data_base).forEach(function (key) {
+    //     console.log('key:', key);
+    //     // console.log('json_parse:', json_data_base.family);
+    // });
+    console.log(json_data_base[1].implementation_date);
+    console.log(data_base);
+    console.log(data_base[1]);
     table_data = [];
-    data_base.forEach(data => {
+    json_data_base.forEach((data, j) => {
         table_row = [];
         data_template.forEach((template, i) => {
-            table_row[i] = data[template.member];
+            if (template.member == "implementation_date") {
+                if (data[template.member].length==0) {
+                    console.log("blank");
+                    // data_base[i][template.member] = [];
+                    table_row[i] = "";
+                } else  {
+                    console.log(data[template.member]);
+                    console.log(data[template.member].map((row) => new interval(row.start + "/" + row.end)));
+                    console.log(j);
+                    console.log(data_base[j]);
+                    data_base[j][template.member] = data[template.member].map((row) => new interval(row.start + "/" + row.end));
+                    // console.log([data_base[i][template.member].start, data_base[i][template.member].end]);
+                    // console.log(Object.prototype.toString.call(data_base[i][template.member]));
+                    table_row[i] = data_base[j][template.member].map((row) => row.ToString()).join("\n");
+                    // console.log(table_row[j]);
+                    
+                }
+            } else {
+                table_row[i] = data[template.member];
+            }
         });
         table_data.push(table_row);
     });
-    
+    console.log(table_data);
 
     //前のシート削除
     let element = document.getElementById('spreadsheet');
@@ -362,7 +474,7 @@ function on_insert_row_callback(instance, x1, y1, x2, y2, origin) {
     });
     // console.log(buffer_data);
     task_table.setRowData(input_row_num, buffer_data);
-    
+
 
     let headers = task_table.getHeaders().split(",");
     headers.forEach((header, i) => {
@@ -395,6 +507,28 @@ var on_selection_callback = function (instance, x1, y1, x2, y2, origin) {
     //     // console.log('The selection from ' + cellName1 + ' to ' + cellName2 + '');
     // }
     // was_added_row = false;
+}
+function on_change_callback(instance, x1, y1, x2, y2, origin) {
+    // console.log("instance");
+    // console.log(instance);
+    // console.log("x1");
+    // console.log(x1);
+    // console.log("y1");
+    // console.log(y1);
+    // console.log("x2");
+    // console.log(x2);
+    // console.log("y2");
+    // console.log(y2);
+    // console.log("origin");
+    // console.log(origin);
+
+
+    let changed_data_template = data_template.find(datum => datum.table_col_num == y1);
+    console.log(changed_data_template);
+
+    changed_data_template.table_changed_function(instance, x1, y1, x2, y2, origin);
+
+    data_change_callback();
 }
 // localStorage.setItem('localStrageSaveTestKey', 'localStrageSaveTestString');
 // var value = localStorage.getItem('localStrageSaveTestKey');
