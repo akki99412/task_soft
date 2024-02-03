@@ -148,43 +148,18 @@ var data_template = [
     { header: "実際の実施日時", member: "implementation_date", data_type: "[date]", table_type: "text", table_width: 200, table_col_num: 13, table_editor: null, table_source: [], table_read_only: false, default_value: [], table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) { }, },
     {
         header: "ステータス", member: "state", data_type: "STATE", table_type: "dropdown", table_width: 200, table_col_num: 14, table_editor: null, table_source: Object.values(TASK_STATE), table_read_only: false, default_value: TASK_STATE.SCHEDULED, table_options: null, table_changed_function: function (instance, x1, y1, x2, y2, origin) {
-            console.log("state changed")
-            console.log("instance");
-            console.log(instance);
-            console.log("x1");
-            console.log(x1);
-            console.log("y1");
-            console.log(y1);
-            console.log("x2");
-            console.log(x2);
-            console.log("y2");
-            console.log(y2);
-            console.log("origin");
-            console.log(origin);
-            console.log(data_base.find(data => data.table_row_num == x2));
             data_change_callback();
             if (y2 == null) {
                 return;
             } else if (y2 == TASK_STATE.IN_PROGRESS) {
-                console.log("start");
-                console.log(data_base.find(data => data.table_row_num == x2));
-
                 let data = data_base[data_base.findIndex(data => data.table_row_num == x2)];
                 data.implementation_date.push(new interval(dayjs().tz(time_zone)));
-                console.log(data.implementation_date.map((row) => row.ToString()).join("\n"));
                 task_table.setValueFromCoords(data_template.find(template => template.member == "implementation_date").table_col_num, x2, data.implementation_date.map((row) => row.ToString()).join("\n"), true);
-                console.log(data_base.find(data => data.table_row_num == x2));
             } else if (origin == TASK_STATE.IN_PROGRESS && y2 != TASK_STATE.IN_PROGRESS) {
-                console.log("end");
-
-                console.log(data_base.find(data => data.table_row_num == x2));
                 let data = data_base[data_base.findIndex(data => data.table_row_num == x2)];
                 data.implementation_date[data.implementation_date.length-1].end=dayjs().tz(time_zone);
-                console.log(data.implementation_date);
-                console.log(data.implementation_date.map((row) => row.ToString()).join("\n"));
                 task_table.setValueFromCoords(data_template.find(template => template.member == "implementation_date").table_col_num, x2, data.implementation_date.map((row) => row.ToString()).join("\n"), true);
                 // data_base.setValueFromCoords(y1, x2,);
-                console.log(data_base.find(data => data.table_row_num == x2));
             }
             data_change_callback();
         }
@@ -392,15 +367,11 @@ function load_data() {
 
 
     json_data_base = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE));
-    console.log(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE)));
     // old_data_template = data_template;
     // Object.keys(json_data_base).forEach(function (key) {
     //     console.log('key:', key);
     //     // console.log('json_parse:', json_data_base.family);
     // });
-    console.log(json_data_base[1].implementation_date);
-    console.log(data_base);
-    console.log(data_base[1]);
     table_data = [];
     json_data_base.forEach((data, j) => {
         table_row = [];
@@ -411,10 +382,6 @@ function load_data() {
                     // data_base[i][template.member] = [];
                     table_row[i] = "";
                 } else  {
-                    console.log(data[template.member]);
-                    console.log(data[template.member].map((row) => new interval(row.start + "/" + row.end)));
-                    console.log(j);
-                    console.log(data_base[j]);
                     data_base[j][template.member] = data[template.member].map((row) => new interval(row.start + "/" + row.end));
                     // console.log([data_base[i][template.member].start, data_base[i][template.member].end]);
                     // console.log(Object.prototype.toString.call(data_base[i][template.member]));
