@@ -327,23 +327,27 @@ function update_data_base() {
         data_base[j]=data_base_row;
     });
 }
-function save_file() {
+async function save_file() {
     clearTimeout(timeoutID);
     // console.log(task_table.getJson());
     // console.log(data_template[0]);
     // console.log(data_template);
     // console.log(data_base);
     localStorage.setItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE,
-        JSON.stringify(data_template));
+        JSON.stringify(await encrypt_string(secret_key, JSON.stringify(data_template)))); 
     localStorage.setItem(LOCAL_STORAGE_KEY.DATA_BASE,
-        JSON.stringify(data_base));
+        JSON.stringify(await encrypt_string(secret_key, JSON.stringify(data_base))));
     console.log("saved!");
     console.log(JSON.stringify(data_base));
 }
 
 
-function load_data() {
-    let load_template = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE));
+async function load_data() {
+    console.log(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE)));
+    // console.log(await decrypt_string(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE))));
+    let decrypt_data = await decrypt_string(secret_key, JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE)))
+    console.log(decrypt_data);
+    let load_template = JSON.parse(decrypt_data); 
     // var headers_and_editors = data_template.map((data) => ({
     //     header: data.header, editor: data.table_editor, default_value: data.default_value
     // }));
@@ -369,8 +373,9 @@ function load_data() {
     data_template.sort((a, b) => a.table_col_num - b.table_col_num);
     // console.log(data_template);
 
-
-    json_data_base = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE));
+    // let load_template = JSON.parse(decrypt_string(secret_key, JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE)))); 
+    decrypt_data = await decrypt_string(secret_key, JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.DATA_BASE)))
+    json_data_base = JSON.parse(decrypt_data);
     // old_data_template = data_template;
     // Object.keys(json_data_base).forEach(function (key) {
     //     console.log('key:', key);
@@ -524,8 +529,8 @@ function saveTextToFile(text, filename) {
         secret_key = await import_secret_key(JSON.parse(secret_key_string));
     }
     // load_data();
-    // await encrypt_string(secret_key, "暗号化したいデータ");
-    // await decrypt_string(secret_key);
+    // let encrypt_data = await encrypt_string(secret_key, "暗号化したいデータ");
+    // await decrypt_string(secret_key, encrypt_data);
 })();
 
 function test_function() {

@@ -201,11 +201,14 @@ async function encrypt_string(secretKey, src_string) {
         }));
     // console.log("encrypt");
     console.log(JSON.parse(localStorage.getItem('encryptedData')));
-    return encryptedBase64String;
+    return {
+        data: encryptedBase64String,
+        iv: invocationPart
+    };
 }
 
-async function decrypt_string(secretKey) {
-    let encryptedResult = JSON.parse(localStorage.getItem('encryptedData'));
+async function decrypt_string(secretKey, encryptedResult) {
+    // let encryptedResult = JSON.parse(localStorage.getItem('encryptedData'));
     // let encryptedBase64String = encryptedData.data;
     // // 通常のArrayとして保存しておいた初期ベクトルをUint8Arrayに戻す
     // let iv = Uint8Array.from(encryptedData.iv);
@@ -245,7 +248,7 @@ async function decrypt_string(secretKey) {
     // => ArrayBuffer { byteLength: 27 }
 
     let decryptedString = (new TextDecoder()).decode(new Uint8Array(decryptedArrayBuffer));
-    console.log(decryptedString);
+    // console.log(decryptedString);
     // => '暗号化したい文字列'
-    // return decryptedString;
+    return decryptedString;
 }
