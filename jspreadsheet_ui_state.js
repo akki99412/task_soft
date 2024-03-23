@@ -83,52 +83,27 @@ function data_change_callback() {
     }
 }
 function on_insert_row_callback(instance, x1, y1, x2, y2, origin) {
-    // console.log("on_insert_row_callback");
-    // let cellName1 = jspreadsheet.getColumnNameFromId([x1, y1]);
-    // let cellName2 = jspreadsheet.getColumnNameFromId([x2, y2]);
-    // console.log('selection ' + x1 + ' ' + y1);
-    // console.log(y2);
-    let uuid = self.crypto.randomUUID();
     let input_row_num = x1;
     if (!y2) {
         input_row_num++;
     }
-
-    // data_template.forEach((src, i) => {
-    //     Object.entries(src).forEach((key, value) => {
-    //         if (!["table_editor", "default_value"].includes(key)) {
-    //             data_template[key] = value;
-    //         }
-    //     }
-    //     );
-    // });
     const buffer_data = [];
     data_template.forEach(template => {
         buffer_data.push(template.default_value);
     });
-    // console.log(buffer_data);
     task_table.setRowData(input_row_num, buffer_data);
 
 
     let headers = task_table.getHeaders().split(",");
     headers.forEach((header, i) => {
-        // console.log(header);
         if (["ID"].includes(header)) {
-            // console.log(data_template.find(template => template.header === header).default_value);
             task_table.setValueFromCoords(i, input_row_num, data_template.find(template => template.header === header).default_value, true);
-            // task_table.setValueFromCoords(i, input_row_num, data_template.find(template => template.header === header).default_value, true);
         } else if (["着手予定時間", "完了予定時間"].includes(header)) {
-            // console.log(data_template.find(template => template.header === header).default_value);
             task_table.setValueFromCoords(i, input_row_num, data_template.find(template => template.header === header).default_value, true);
             task_table.records[input_row_num][i].innerHTML = data_template.find(template => template.header === header).default_value;//htmlが更新されないため、強制入力
         }
     });
-    // console.log('id col is ' + id_col_num);
     data_change_callback();
-    // was_added_row = true;
-    // cellName1 = jspreadsheet.getColumnNameFromId([x1, y1]);
-    // cellName2 = jspreadsheet.getColumnNameFromId([x2, y2]);
-    // console.log('after add The selection from ' + cellName1 + ' to ' + cellName2 + '');
 }
 var on_selection_callback = function (instance, x1, y1, x2, y2, origin) {
     // if (was_added_row) {

@@ -1,44 +1,3 @@
-
-
-```mermaid
-sequenceDiagram
-box view
-    participant view
-end
-box presenter
-    participant presenter
-end
-box model
-    participant useCase
-    participant repository
-    participant api
-end
-    presenter ->> view: Subscribe
-    view -->> presenter: onNext
-    presenter ->> useCase: run
-    useCase ->> repository: get
-    repository ->> useCase: entity
-    useCase ->> api: request
-    api ->> useCase: response
-    useCase ->> repository: update
-    repository ->> repository: update entity
-    useCase ->> presenter: result
-    presenter ->> view: update
-    
-
-```
-  
-# 基礎クラス図
-
-```mermaid
-classDiagram
-viewClass <|-- presenterClass
-modelClass <|-- presenterClass
-```
-
-# 詳細クラス図
-
-```mermaid
 classDiagram
 Jspreadsheet <.. SpreadsheetView
 IObservable <.. SpreadsheetView
@@ -183,31 +142,26 @@ EncryptString ..> EncryptedResultEntity
 
 namespace entityGroupe{
     class TaskDataEntity{
-        <<anonymous class>>
     }
     class TaskDataTemplate{
         +member
         +defaultValue
     }
     class TaskUiTemplate{
-        <<anonymous class>>
         +title
     }
     class TaskDataTemplateEntity{
-        <<anonymous class>>
         +TaskDataTemplate TaskDataTemplate
         +jspreadsheetTaskDataTemplate jspreadsheetTaskDataTemplate
         +tableTaskDataTemplate tableTaskDataTemplate
     }
     class TableTaskDataTemplate{
-        <<anonymous class>>
         +type
         +width
         +colNum
         +readOnly
     }
     class JspreadsheetTaskDataTemplate{
-        <<anonymous class>>
         +editor
         +source
         +options
@@ -217,5 +171,3 @@ namespace entityGroupe{
         +iv
     }
 }
-style viewGroupe fill black
-```

@@ -64,24 +64,47 @@
 <div class="test_clockpicker">
     <input type="text" value="09:30">
 </div>
-<script src="template_data_source.js" charset="UTF-8"></script>
+<!-- <script src="template_data_source.js" charset="UTF-8"></script>
 <script src="jspreadsheet_ui_state.js" charset="UTF-8"></script>
 <script src="local_strage_data_source.js" charset="UTF-8"></script>
-<script src="data_base_data_source.js" charset="UTF-8"></script>
+<script src="data_base_data_source.js" charset="UTF-8"></script> -->
 
-<script src="main.js" charset="UTF-8">
+
+
+
 </script>
+
+<script src="other/DiContainer.js" charset="UTF-8"></script>
+<script src= "entity\template_data_source.js" charset="UTF-8"></script>
+<script src="other\const_values.js" charset="UTF-8"></script>
+<!-- <script src="other\other.js" charset="UTF-8"></script> -->
+<script src="entity\Entities.js" charset="UTF-8"></script>
+<script src="useCase\UseCases.js" charset="UTF-8"></script>
+<script src= "entity\EncryptedResultEntity.js" charset="UTF-8"></script>
+<script src= "entity\IntervalEntity.js" charset="UTF-8"></script>
+<script src="other\Observable.js" charset="UTF-8"></script>
+<script src="repository\TaskDataRepository.js" charset="UTF-8"></script>
+<script src="repository\TaskDataTemplateRepository.js" charset="UTF-8"></script>
+<script src="useCase\Interval2String.js" charset="UTF-8"></script>
+<script src="useCase\LocalStrage.js" charset="UTF-8"></script>
+<script src= "presenter\mainPresenter.js" charset="UTF-8"></script>
+<script src="presenter/TaskTablePresenter.js" charset="UTF-8"></script>
+<script src="view/SpreadsheetView.js" charset="UTF-8"></script>
+
+
+
+<script src="main.js" charset="UTF-8"></script>
 <script>
 
     // $('.test_clockpicker').clockpicker();
     document.getElementById("save_button").onclick = function () {
-        save_file();
+        
     };
     document.getElementById("export_button").onclick = function () {
 
     };
     document.getElementById("load_button").onclick = function () {
-        load_data();
+        
     };
     document.getElementById("test_button").onclick = function () {
         // console.log(Object.values(TASK_STATE).map((state, i) => {return {id:i, title:state}}));
@@ -114,19 +137,22 @@
     // console.log(dayjs.utc().tz(time_zone).hour());
     // console.log();
 
-    console.log(dayjs().tz(time_zone).format("YYYY/MM/DD"));
-    console.log(dayjs().tz(time_zone).format("HH:mm:ss"));
-    task_table.setValue("I1", dayjs().tz(time_zone).format("HH:mm:ss"), true);
-    console.log("getvalue")
-    console.log(task_table.getValue("I1"));
-    console.log(jexcel.current);
-    let test_string = dayjs().tz(time_zone).format() + "/";
-    console.log(test_string);
-    console.log(test_string.split("/"));
-    console.log(dayjs(test_string.split("/")[0]).format());
+    // console.log(dayjs().tz(time_zone).format("YYYY/MM/DD"));
+    // console.log(dayjs().tz(time_zone).format("HH:mm:ss"));
+    // task_table.setValue("I1", dayjs().tz(time_zone).format("HH:mm:ss"), true);
+    // console.log("getvalue")
+    // console.log(task_table.getValue("I1"));
+    // console.log(jexcel.current);
+    // let test_string = dayjs().tz(time_zone).format() + "/";
+    // console.log(test_string);
+    // console.log(test_string.split("/"));
+    // console.log(dayjs(test_string.split("/")[0]).format());
 
 
 </script>
+
+
+
 <style>
     
 :root {

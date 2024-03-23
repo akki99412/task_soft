@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<body>
+
+    <div class="mermaid" id="mermaid_id" ></div>
+</body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: false, theme: 'dark' });</script> <!-- 処理しない -->
+
+<script>
+    fetch('mermaid.mmd')
+            .then(response => response.text())
+            .then(text => document.querySelector('.mermaid').innerHTML = text)
+    setTimeout(()=>{mermaid.init();
+    // SVG要素を取得
+            // div要素を取得します。
+        let div = document.getElementById('mermaid_id');
+
+        // マウスホイールイベントを追加します。
+        window.addEventListener('wheel', function (e) {
+            // マウスホイールの方向を取得します。
+            let delta = Math.sign(e.deltaY);
+
+            // divの現在の幅を取得します。
+            let width = div.offsetWidth;
+            const scale_multiplier=1.5;
+            // マウスホイールの方向に応じて幅を増減します。
+            if (delta < 0) {
+                width *= scale_multiplier; // マウスホイールを上にスクロールすると幅が増加します。
+            } else {
+                width /= scale_multiplier; // マウスホイールを下にスクロールすると幅が減少します。
+            }
+            if(width<1){
+                width=1;
+            }
+
+            // divの新しい幅を設定します。
+            div.style.width = width + 'px';
+        
+        div.onpointermove = function (event) {
+                if (event.buttons) {
+                    this.style.left = this.offsetLeft + event.movementX + 'px'
+                    this.style.top = this.offsetTop + event.movementY + 'px'
+                    this.style.position = 'absolute'
+                    this.draggable = false
+                    this.setPointerCapture(event.pointerId)
+                }
+            }
+        });
+}, 300);
+    // div要素を取得します。
+        
+
+    // const text = document.querySelector(".mermaid");
+    //     text.style.width="10000px";
+</script>
+<style>
+g.clusters rect {
+stroke: gainsboro !important;
+}
+body {
+  background-color: #1f2020;
+}
+/* .mermaid svg{
+    width: 10000px;
+} */
+
+</style>
