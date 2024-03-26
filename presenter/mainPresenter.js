@@ -1,5 +1,5 @@
 class MainPresenter {
-    constructor({ taskDataTemplateRepository = diContainer.container.taskDataTemplateRepository } = {} ) {
+    constructor({ taskDataTemplateRepository = diContainer.container.taskDataTemplateRepository } = {}) {
         this._taskDataTemplateRepository = taskDataTemplateRepository;
         this._spreadSheetView = new SpreadSheetView();
 
@@ -37,13 +37,14 @@ class MainPresenter {
         });
 
         this._spreadSheetView.onChangeBroadcaster.subscribe((data) => {
-            console.log(new colNum2MemberUseCase({num: Number(data.y1)}).do());
+            console.log(new colNum2MemberUseCase({ num: Number(data.y1) }).do());
+            if (new colNum2MemberUseCase({ num: Number(data.y1) }).do() == "implementation_date") return;
             new ChangeTaskDataUseCase({ row: Number(data.x2), key: new colNum2MemberUseCase({ num: Number(data.y1) }).do(), data: data.y2 }).do();
             console.log(diContainer.container.taskDataRepository.taskData);
         });
 
         this._spreadSheetView.onInsertrowBroadcaster.subscribe((data) => {
-            const input_row_num = function (data){
+            const input_row_num = function (data) {
                 let input_row_num = data.x1;
                 if (!data.y2) {
                     input_row_num++;
@@ -69,13 +70,21 @@ class MainPresenter {
                 console.log(new GetTaskDefaultValueUseCase({ key: data.key }).do());
                 if (data.key == "state") {
                     if (data.data == null) {
-                        
+
                     } else if (data.data == TASK_STATE.IN_PROGRESS) {
                         // console.log()
                         // new ChangeTaskDataUseCase({ row: data.row, key: "implementation_date", data: dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE) }).do();
                         new ImplementationDataStartLine({ row: data.row, data: new GetTodayUseCase().do() }).do();
-                        return;
-                        
+
+                    } else if (data.origin == TASK_STATE.IN_PROGRESS && data.data != TASK_STATE.IN_PROGRESS) {
+                        new ImplementationDataEndLine({ row: data.row, data: new GetTodayUseCase().do() }).do();
+                        // let data = data_base[data_base.findIndex(data => data.table_row_num == x2)];
+                        // data.implementation_date[data.implementation_date.length - 1].end = dayjs().tz(time_zone);
+                        // task_table.setValueFromCoords(data_template.find(template => template.member == "implementation_date").table_col_num, x2, data.implementation_date.map((row) => row.ToString()).join("\n"), true);
+                        // task_table.setValueFromCoords(data_template.find(template => template.member == "table_implementation_time").table_col_num, x2, data.implementation_date.reduce(function (sum, element) {
+                        //     return sum + element.end.diff(element.start, 'hour');
+                        // }, 0), true);
+                        // data_base.setValueFromCoords(y1, x2,);
                     }
                     // function (instance, x1, y1, x2, y2, origin) {
                     //     data_change_callback();
@@ -97,16 +106,20 @@ class MainPresenter {
                     //     data_change_callback();
                     // }
                 }
+                
+                if (data.key == "implementation_date") {
+                    this._spreadSheetView.setValue(new GetTableTaskDataTemplates().do()[data.key].col_num, data.row, new ImplementationDate2String(data.data).do(), false);
+                } else {
 
                     this._spreadSheetView.setValue(new GetTableTaskDataTemplates().do()[data.key].col_num, data.row, data.data, false);
-                
+                }
                 console.log(new GetTaskData4TableDataUseCase({ row: data.row, key: data.key }).do());
                 console.log(new GetTaskDataUseCase().do());
 
             }
 
         }).do();
-        
+
 
 
     }

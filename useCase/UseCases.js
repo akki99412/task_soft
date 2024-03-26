@@ -55,7 +55,12 @@ class ImplementationDate2String {
         this._implementation_date = implementation_date;
     }
     do() {
-        return JSON.stringify(this._implementation_date);
+        const stringifyList = this._implementation_date.map((data) => {
+            return data.start + " - " + data.end
+        });
+        const dst = stringifyList.join("\n");
+        return dst; //JSON.stringify(this._implementation_date);
+        // return this._implementation_date.reduce((str, data)=>{str=data+"\n"})
     }
 }
 
@@ -254,7 +259,7 @@ class GetTodayUseCase{
         return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME);
     }
 }
-class ImplementationDataStartLine{
+class ImplementationDataStartLine {
     constructor({ taskDataRepository = diContainer.container.taskDataRepository, row, data } = {}) {
         this._taskDataRepository = taskDataRepository;
         this._row = row;
@@ -264,6 +269,22 @@ class ImplementationDataStartLine{
         const src = this._taskDataRepository.taskData[this._row]["implementation_date"];
         console.log({ start: this._data, end: "" });
         console.log(this._row);
-        new ChangeTaskDataUseCase({ row: this._row, key: "implementation_date", data: src.concat([new ImplementationDate2String({ start: this._data, end: "" }).do()]) }).do();
+        new ChangeTaskDataUseCase({ row: this._row, key: "implementation_date", data: src.concat([{ start: this._data, end: "" }]) }).do();
+    }
+}
+
+class ImplementationDataEndLine {
+    constructor({ taskDataRepository = diContainer.container.taskDataRepository, row, data } = {}) {
+        this._taskDataRepository = taskDataRepository;
+        this._row = row;
+        this._data = data;
+    }
+    do() {
+        const src = this._taskDataRepository.taskData[this._row]["implementation_date"];
+        const last_data = src.slice(-1)[0];
+        const dst = src.toSpliced(-1, 1, { start: last_data.start, end: this._data });
+        console.log({ start: last_data.start, end: this._data });
+        console.log(this._row);
+        new ChangeTaskDataUseCase({ row: this._row, key: "implementation_date", data: dst}).do();
     }
 }

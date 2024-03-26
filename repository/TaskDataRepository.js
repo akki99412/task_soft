@@ -22,8 +22,9 @@ diContainer.addForCallByReference("taskDataRepository",
             console.log(row);
             console.log(this._taskData[row][key]);
             if (this._taskData[row][key] != data) {
+                const beforeData = this._taskData[row][key];
                 this._taskData[row][key] = data;
-                this.onChangeBroadcaster.notify({ row: row, key: key, data: data })
+                this.onChangeBroadcaster.notify({ row: row, key: key, data: data, origin: beforeData })
                 console.log({ row: row, key: key, data: data });
             }
         }
