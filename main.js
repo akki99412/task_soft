@@ -15,13 +15,13 @@
     // console.log(typeof(Object.values(taskDataTemplateRepository.DEFAULT_TASK_DATA_TEMPLATE[1])[11]));
 
     // let mainPresenter = new MainPresenter();
-    let taskTablePresenter = new TaskTablePresenter();
-    new InsertTaskDataUseCase({ row: 0 }).do();
-    new InsertTaskDataUseCase({ row: 0 }).do();
-    new InsertTaskDataUseCase({ row: 0 }).do();
-    console.log(new GetTaskDataUseCase().do().map((obj) => { return obj.id }));
+    // let taskTablePresenter = new TaskTablePresenter();
+    // new InsertTaskDataUseCase({ row: 0 }).do();
+    // new InsertTaskDataUseCase({ row: 0 }).do();
+    // new InsertTaskDataUseCase({ row: 0 }).do();
+    // console.log(new GetTaskDataUseCase().do().map((obj) => { return obj.id }));
     
-    new MainPresenter();
+    // new MainPresenter();
 
 
     // new insertTaskDataUseCase({ row: 0 }).do();
