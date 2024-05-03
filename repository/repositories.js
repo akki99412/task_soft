@@ -47,13 +47,13 @@ class TimelineSandwich {
 
 
 const repositories = Timeline.create(true)({
-    taskDataProperties: diContainer.container.TASK_DATA_TEMPLATES,
+    // taskDataProperties: diContainer.container.TASK_DATA_TEMPLATES,
     taskUiProperties: diContainer.container.TASK_UI_TEMPLATES,
     tableTaskDataProperties: notDuplicateTableTaskDataColNum(diContainer.container.TABLE_TASK_DATA_TEMPLATES),
     jspreadsheetTaskDataProperties: diContainer.container.JSPREADSHEET_TASK_DATA_TEMPLATES,
     taskDataRepository: [],
 });
-
+const taskDataProperties = Timeline.create()(diContainer.container.TASK_DATA_TEMPLATES);
 
 // const tableHeaderKeys = Timeline.create()({});
 // const masterTimeline = Timeline.create(true)(

@@ -14,7 +14,7 @@ diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
         completion_date_time = { defaultValue: "", };
         completion_date = { get defaultValue() { return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE); }, };
         completion_time = { get defaultValue() { return dayjs().tz(time_zone).format(DEFAULT_FORMAT.TIME); }, };
-        implementation_date = { defaultValue: [], };
+        implementation_date = { defaultValue: [{ start: "", end: "" }], };
         state = { defaultValue: TASK_STATE.SCHEDULED, };
         similar_tasks_id = { defaultValue: "", };
         similar_tasks = { defaultValue: "", };
@@ -83,29 +83,29 @@ diContainer.addForCallByValue("TABLE_TASK_DATA_TEMPLATES",
 
 diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
     class {
-        title = { type: "text", editor: "", source: [], options: "", };
-        id = { type: "text", editor: "", source: [], options: "", };
+        title = { type: "text", editor: "", source: [], options: [], };
+        id = { type: "text", editor: "", source: [], options: [], };
         receipt = { type: "calendar", editor: "", source: [], options: { format: DEFAULT_FORMAT.DATE }, };
-        memo = { type: "html", editor: "", source: [], options: "" };
-        tag = { type: "text", editor: "", source: [], options: "" };
+        memo = { type: "html", editor: "", source: [], options: [] };
+        tag = { type: "text", editor: "", source: [], options: [] };
         limit = { type: "calendar", editor: "", source: [], options: { format: DEFAULT_FORMAT.DATE } };
-        man_hours = { type: "numeric", editor: "", source: [], options: "", };
-        scheduled_date_time = { type: "hidden", editor: "", source: [], options: "", };
+        man_hours = { type: "numeric", editor: "", source: [], options: [], };
+        scheduled_date_time = { type: "hidden", editor: "", source: [], options: [], };
         scheduled_date = { type: "calendar", editor: "", source: [], options: { format: DEFAULT_FORMAT.DATE }, };
         scheduled_time = { type: "text", editor: clock_editor, source: [], options: { format: DEFAULT_FORMAT.TIME }, };
-        completion_date_time = { type: "hidden", editor: "", source: [], options: "", };
+        completion_date_time = { type: "hidden", editor: "", source: [], options: [], };
         completion_date = { type: "calendar", editor: "", source: [], options: { format: DEFAULT_FORMAT.DATE } };
-        completion_time = { type: "text", editor: clock_editor, source: [], options: "", };
-        implementation_date = { type: "text", editor: "", source: [], options: "", };
-        state = { type: "dropdown", editor: "", source: Object.values(TASK_STATE), options: "", };
-        similar_tasks_id = { type: "hidden", editor: "", source: [], options: "", };
-        similar_tasks = { type: "text", editor: "", source: [], options: "", };
-        successor_task_id = { type: "hidden", editor: "", source: [], options: "", };
-        successor_task = { type: "text", editor: "", source: [], options: "", };
-        connotative_task_id = { type: "hidden", editor: "", source: [], options: "", };
-        connotative_task = { type: "text", editor: "", source: [], options: "", };
-        row_num = { type: "hidden", editor: "", source: [], options: "", };
-        implementation_time = { type: "text", editor: "", source: [], options: "", };
+        completion_time = { type: "text", editor: clock_editor, source: [], options: [], };
+        implementation_date = { type: "text", editor: "", source: [], options: [], };
+        state = { type: "dropdown", editor: "", source: Object.values(TASK_STATE), options: [], };
+        similar_tasks_id = { type: "hidden", editor: "", source: [], options: [], };
+        similar_tasks = { type: "text", editor: "", source: [], options: [], };
+        successor_task_id = { type: "hidden", editor: "", source: [], options: [], };
+        successor_task = { type: "text", editor: "", source: [], options: [], };
+        connotative_task_id = { type: "hidden", editor: "", source: [], options: [], };
+        connotative_task = { type: "text", editor: "", source: [], options: [], };
+        row_num = { type: "hidden", editor: "", source: [], options: [], };
+        implementation_time = { type: "text", editor: "", source: [], options: [], };
     });
 
 
