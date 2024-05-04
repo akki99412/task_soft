@@ -1,5 +1,7 @@
 const implementationDate2String = implementation_date => {
+    // c.log(implementation_date);
     const stringifyList = implementation_date.map((data) => {
+        if (data.start === undefined) return "";
         return data.start + " - " + data.end
     });
     const dst = stringifyList.join("\n");

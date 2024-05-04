@@ -14,7 +14,7 @@ diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
         completion_date_time = { defaultValue: "", };
         completion_date = { get defaultValue() { return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE); }, };
         completion_time = { get defaultValue() { return dayjs().tz(time_zone).format(DEFAULT_FORMAT.TIME); }, };
-        implementation_date = { defaultValue: [{ start: "", end: "" }], };
+        implementation_date = { defaultValue: [], };
         state = { defaultValue: TASK_STATE.SCHEDULED, };
         similar_tasks_id = { defaultValue: "", };
         similar_tasks = { defaultValue: "", };
@@ -172,3 +172,28 @@ function update_data_template() {
     });
     data_template.sort((a, b) => a.col_num - b.col_num);
 }
+class interval {
+    start = "";
+    end = "";
+
+    ToString = function () {
+        if (this.end == "") {
+            return this.start.format() + "/";
+        } else {
+            return this.start.format() + "/" + this.end.format();
+        }
+    }
+
+    constructor(start) {
+        let type_of_start = Object.prototype.toString.call(start);
+        if (type_of_start == "[object String]") {
+            this.start = dayjs(start.split("/")[0]);
+            this.end = dayjs(start.split("/")[1]);
+        } else if (type_of_start == "[object Array]") {
+            this.start = start[0];
+            this.end = start[1];
+        } else {
+            this.start = start;
+        }
+    }
+};

@@ -44,16 +44,59 @@ class TimelineSandwich {
 // const jspreadsheetTaskDataPropertiesSetter = Timeline.create()(diContainer.container.JSPREADSHEET_TASK_DATA_TEMPLATES);
 // const taskDataRepositorySetter = Timeline.create()([]);
 
+const taskDataProperties = Timeline.create()(diContainer.container.TASK_DATA_TEMPLATES);
 
 
-const repositories = Timeline.create(true)({
+const repositorySetter = Timeline.create(true)({
     // taskDataProperties: diContainer.container.TASK_DATA_TEMPLATES,
     taskUiProperties: diContainer.container.TASK_UI_TEMPLATES,
     tableTaskDataProperties: notDuplicateTableTaskDataColNum(diContainer.container.TABLE_TASK_DATA_TEMPLATES),
     jspreadsheetTaskDataProperties: diContainer.container.JSPREADSHEET_TASK_DATA_TEMPLATES,
     taskDataRepository: [],
 });
-const taskDataProperties = Timeline.create()(diContainer.container.TASK_DATA_TEMPLATES);
+loggerTimelines.push(
+    repositorySetter.map(a => { c.groupCollapsed("repositorySetter"); c.log(a); c.groupEnd(); return a })
+);
+
+Object.fromEntries(Object.entries(taskDataProperties.value).map((obj) => { return [obj[0], obj[1].defaultValue] }))
+// const repositories = Timeline.create(true)({
+//     // taskDataProperties: diContainer.container.TASK_DATA_TEMPLATES,
+//     taskUiProperties: diContainer.container.TASK_UI_TEMPLATES,
+//     tableTaskDataProperties: notDuplicateTableTaskDataColNum(diContainer.container.TABLE_TASK_DATA_TEMPLATES),
+//     jspreadsheetTaskDataProperties: diContainer.container.JSPREADSHEET_TASK_DATA_TEMPLATES,
+//     taskDataRepository: [],
+// });
+
+const repositories = repositorySetter.map(parent => ({
+    taskUiProperties: parent.taskUiProperties,
+    tableTaskDataProperties: notDuplicateTableTaskDataColNum(parent.tableTaskDataProperties),
+    jspreadsheetTaskDataProperties: parent.jspreadsheetTaskDataProperties,
+    taskDataRepository: parent.taskDataRepository.map((data, i) => {
+
+        if (data.state === null) {
+        } else if (data.state === TASK_STATE.IN_PROGRESS) {
+            c.log(repositories.value.taskDataRepository[i].state);
+            if (repositories.value.taskDataRepository[i].state !== TASK_STATE.IN_PROGRESS && data.id === repositories.value.taskDataRepository[i].id) {
+
+                data.implementation_date.push({ start: (dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME)), end: "" });
+                // console.warn("change to in progress");
+            }
+        } else if (data.state !== TASK_STATE.IN_PROGRESS) {
+            if (i<repositories.value.taskDataRepository.length  && repositories.value.taskDataRepository[i].state === TASK_STATE.IN_PROGRESS && data.id === repositories.value.taskDataRepository[i].id) {
+                data.implementation_date[data.implementation_date.length - 1].end = dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME);
+                const sum_time = data.implementation_date.reduce(function (sum, element) {
+                    return sum + dayjs(element.end).diff(dayjs(element.start), 'hour');
+                }, 0);
+                // c.log(sum_time);
+                data.implementation_time = sum_time;
+            }
+            // task_table.setValueFromCoords(data_template.find(template => template.member == "table_implementation_time").table_col_num, x2, 
+        }
+        return data.id === "" ? Object.fromEntries(Object.entries(taskDataProperties.value).map((obj) => { return [obj[0], obj[1].defaultValue] })) : data
+    }
+    ),
+}));
+
 
 // const tableHeaderKeys = Timeline.create()({});
 // const masterTimeline = Timeline.create(true)(
@@ -76,11 +119,11 @@ const taskDataProperties = Timeline.create()(diContainer.container.TASK_DATA_TEM
 //                             taskDataRepository,
 //                         });
 //                     })
-    // .apply(taskDataPropertiesSetter)
-    // .apply(taskUiPropertiesSetter)
-    // .apply(tableTaskDataPropertiesSetter.map(notDuplicateTableTaskDataColNum))
-    // .apply(jspreadsheetTaskDataPropertiesSetter)
-    // .apply(taskDataRepositorySetter);
+// .apply(taskDataPropertiesSetter)
+// .apply(taskUiPropertiesSetter)
+// .apply(tableTaskDataPropertiesSetter.map(notDuplicateTableTaskDataColNum))
+// .apply(jspreadsheetTaskDataPropertiesSetter)
+// .apply(taskDataRepositorySetter);
 
 // const taskDataPropertiesGetter = masterTimeline.map(data => (data.taskDataProperties));
 // const taskUiPropertiesGetter = masterTimeline.map(data => (data.taskUiProperties));
