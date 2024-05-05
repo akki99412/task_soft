@@ -1,21 +1,6 @@
 
 
 let timeoutID = 0;
-let secret_key = {};
-
-const secretKeyTimeline = Timeline.create()(null);
-(async _ => {
-    if (secret_key_string === "") {
-        let generated_key = await auto_generate_key();
-        return generated_key;
-    } else {
-        return await import_secret_key(JSON.parse(secret_key_string));
-    }
-})().then(value => secretKeyTimeline.next(value));
-loggerTimelines.push(
-    secretKeyTimeline.map(a => { c.groupCollapsed("secretKeyTimeline"); c.log(a); c.groupEnd(); return a })
-);
-
 
 const delayRepositoryGetter = Timeline.create()({});
 const delayRepositoryUpdate = value => _ =>
@@ -45,7 +30,7 @@ const encryptTimelineSetter = Timeline.create()(secretKey => async parent => {
     // c.log(repositories);
     // c.log(secretKey);
     // c.log(secretKey === null);
-    if (secretKey !== null&&parent!=="{}") {
+    if (secretKey !== null && parent !== "{}") {
         const buffer = await encrypt_string(secretKey, parent);
         encryptTimelineGetter.next(buffer);
         return buffer;
@@ -66,9 +51,13 @@ loggerTimelines.push(
 
 const localStorageSetter = encryptTimelineGetter.map(parent => {
     const buffer = JSON.stringify(parent);
-    localStorage.setItem(LOCAL_STORAGE_KEY,
-        buffer);
+    if (parent !== undefined) {
+        localStorage.setItem(LOCAL_STORAGE_KEY,
+            buffer);
+    }
+    // c.log(localStorage.getItem(LOCAL_STORAGE_KEY));
     return buffer
+
 });
 loggerTimelines.push(
     localStorageSetter.map(a => { c.groupCollapsed("localStorageSetter"); c.log(a); c.groupEnd(); return a })
