@@ -12,3 +12,5 @@ const TASK_STATE = Object.freeze({
     COMPLETED: "完了",
     POSTPONEMENT: "延期",
 });
+
+const LOCAL_STORAGE_KEY = "repositories";

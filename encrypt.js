@@ -154,7 +154,7 @@ async function encrypt_string(secretKey, src_string) {
 
     // データをTyped Arrayに変換。
     let inputData = (new TextEncoder()).encode(src_string);
-    // console.log(inputData);
+    console.log(inputData);
     // => Uint8Array(27) [ 230, 154, 151, 229, 143, 183, 229, 140, 150, 227, … ]
 
 

@@ -14,7 +14,7 @@ diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
         completion_date_time = { defaultValue: "", };
         completion_date = { get defaultValue() { return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE); }, };
         completion_time = { get defaultValue() { return dayjs().tz(time_zone).format(DEFAULT_FORMAT.TIME); }, };
-        implementation_date = { defaultValue: [], };
+        implementation_date = { defaultValue: [{}], };
         state = { defaultValue: TASK_STATE.SCHEDULED, };
         similar_tasks_id = { defaultValue: "", };
         similar_tasks = { defaultValue: "", };
