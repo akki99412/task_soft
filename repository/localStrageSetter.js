@@ -64,40 +64,14 @@ loggerTimelines.push(
 );
 
 
-
-
-
-// const encryptTimelineSetter = repositoriesStringify2Json.map(async parent => {
-//     c.log(secret_key);
-//     await encrypt_string(secret_key, parent)
-// }
-// );
-// const localStorageSetter = encryptTimeline.map(parent => parent);
-// loggerTimelines.push(
-//     localStorageSetter.map(a => { c.groupCollapsed("localStorageSetter"); c.log(a); c.groupEnd(); return a })
-// );
-
-
-
-
-
-
-(async parent => {
-    clearTimeout(timeoutID);
-    // console.log(task_table.getJson());
-    // console.log(data_template[0]);
-    // console.log(data_template);
-    // console.log(data_base);
-    localStorage.setItem(LOCAL_STORAGE_KEY.DATA_TEMPLATE,
-        JSON.stringify(await encrypt_string(secret_key, JSON.stringify(data_template))));
-    localStorage.setItem(LOCAL_STORAGE_KEY.DATA_BASE,
-        JSON.stringify(await encrypt_string(secret_key, JSON.stringify(data_base))));
-    console.log("saved!");
-    console.log(JSON.stringify(data_base));
-    return parent
-}
+const localStorageSetter = encryptTimelineGetter.map(parent => {
+    const buffer = JSON.stringify(parent);
+    localStorage.setItem(LOCAL_STORAGE_KEY,
+        buffer);
+    return buffer
+});
+loggerTimelines.push(
+    localStorageSetter.map(a => { c.groupCollapsed("localStorageSetter"); c.log(a); c.groupEnd(); return a })
 );
 
 
-
-// const localStorageGetter
