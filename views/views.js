@@ -102,12 +102,15 @@ const createJspreadsheet =
         jspreadsheetEventFunc();
         return jspreadsheetData;
     };
-
-const jspreadsheetTimelineOutputSetter = repositories2Table.map(parent => ({ jspreadsheetData: jspreadsheetData.getData(), jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetData.getConfig().columns)), header2Key: parent.header2Key }));
-// const jspreadsheetHeaders=Timeline.create()([]);
-// const jspreadsheetHeaders2keys = tableHeaderKeys
-
-// jspreadsheetEventFunc = _ => 
+    
+    const jspreadsheetTimelineOutputSetter = repositories2Table.map(parent => ({ jspreadsheetData: jspreadsheetData.getData(), jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetData.getConfig().columns)), header2Key: parent.header2Key }));
+    loggerTimelines.push(
+        jspreadsheetTimelineOutputSetter.map(a => { c.groupCollapsed("jspreadsheetTimelineOutputSetter"); c.log(a); c.groupEnd(); return a })
+    );
+    // const jspreadsheetHeaders=Timeline.create()([]);
+    // const jspreadsheetHeaders2keys = tableHeaderKeys
+    
+    // jspreadsheetEventFunc = _ => 
 const jspreadsheetEventInnerFunc = _ => {
     c.log({ string: "jspreadsheetData.getData()", data: jspreadsheetData.getData() });
     c.log({ string: "jspreadsheetData.getConfig().columns", data: jspreadsheetData.getConfig().columns });
@@ -117,21 +120,19 @@ const jspreadsheetEventInnerFunc = _ => {
 
 
 const jspreadsheetTimeline = repositories2Table.map(parent => createJspreadsheet(parent.jspreadsheetData)(parent.jspreadsheetColumns));
-
-const jspreadsheetTimelineOutput = jspreadsheetTimelineOutputSetter.bind(_ => {
-    jspreadsheetEventFunc();
-    return jspreadsheetTimelineOutputSetter;
-});
-
-
 loggerTimelines.push(
     jspreadsheetTimeline.map(a => { c.groupCollapsed("jspreadsheetTimeline"); c.log(a); c.groupEnd(); return a })
 );
+
+const jspreadsheetTimelineOutput = jspreadsheetTimelineOutputSetter.bind(_ => {
+    // jspreadsheetEventFunc();
+    return jspreadsheetTimelineOutputSetter;
+});
 loggerTimelines.push(
     jspreadsheetTimelineOutput.map(a => { c.groupCollapsed("jspreadsheetTimelineOutput"); c.log(a); c.groupEnd(); return a })
-); loggerTimelines.push(
-    jspreadsheetTimelineOutputSetter.map(a => { c.groupCollapsed("jspreadsheetTimelineOutputSetter"); c.log(a); c.groupEnd(); return a })
 );
+
+
 
 
 
