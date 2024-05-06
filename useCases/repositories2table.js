@@ -20,38 +20,6 @@ repositories.next(
 );
 c.log("make start table finish");
 
-// const taskDataTableSetter = Timeline.create()(header => taskData => taskData
-//     .map(taskDatum =>
-//         header.map(key =>
-//             key !== "implementation_date" ?
-//                 taskDatum[key] :
-//                 implementationDate2String(taskDatum[key])
-//         )
-//     )
-// )
-//     .apply(tableHeaderKeys)
-//     .apply(taskDataRepository.getter);
-
-
-
-// const jspreadsheetColumnsSetter = Timeline.create()(
-//     headerKeys => taskUi => tableTaskData => jspreadsheetTaskDataProperties =>
-//         headerKeys.map(
-//             data => ({
-//                 title: taskUi[data].header,
-//                 width: tableTaskData[data].width,
-//                 readOnly: tableTaskData[data].read_only,
-//                 type: jspreadsheetTaskDataProperties[data].type,
-//                 editor: jspreadsheetTaskDataProperties[data].editor,
-//                 source: jspreadsheetTaskDataProperties[data].source,
-//                 options: jspreadsheetTaskDataProperties[data].options,
-//             }))
-// )
-//     .apply(tableHeaderKeys)
-//     .apply(taskUiProperties.getter)
-//     .apply(tableTaskDataProperties.getter)
-//     .apply(jspreadsheetTaskDataProperties.getter);
-
 
 const repositories2Table = repositories.map(parent => {
     const tableHeaderKeys = Object.entries(parent.tableTaskDataProperties)

@@ -42,29 +42,3 @@ const parseJson2repositories = decryptTimelineGetter.map(parent =>
 loggerTimelines.push(
     parseJson2repositories.map(a => { c.groupCollapsed("parseJson2repositories"); c.log(a); c.groupEnd(); return a })
 );
-
-// parseJson2repositories.map(parent => {
-//     if
-//     repositorySetter.next(parent);
-//     return parent;
-// }
-// );
-
-// parseJson2repositories.map(parent => {
-//     c.log(parent);
-//     c.log(repositories.value);
-//     try{
-//     c.log(isEqualObjectJson(parent.taskUiProperties)(repositories.value.taskUiProperties));
-
-//     c.log(isEqualObjectJson(parent.tableTaskDataProperties)(repositories.value.tableTaskDataProperties));
-
-//     c.log(isEqualObjectJson(parent.jspreadsheetTaskDataProperties)(repositories.value.jspreadsheetTaskDataProperties));
-
-//         c.log(isEqualObjectJson(parent.taskDataRepository)(repositories.value.taskDataRepository));
-//         c.log(JSON.stringify(parent.taskDataRepository));
-//         c.log(JSON.stringify(repositories.value.taskDataRepository));
-//     } catch {
-        
-//     }
-//     return parent;
-// });

@@ -114,17 +114,6 @@ const jspreadsheetEventInnerFunc = _ => {
     // jspreadsheetHeaders.next(jspreadsheetData.getHeaders().split(","));
     jspreadsheetTimelineOutputSetter.next({ jspreadsheetData: jspreadsheetData.getData(), jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetData.getConfig().columns)), header2Key: jspreadsheetTimelineOutputSetter.value.header2Key});
 };
-// jspreadsheetHeaders.bind(data => {
-//     c.log(data);
-//     c.log(taskUiProperties.value);
-//     const header2key = Object.fromEntries(Object.entries(taskUiProperties.value).map(([key, value]) => ([value.header, key])));
-//     c.log(header2key);
-//     const destination = data.map((header) => header2key[header]);
-//     c.log(destination);
-//     jspreadsheetHeaders2keys.next(destination);
-//     return jspreadsheetHeaders2keys;
-// }
-// );
 
 
 const jspreadsheetTimeline = repositories2Table.map(parent => createJspreadsheet(parent.jspreadsheetData)(parent.jspreadsheetColumns));
