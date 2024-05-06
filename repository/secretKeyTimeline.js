@@ -5,6 +5,7 @@ const secretKeyTimeline = Timeline.create()(null);
 (async _ => {
     if (secret_key_string === "") {
         let generated_key = await auto_generate_key();
+        saveTextToFile("const secret_key_string=\'" + JSON.stringify(generated_key) + "\'", "key_file.js");
         return generated_key;
     } else {
         return await import_secret_key(JSON.parse(secret_key_string));

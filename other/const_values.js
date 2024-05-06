@@ -14,3 +14,5 @@ const TASK_STATE = Object.freeze({
 });
 
 const LOCAL_STORAGE_KEY = "repositories";
+
+const saveTime = 3;//second

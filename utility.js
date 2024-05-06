@@ -20,3 +20,12 @@ const isEqualObjectJson = (objectA) => (objectB) => {
     return buff;
 };
 const loggerTimelines = [];
+
+function saveTextToFile(text, filename) {
+    const blob = new Blob([text], { type: 'text/plain' });
+    const blobUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = filename;
+    link.click();
+}

@@ -7,7 +7,7 @@ const delayRepositoryUpdate = value => _ =>
     delayRepositoryGetter.next(value);
 const delayRepositorySetter = repositories.bind(async parent => {
     clearTimeout(timeoutID);
-    timeoutID = setTimeout(delayRepositoryUpdate(parent), 1 * 1000);
+    timeoutID = setTimeout(delayRepositoryUpdate(parent), saveTime * 1000);
     c.log(parent);
     c.log("reset timeoutID");
     return delayRepositoryGetter;
