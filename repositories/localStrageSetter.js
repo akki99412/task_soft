@@ -25,7 +25,7 @@ loggerTimelines.push(
 
 const encryptTimelineGetter = Timeline.create()();
 const encryptTimelineSetter = Timeline.create()(secretKey => async parent => {
-    c.log(parent);
+    // c.log(parent);
     // c.log(secretKey);
     // c.log(repositories);
     // c.log(secretKey);

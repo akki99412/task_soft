@@ -13,24 +13,33 @@
 //     onpaste: Timeline.create()({}),
 //     onselection: Timeline.create()({}),
 // };
-
-let jspreadsheetEventFunc = _ => jspreadsheetEventInnerFunc();
-let jspreadsheetData = jspreadsheet(document.getElementById('spreadsheet'), {
+let jspreadsheetObject = jspreadsheet(document.getElementById('spreadsheet'), {
     data: [[]],
     columns: repositories2Table.value.jspreadsheetColumns,
 });
+const jspreadsheetTimelineOutput = repositories2Table.map(parent => ({
+    jspreadsheetData: jspreadsheetObject.getData(),
+    jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
+    header2Key: parent.header2Key
+}));
+loggerTimelines.push(
+    jspreadsheetTimelineOutput.map(a => { c.groupCollapsed("jspreadsheetTimelineOutput"); c.log(a); c.groupEnd(); return a })
+);
+
+
+
 
 let isConstructingJspreadsheet = false;
 const createJspreadsheet =
-    tableData => dataTemplate => {
+    nextData => columns => eventFunc => {
         isConstructingJspreadsheet = true;
         const element = document.getElementById('spreadsheet');
         while (element.firstChild) {
             element.removeChild(element.firstChild);
         };
-        jspreadsheetData = jspreadsheet(element, {
-            data: tableData,
-            columns: dataTemplate,
+        jspreadsheetObject = jspreadsheet(element, {
+            data: nextData,
+            columns: columns,
             //パラメーター
             allowComments: true,//セルへのコメント追加を許可するか(デフォルト: false)。
             allowInsertColumn: false,//列追加を許可するか(デフォルト: true)。
@@ -94,42 +103,43 @@ const createJspreadsheet =
                     console.log("constructing");
                 } else {
                     console.log(a);
-                    jspreadsheetEventFunc();
+                    eventFunc();
                 }
             }
         });
         isConstructingJspreadsheet = false;
-        jspreadsheetEventFunc();
-        return jspreadsheetData;
+        eventFunc();
+        return jspreadsheetObject;
     };
+const updateJspreadsheet = spreadsheet => nextData => columns => eventFunc => {
+    const nowData = spreadsheet.getData();
+    const nowColumns = spreadsheet.getConfig().columns;
+    if (nowColumns !== columns && 0 < nowData[0].filter(datum => datum !== '').length) {
+        return createJspreadsheet(nextData)(columns)(eventFunc);
+        
+    }
+    // if (nowData !== nextData && 0 < nowData[0].filter(datum => datum !== '').length) {
+        spreadsheet.setData(JSON.stringify(nextData));
+        return spreadsheet;
+    // }
+};
     
-    const jspreadsheetTimelineOutputSetter = repositories2Table.map(parent => ({ jspreadsheetData: jspreadsheetData.getData(), jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetData.getConfig().columns)), header2Key: parent.header2Key }));
-    loggerTimelines.push(
-        jspreadsheetTimelineOutputSetter.map(a => { c.groupCollapsed("jspreadsheetTimelineOutputSetter"); c.log(a); c.groupEnd(); return a })
-    );
-    // const jspreadsheetHeaders=Timeline.create()([]);
-    // const jspreadsheetHeaders2keys = tableHeaderKeys
-    
-    // jspreadsheetEventFunc = _ => 
+
+
 const jspreadsheetEventInnerFunc = _ => {
-    c.log({ string: "jspreadsheetData.getData()", data: jspreadsheetData.getData() });
-    c.log({ string: "jspreadsheetData.getConfig().columns", data: jspreadsheetData.getConfig().columns });
-    // jspreadsheetHeaders.next(jspreadsheetData.getHeaders().split(","));
-    jspreadsheetTimelineOutputSetter.next({ jspreadsheetData: jspreadsheetData.getData(), jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetData.getConfig().columns)), header2Key: jspreadsheetTimelineOutputSetter.value.header2Key});
+    // c.log({ string: "jspreadsheetObject.getData()", data: jspreadsheetObject.getData() });
+    // c.log({ string: "jspreadsheetObject.getConfig().columns", data: jspreadsheetObject.getConfig().columns });
+    jspreadsheetTimelineOutput.next({
+        jspreadsheetData: jspreadsheetObject.getData(),
+        jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
+        header2Key: jspreadsheetTimelineOutput.value.header2Key
+    });
 };
 
 
-const jspreadsheetTimeline = repositories2Table.map(parent => createJspreadsheet(parent.jspreadsheetData)(parent.jspreadsheetColumns));
+const jspreadsheetTimeline = repositories2Table.map(parent => updateJspreadsheet(jspreadsheetObject)(parent.jspreadsheetData)(parent.jspreadsheetColumns)(jspreadsheetEventInnerFunc));
 loggerTimelines.push(
     jspreadsheetTimeline.map(a => { c.groupCollapsed("jspreadsheetTimeline"); c.log(a); c.groupEnd(); return a })
-);
-
-const jspreadsheetTimelineOutput = jspreadsheetTimelineOutputSetter.bind(_ => {
-    // jspreadsheetEventFunc();
-    return jspreadsheetTimelineOutputSetter;
-});
-loggerTimelines.push(
-    jspreadsheetTimelineOutput.map(a => { c.groupCollapsed("jspreadsheetTimelineOutput"); c.log(a); c.groupEnd(); return a })
 );
 
 
