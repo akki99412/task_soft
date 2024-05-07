@@ -52,15 +52,21 @@
 <button type=button id="saveButton">
     save
 </button>
-<button type=button id="exportButton">
-    export
+<button type=button id="exportJsonButton">
+    export JSON
+</button>
+<button type=button id="importJsonButton">
+    import JSON
 </button>
 <button type=button id="loadButton">
     load
 </button>
 <div class="json">
-    <input type="text">
+    <textarea id="$json" cols="100" rows="50">
+    </textarea>
 </div>
+
+
 <!-- <script src="template_data_source.js" charset="UTF-8"></script>
 <script src="jspreadsheet_ui_state.js" charset="UTF-8"></script>
 <script src="local_strage_data_source.js" charset="UTF-8"></script>
@@ -107,8 +113,9 @@
             c.log("timeoutID cleared")
             delayRepositoryUpdate(repositories.value)();
     };
-    document.getElementById("exportButton").onclick = function () {
-
+    document.getElementById("exportJsonButton").onclick = function () {
+            c.log(JSON.stringify(repositories.value));
+        $json.value = (JSON.stringify(repositories.value));
     };
     document.getElementById("loadButton").onclick = function () {
         
