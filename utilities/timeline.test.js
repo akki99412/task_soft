@@ -255,10 +255,11 @@ requirement(c.group)("undo、redoできる")(_ => {
     category()("undo")(_ => {
         const x = 0;
         const f = x => Timeline.create()(x + 2);
-        const timelineA = Timeline.create(true)(x);
-        const timelineB = timelineA.bind(f);
+        const timelineA = Timeline.create(100)(x);
+        const timelineB = timelineA.bind(f)
         c.log(spec("timelineAの内容を変えられる"));
         const y = 1;
+        
         try {
             timelineA.next(y);
         } catch {
@@ -335,7 +336,7 @@ requirement(c.group)("undo、redoできる")(_ => {
     category()("redo")(_ => {
         const x = 0;
         const f = x => Timeline.create()(x + 2);
-        const timelineA = Timeline.create(true)(x);
+        const timelineA = Timeline.create(100)(x);
         const timelineB = timelineA.bind(f);
         const y = 1;
         try {
@@ -373,5 +374,46 @@ requirement(c.group)("undo、redoできる")(_ => {
             c.assert(false, timelineA);
         } catch {
         }
+
+        c.log(spec("valuesLengthサイズより多くログを持たない"));
+        timelineA.next(x);
+        try {
+            timelineA.redo();
+            c.assert(false, timelineA);
+        } catch {
+        }
+    });
+    category()("valuesLengthサイズより多くログを持たない")(_ => {
+        const x = 0;
+        const timelineA = Timeline.create(3)(x);
+        c.log(spec("valuesLengthサイズより多くnextできる"));
+        try {
+            [1, 2, 3, 4, 5].forEach(value => timelineA.next(value));
+        } catch {
+            c.assert(false, timelineA);
+        }
+        c.log(spec("undoできること"));
+        try {
+            timelineA.undo();
+        } catch(e) {
+            c.assert(false, {e, timelineA});
+        }
+        c.log(spec("undo後の値が正しいこと"));
+        (_ =>{
+            const left = timelineA.value;
+            const right = 4;
+            c.assert(left === right, { left, right });
+        }
+        )();
+        c.log(spec("undoした回数がvalueLengthを超えるとエラーになる"))
+        timelineA.undo();
+        timelineA.undo();
+        try {
+            timelineA.undo();
+            c.assert(false, timelineA);
+        } catch {
+            
+        }
+
     });
 });

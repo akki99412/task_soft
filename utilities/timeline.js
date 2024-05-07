@@ -4,25 +4,30 @@
 
 
 class Timeline {
-    constructor(a, isShiftable) {
-        this.isShiftable = isShiftable;
+    constructor(a, valuesLength) {
         this.value = a;
         this.lastFns = [];
         this.values = [this.value];
         this.index = 0;
+        this.valuesLength = valuesLength;
+        this.isShiftable = valuesLength > 0;
     };
 
 
-    static create = (isShiftable = false) => (a) => {
-        return new Timeline(a, isShiftable);
+    static create = (valuesLength = 0) => (a) => {
+        return new Timeline(a, valuesLength);
     }
     static Op = class {
         static push =
             a => timeline => {
                 timeline.value = a;
                 if (timeline.isShiftable) {
-                    timeline.values = timeline.values.slice(0, timeline.index + 1).concat([a]);
-                    timeline.index = timeline.index + 1;
+                    const end = timeline.index+1;
+                    const start = 0 < (end - timeline.valuesLength) ? end - timeline.valuesLength : 0;
+
+                    timeline.values = timeline.values.slice(start, end).concat([a]);
+                    // timeline.index = timeline.index + 1;
+                    timeline.index=timeline.values.length-1
                 }
                 return timeline;
             }

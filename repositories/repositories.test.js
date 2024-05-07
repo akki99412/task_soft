@@ -36,9 +36,9 @@ requirement(c.group)("データを保存")(_ => {
             (_ => {
                 c.log(spec("かぶりないこと"));
 
-                const left = Object.entries(tableTaskDataPropertiesGetter.value).map(([_, value]) => value.col_num).length;
-                const right = new Set(Object.entries(tableTaskDataPropertiesGetter.value).map(([_, value]) => value.col_num)).size;
-                c.assert(left === right, { left, right, tableTaskDataPropertiesGetter });
+                const left = Object.entries(repositories.value.tableTaskDataProperties).map(([_, value]) => value.col_num).length;
+                const right = new Set(Object.entries(repositories.value.tableTaskDataProperties).map(([_, value]) => value.col_num)).size;
+                c.assert(left === right, { left, right, repositories });
             })();
         });
     });
