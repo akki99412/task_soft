@@ -56,6 +56,7 @@ const localStorageSetter = encryptTimelineGetter.map(parent => {
             buffer);
     }
     // c.log(localStorage.getItem(LOCAL_STORAGE_KEY));
+    c.log("saved!!")
     return buffer
 
 });

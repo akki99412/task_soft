@@ -49,13 +49,13 @@
     new Darkmode().showWidget();
 </script>
 <div id="spreadsheet"></div>
-<button type=button id="save_button">
+<button type=button id="saveButton">
     save
 </button>
-<button type=button id="export_button">
+<button type=button id="exportButton">
     export
 </button>
-<button type=button id="load_button">
+<button type=button id="loadButton">
     load
 </button>
 <div class="json">
@@ -64,7 +64,7 @@
 <!-- <script src="template_data_source.js" charset="UTF-8"></script>
 <script src="jspreadsheet_ui_state.js" charset="UTF-8"></script>
 <script src="local_strage_data_source.js" charset="UTF-8"></script>
-<script src="data_base_data_source.js" charset="UTF-8"></script> -->
+<script src="dataBase_data_source.js" charset="UTF-8"></script> -->
 
 
 
@@ -102,13 +102,15 @@
 <script>
 
     // $('.test_clockpicker').clockpicker();
-    document.getElementById("save_button").onclick = function () {
-        
+    document.getElementById("saveButton").onclick = function () {
+            clearTimeout(timeoutID);
+            c.log("timeoutID cleared")
+            delayRepositoryUpdate(repositories.value)();
     };
-    document.getElementById("export_button").onclick = function () {
+    document.getElementById("exportButton").onclick = function () {
 
     };
-    document.getElementById("load_button").onclick = function () {
+    document.getElementById("loadButton").onclick = function () {
         
     };
 
