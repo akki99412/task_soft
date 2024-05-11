@@ -120,7 +120,7 @@
             $json.value = (JSON.stringify(repositories.value));
         };
         $importJsonButton.onclick = _ => {
-            repositories.next(JSON.parse($json.value));
+            repositorySetter.next(JSON.parse($json.value));
 
         }
 
