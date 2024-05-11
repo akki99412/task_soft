@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>サンプル</title>
+</head>
+<script src="https://bossanova.uk/jspreadsheet/v4/jexcel.js"></script>
+<script src="https://jsuites.net/v4/jsuites.js"></script>
+<link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css" />
+<link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
+<link rel="stylesheet" type="text/css"
+    href="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
+
+<body>
+
+    <div class="input-group clockpicker">
+        <input type="text" class="form-control" value="09:30">
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-time"></span>
+        </span>
+    </div>
+    <div id="custom"></div>
+    <div id="clockpicker_buffer"></div>
+    <script>
+        var data2 = [
+            ['PHP', '14:00'],
+            ['Javascript', '16:30'],
+        ];
+
+        var customColumn = {
+            // Methods
+            picked_time: "00:00",
+            closeEditor: function (cell, save) {
+                var value = cell.children[0].value;
+                cell.innerHTML = value;
+                return value;
+            },
+            openEditor: function (cell) {
+                // Create input
+                var element = document.createElement('input');
+                element.value = cell.innerHTML;
+                // Update cell
+                cell.classList.add('editor');
+                cell.innerHTML = '';
+                cell.appendChild(element);
+                $(element).clockpicker({
+                    afterHide: function () {
+                        setTimeout(function () {
+                            // To avoid double call
+                            if (cell.children[0]) {
+                                myTable.closeEditor(cell, true);
+                            }
+                        });
+                    },
+                }).change(function () {
+                    picked_time = this.value;
+                    console.log(picked_time);
+                    cell.innerHTML = picked_time;
+                });;
+                // Focus on the element
+                element.focus();
+                // console.log(element);
+                // console.log(document.getSelection())
+                // console.log(document.body.children[document.body.children.length-1]);
+            },
+            getValue: function (cell) {
+                return cell.innerHTML;
+            },
+            setValue: function (cell, value) {
+                cell.innerHTML = value;
+            }
+        }
+
+        myTable = jspreadsheet(document.getElementById('custom'), {
+            data: data2,
+            columns: [
+                { type: 'text', title: 'Course Title', width: 300 },
+                { type: 'text', title: 'Time', width: 100, editor: customColumn },
+            ]
+        });
+    </script>
+    <script src="other/diContainer.js" charset="UTF-8"></script>
+    <script type="text/javascript">
+        $('.clockpicker').clockpicker();
+        let test = { a: 0, b: { a: 3, b: 4 } };
+        class AClass {
+            constructor() {
+                this.a = 0;
+            }
+            a;
+        }
+        class BClass {
+            constructor() {
+                this.b = 1;
+            }
+            b;
+        }
+        class CClass {
+            constructor() {
+                // super();
+                this.c = 2
+            }
+            c;
+        }
+        // function mixin(child, parent){
+        //     class child extends parent{
+        //         constructor(){
+
+        //         }
+        //     }
+        // }
+
+        // Object.assign(CClass.prototype, {a:() => console.log("a"),});
+        // let value = new CClass();
+        // value.a();
+
+        // let cValue=new CClass();
+        // test.b["a"]=1;
+        // console.log(value);
+        class Foo {
+            foo() {
+                console.log('foo')
+            }
+        }
+
+        let Bar = new class extends Foo {
+            bar() {
+                console.log('bar')
+            }
+        }
+
+        class Interface {
+            constructor() {
+                console.log("interface");
+            }
+        }
+        function alpha_class(base) {
+            return class extends base {
+                constructor() {
+                    super();
+                }
+                alpha_function() { console.log("alpha"); }
+
+            }
+        }
+
+        function beta_class(base) {
+            return class extends base {
+                constructor() {
+                    super();
+                }
+                beta_function() { console.log("beta"); }
+
+            }
+        }
+
+        function delta_class(base) {
+            return class extends base {
+                constructor() {
+                    super();
+                    this["a"] = 100;
+                }
+                delta_function() { console.log("delta"); }
+
+            }
+        }
+        DeltaClass = delta_class(beta_class(alpha_class(Interface)));
+        let deltaObject = new DeltaClass();
+        console.log(deltaObject.a);
+        function drawChart({
+            size = "big",
+            coords = { x: 0, y: 0 },
+            radius = 25,
+        } = {}) {
+            let a = 10;
+            let b = 30;
+            console.log(size, coords, radius);
+            console.log(a, b);
+            // グラフの描画
+        }
+
+        drawChart({
+            coords: { x: 18, y: 30 },
+            radius: 30,
+            a: 100,
+            b: 20,
+        });
+        // deltaObject.delta_function();
+        // deltaObject.beta_function();
+        // deltaObject.alpha_function();
+
+        obj1 = { a: 1, b: 2, c: {cc:3, ccc:4}, d:function(){console.log(this.a)}};
+            obj2 = obj1;
+        obj2.a = 100;
+        obj2.c.cc=1100;
+        console.log(obj1);
+        console.log(obj2);
+
+        function over_write_test_function({a, b, c}=obj1){
+            console.log({a, b, c});
+        }
+        over_write_test_function({ a: 10, b: 20, c: 30 });
+        over_write_test_function();
+        console.log(obj1);
+        
+            obj2.d();
+            obj2 = Object.fromEntries(Object.entries(obj1));
+        obj2.a = 100;
+        obj2.c.cc=10000;
+        console.log(obj1);
+        console.log(obj2);
+
+        container_test = {};
+        referenced_object = { name: "referenced" };
+        container_test.referenced_object = referenced_object;
+        reference_object1 = new class {
+            constructor(obj) {
+                this.dic = obj;
+            }
+        }(container_test.referenced_object);
+        reference_object1.dic.name = "changed";
+        console.log(referenced_object);
+        console.log(container_test.referenced_object);
+        console.log("");
+        // container_test.value_object=new class {name = "value"}();
+        container_test.value_object={}
+        Object.defineProperty(container_test, "value_object", { get(){return {name: "value"}}});
+        reference_object2 = new class {
+                constructor(obj) {
+                    this.dic = obj;
+                }
+            }(container_test.value_object);
+            reference_object2.dic.name = "changed";
+            console.log(reference_object2);
+            console.log(container_test.value_object);
+
+            console.log("di test");
+            class TestClass{ a = 10; b = 20; c = 30 };
+            diContainer.addForCallByReference("Obj1", obj1);
+            diContainer.addForCallByValue("Obj2",  TestClass);
+
+            let injectedObject1 = { Obj1, Obj2 } = diContainer.container;
+                injectedObject1.Obj2.a = 3000;
+            let injectedObject2 = { Obj1, Obj2 } = diContainer.container;
+            injectedObject1.Obj1.a=1000;
+            console.log(injectedObject1);
+            console.log(injectedObject2);
+
+
+
+        // Bar.foo()
+        // Bar.bar()
+
+
+    </script>
+
+    <input type="submit" value="Sign in" />
+
+</html>
