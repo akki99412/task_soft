@@ -125,8 +125,12 @@
         }
 
         document.getElementById("loadButton").onclick = function () {
-
+                clearTimeout(timeoutID);
+                c.log("timeoutID cleared")
+            getLocalStorage2Timeline(localStorageGetter);
+            repositorySetter.next(parseJson2repositories.value);
         };
+
 
 
     </script>

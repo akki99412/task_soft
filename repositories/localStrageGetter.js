@@ -2,9 +2,10 @@
 
 // c.log(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
 
-const localStorageGetter = Timeline.create()(
-    (JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)))
-);
+const localStorageGetter = Timeline.create()({});
+getLocalStorage2Timeline = timeline =>
+    timeline.next(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
+getLocalStorage2Timeline(localStorageGetter);
 loggerTimelines.push(
     localStorageGetter.map(a => { c.groupCollapsed("localStorageGetter"); c.log(a); c.groupEnd(); return a })
 );
