@@ -1,0 +1,25 @@
+body {
+  background-color: #1a1a1a; /* ダークな背景色 */
+  color: #ffffff; /* 白い文字色 */
+}
+
+/* リンクのスタイル */
+a {
+  color: #66b2ff; /* リンクの色 */
+}
+
+a:hover {
+  color: #3399ff; /* リンクのホバー時の色 */
+}
+
+/* ヘッダーのスタイル */
+header {
+  background-color: #333333; /* ダークなヘッダーの背景色 */
+  color: #ffffff; /* ヘッダーの文字色 */
+}
+
+/* フッターのスタイル */
+footer {
+  background-color: #333333; /* ダークなフッターの背景色 */
+  color: #ffffff; /* フッターの文字色 */
+}
