@@ -3,17 +3,25 @@
 let timeoutID = 0;
 
 const delayRepositoryGetter = Timeline.create()({});
-const delayRepositoryUpdate = value => _ =>
+const delayRepositoryUpdate = value => 
     delayRepositoryGetter.next(value);
-const delayRepositorySetter = repositories.bind(async parent => {
+const delayRepositorySetter = repositories.map(parent => {
     clearTimeout(timeoutID);
-    timeoutID = setTimeout(delayRepositoryUpdate(parent), saveTime * 1000);
-    c.log(parent);
-    c.log("reset timeoutID");
-    return delayRepositoryGetter;
+    return new Promise(resolve => {
+        timeoutID = setTimeout(_ => {
+            delayRepositoryUpdate(parent);
+            c.log("reset timeoutID");
+            resolve(delayRepositoryGetter);
+        },
+            saveTime * 1000);
+        // c.log(parent);
+    })
 });
 loggerTimelines.push(
     delayRepositoryGetter.map(a => { c.groupCollapsed("delayRepositoryGetter"); c.log(a); c.groupEnd(); return a })
+);
+loggerTimelines.push(
+    delayRepositorySetter.map(a => { c.group("delayRepositorySetter"); c.log(a); c.groupEnd(); return a })
 );
 
 const repositoriesStringify2Json = delayRepositoryGetter.map(parent =>

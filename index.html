@@ -113,7 +113,7 @@
         document.getElementById("saveButton").onclick = function () {
             clearTimeout(timeoutID);
             c.log("timeoutID cleared")
-            delayRepositoryUpdate(repositories.value)();
+            delayRepositoryUpdate(repositories.value);
         };
         document.getElementById("exportJsonButton").onclick = function () {
             c.log(JSON.stringify(repositories.value));
@@ -125,13 +125,45 @@
         }
 
         document.getElementById("loadButton").onclick = function () {
-                clearTimeout(timeoutID);
-                c.log("timeoutID cleared")
+            clearTimeout(timeoutID);
+            c.log("timeoutID cleared")
             getLocalStorage2Timeline(localStorageGetter);
             repositorySetter.next(parseJson2repositories.value);
         };
+        const unloadFunction = e => {
+            e.preventDefault();
+            e.returnValue = "ページを離れようとしています。よろしいですか？"
+        }
+        const beforeUnloadTimeline = repositories.map(parent =>
+            ({ isSaved: false })
+        );
+        loggerTimelines.push(
+            beforeUnloadTimeline.map(a => { c.groupCollapsed("beforeUnloadTimeline"); c.log(a); c.groupEnd(); return a })
+        );
 
+        const beforeUnloadTimelineSetter = localStorageSetter.map(parent =>
+            beforeUnloadTimeline.next({ isSaved: true })
+        );
+        loggerTimelines.push(
+            beforeUnloadTimelineSetter.map(a => { c.groupCollapsed("beforeUnloadTimelineSetter"); c.log(a); c.groupEnd(); return a })
+        );
 
+        const beforeUnloadEventSetter = beforeUnloadTimeline.map(parent => {
+            if (parent.isSaved) {
+                window.removeEventListener("beforeunload", unloadFunction);
+            } else {
+                window.addEventListener("beforeunload", unloadFunction);
+            }
+            return parent.isSaved;
+        }
+        );
+            loggerTimelines.push(
+                beforeUnloadEventSetter.map(a => { c.group("beforeUnloadEventSetter"); c.log(a); c.groupEnd(); return a })
+            );
+        // window.onbeforeunload = function (e) {
+        //     c.log(delayRepositorySetter);
+        //     e.returnValue = "ページを離れようとしています。よろしいですか？";
+        // }
 
     </script>
 
