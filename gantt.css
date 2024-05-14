@@ -1,0 +1,86 @@
+/* ... Original styles */
+
+.gantt-container {
+    /* this is for the container in dark mode */
+    background-color: #252525;
+}
+
+@media (prefers-color-scheme: dark) {
+    .gantt .grid-header {
+        fill: #252525;
+        stroke: #616161;
+    }
+
+    .gantt .grid-row {
+        fill: #252525;
+    }
+
+    .gantt .grid-row:nth-child(even) {
+        fill: #3e3e3e;
+    }
+
+    .gantt .row-line {
+        stroke: #3e3e3e;
+    }
+
+    .gantt .tick {
+        stroke: #616161;
+    }
+
+    .gantt .today-highlight {
+        opacity: 0.2;
+    }
+
+    .gantt .arrow {
+        stroke: #eee;
+    }
+
+    .gantt .bar {
+        fill: #616161;
+        stroke: none;
+    }
+
+    .gantt .bar-progress {
+        fill: #8a8aff;
+    }
+
+    .gantt .bar-invalid {
+        fill: transparent;
+        stroke: #c6ccd2;
+    }
+
+    .gantt .bar-invalid~.bar-label,
+    .gantt .bar-label.big {
+        fill: #ececec;
+    }
+
+    .gantt .bar-wrapper:hover .bar,
+    .gantt .bar-wrapper.active .bar {
+        fill: #9E9E9E;
+    }
+
+    .gantt .bar-wrapper:hover .bar-progress,
+    .gantt .bar-wrapper.active .bar-progress {
+        fill: #a3a3ff;
+    }
+
+    .gantt .upper-text {
+        fill: #a2a2a2;
+    }
+
+    .gantt .lower-text {
+        fill: #f7f7f7;
+    }
+
+    .gantt-container .popup-wrapper {
+        background-color: #333;
+    }
+
+    .gantt-container .popup-wrapper .title {
+        border-color: #8a8aff;
+    }
+
+    .gantt-container .popup-wrapper .pointer {
+        border-top-color: #333;
+    }
+}
