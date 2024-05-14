@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
 
 <head>
@@ -16,12 +17,10 @@
         href="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.28.5/date_fns.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/customParseFormat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/duration.js"></script> -->
     <script>
         dayjs.extend(window.dayjs_plugin_utc);
         dayjs.extend(window.dayjs_plugin_timezone);
@@ -31,11 +30,6 @@
     <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.themes.css" type="text/css" />
 
 
-
-    <!-- <script type="module">
-        import data from "./key_file.json" assert { type: "json" };
-        console.log(data);
-    </script> -->
     <script src="key_file.js" charset="UTF-8">
     </script>
     <script src="useCases/encrypt.js" charset="UTF-8">
@@ -69,16 +63,9 @@
     </div>
 
 
-    <!-- <script src="template_data_source.js" charset="UTF-8"></script>
-<script src="jspreadsheet_ui_state.js" charset="UTF-8"></script>
-<script src="local_strage_data_source.js" charset="UTF-8"></script>
-<script src="dataBase_data_source.js" charset="UTF-8"></script> -->
-
-
 
 
     </script>
-    <!-- <script src="key_file.js" charset="UTF-8"></script> -->
     <script src="utilities/compose.js" charset="UTF-8"></script>
     <script src="utilities/pipe.js" charset="UTF-8"></script>
     <script src="utilities/utilities.js" charset="UTF-8"></script>
@@ -109,7 +96,6 @@
 
     <script>
 
-        // $('.test_clockpicker').clockpicker();
         document.getElementById("saveButton").onclick = function () {
             clearTimeout(timeoutID);
             c.log("timeoutID cleared")
@@ -157,14 +143,9 @@
             return parent.isSaved;
         }
         );
-            loggerTimelines.push(
-                beforeUnloadEventSetter.map(a => { c.group("beforeUnloadEventSetter"); c.log(a); c.groupEnd(); return a })
-            );
-        // window.onbeforeunload = function (e) {
-        //     c.log(delayRepositorySetter);
-        //     e.returnValue = "ページを離れようとしています。よろしいですか？";
-        // }
-
+        loggerTimelines.push(
+            beforeUnloadEventSetter.map(a => { c.group("beforeUnloadEventSetter"); c.log(a); c.groupEnd(); return a })
+        );
     </script>
 
     <link rel="stylesheet" href="style.css">
