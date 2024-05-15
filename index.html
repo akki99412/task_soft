@@ -57,7 +57,11 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 editable: true,
-                themeSystem: 'bootstrap5'
+                themeSystem: 'bootstrap5',
+                events: [
+                    { title: 'Meeting', start: new Date() },
+                    { title: 'make', start: new Date(), end: (dayjs().add(2, 'd').startOf('day').toDate()) }
+                ]
             });
             calendar.render();
         });
@@ -67,6 +71,7 @@
 </head>
 
 <body>
+    <script>console.log(dayjs().add(1, 'd').startOf('day').toDate());</script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.3.4/lib/darkmode-js.min.js"></script>
     <script>
         new Darkmode().showWidget();
@@ -248,7 +253,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="calendar.css">
+    <link rel="stylesheet" href="calendar.css">
 </body>
 
 </html>
