@@ -1,0 +1,61 @@
+/* カードの設定 */
+.kanban-item .text-red {
+    color: crimson;
+}
+
+.kanban-item .text-bold {
+    font-weight: bold;
+}
+
+.kanban-item.orange {
+    color: white;
+    background-color: darkorange;
+}
+
+.kanban-item .item-body img {
+    width: 100%;
+}
+
+.kanban-item .item-body {
+    max-height: 240px;
+    overflow: hidden;
+}
+
+/* メッセージ表示欄 */
+#show-message {
+    margin: 0 1% 1rem 1%;
+    padding: 0.5rem;
+    color: white;
+    background-color: mediumturquoise;
+}
+
+/* 完了したカードのテキストを灰色にして取り消し線を入れる */
+.kanban-item.done {
+    color: gray;
+    text-decoration: line-through;
+    background-color: whitesmoke;
+}
+
+/* 完了したカードの画像を75%モノクロにして薄く表示する */
+.kanban-item.done img {
+    filter: grayscale(75%);
+    opacity: 0.5;
+}
+
+/* カラムのタイトルの色 */
+.kanban-board header {
+    color: white;
+    background-color: gray;
+}
+
+.kanban-board header.red {
+    background-color: crimson;
+}
+
+.kanban-board header.blue {
+    background-color: royalblue;
+}
+
+.kanban-board header.green {
+    background-color: green;
+}
