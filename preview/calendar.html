@@ -1,37 +1,186 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html>
 
 <head>
   <meta charset='utf-8' />
-  <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet'>
-  <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
-  
-  
-  <!-- bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link href="
-  https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/cyborg/bootstrap.min.css
-  " rel="stylesheet">
+
+
+  <title>
+    Drag-n-drop external events - Demos | FullCalendar
+  </title>
+
+
+  <!-- <link href='/docs/dist/demo-to-codepen.css' rel='stylesheet' /> -->
+
+
+
+
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+
+
+  <!-- <script src='/docs/dist/demo-to-codepen.js'></script> -->
+
+<script src="
+https://cdn.jsdelivr.net/npm/leader-line-new@1.1.9/leader-line.min.js
+"></script>
   <script>
 
     document.addEventListener('DOMContentLoaded', function () {
+      var Calendar = FullCalendar.Calendar;
+      var Draggable = FullCalendar.Draggable;
+
+      var containerEl = document.getElementById('external-events');
       var calendarEl = document.getElementById('calendar');
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-  themeSystem: 'bootstrap5'
+      var checkbox = document.getElementById('drop-remove');
+
+      // initialize the external events
+      // -----------------------------------------------------------------
+
+      new Draggable(containerEl, {
+        itemSelector: '.fc-event',
+        eventData: function (eventEl) {
+          return {
+            title: eventEl.innerText
+          };
+        }
       });
+
+      // initialize the calendar
+      // -----------------------------------------------------------------
+
+      var calendar = new Calendar(calendarEl, {
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: [
+          {
+            id: 'event_id_test',
+            title: 'my event',
+            start: new Date()
+          }
+        ],
+        editable: true,
+        droppable: true, // this allows things to be dropped onto the calendar
+        drop: function (info) {
+          // is the "remove after drop" checkbox checked?
+          if (checkbox.checked) {
+            // if so, remove the element from the "Draggable Events" list
+            info.draggedEl.parentNode.removeChild(info.draggedEl);
+          }
+        },
+        eventClick: function (info) {
+          console.log('Event: ' + info.event.title);
+          console.log('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+          console.log('View: ' + info.view.type);
+          console.log(info);
+          console.log(info.el);
+          console.log(info.el.id = info.event.title);
+          console.log(info);
+          console.log(info.el);
+          new LeaderLine(
+            document.getElementById('start'),
+            document.getElementById(info.event.title)
+          );
+          // change the border color just for fun
+          info.el.style.borderColor = 'red';
+        }
+      });
+
       calendar.render();
     });
 
   </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+      font-size: 14px;
+    }
+
+    #external-events {
+      position: fixed;
+      z-index: 2;
+      top: 20px;
+      left: 20px;
+      width: 150px;
+      padding: 0 10px;
+      border: 1px solid #ccc;
+      background: #eee;
+    }
+
+    .demo-topbar+#external-events {
+      /* will get stripped out */
+      top: 60px;
+    }
+
+    #external-events .fc-event {
+      cursor: move;
+      margin: 3px 0;
+    }
+
+    #calendar-container {
+      position: relative;
+      z-index: 1;
+      margin-left: 200px;
+    }
+
+    #calendar {
+      max-width: 1100px;
+      margin: 20px auto;
+    }
+  </style>
 </head>
 
 <body>
-  <div id='calendar'></div>
+
+  <div class='demo-topbar'>
+    <button data-codepen class='codepen-button'>Edit in CodePen</button>
+
+
+
+
+    Drag external events into the calendar with the Draggable API
+
+  </div>
+
+
+  <div id='external-events'>
+    <p>
+      <strong>Draggable Events</strong>
+    </p>
+
+    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+      <div class='fc-event-main' id="divtest"><span id="test">My Event 1</span></div>
+    </div>
+    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+      <div class='fc-event-main'>My Event 2</div>
+    </div>
+    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+      <div class='fc-event-main'>My Event 3</div>
+    </div>
+    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+      <div class='fc-event-main'>My Event 4</div>
+    </div>
+    <div class='fc-event fc-h-event fc-daygrid-event fc-daygrid-block-event'>
+      <div class='fc-event-main'>My Event 5</div>
+    </div>
+
+    <p>
+      <input type='checkbox' id='drop-remove' />
+      <label for='drop-remove'>remove after drop</label>
+    </p>
+  </div>
+  <div id="start">start</div>
+
+  <div id='calendar-container'>
+    <div id='calendar'></div>
+  </div>
+
 </body>
+
 
 </html>
