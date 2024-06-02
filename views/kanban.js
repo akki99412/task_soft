@@ -139,7 +139,8 @@ function setKanbanItemStatus(el, status) {
 }
 
 function showMessage(msg) {
-    document.getElementById('show-message').innerHTML = msg;
+    // document.getElementById('show-message').innerHTML = msg;
+    console.log(msg);
 }
 
 // カードに data-class= 属性が設定されていたら、
