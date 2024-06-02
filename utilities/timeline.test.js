@@ -419,7 +419,7 @@ requirement(c.group)("undo、redoできる")(_ => {
     category()("データの更新前後にtimelineの更新処理を設定できる")(_ => {
         let logList = [];
         const timelineA = Timeline.create()(1);
-        const logA = timelineA.map(parent =>logList.push({timeline: "timelineA", value: parent}));
+        const logA = timelineA.map(parent => logList.push({ timeline: "timelineA", value: parent }));
         const timelineB = timelineA.map(parent => parent * 2);
         const logB = timelineB.map(parent => logList.push({ timeline: "timelineB", value: parent }));
         const timelineAIsResolved = Timeline.create()(true);
@@ -448,9 +448,39 @@ requirement(c.group)("undo、redoできる")(_ => {
             { timeline: "timelineB", value: 4 },
             { timeline: "timelineAIsResolved", value: true },
         ];
-        c.assert(isEqualObjectJson(left)(logList), {logList, timelineA});
+        c.assert(isEqualObjectJson(left)(logList), { logList, timelineA });
         
 
 
-    })
+    });
+    category()("applicativeとして動作すること")(_ => {
+        const func = a => b => a + b;
+        const functionTimeline = Timeline.create()(func);
+        const timelineA = Timeline.create()(1);
+        const timelineB = Timeline.create()(2);
+        c.log(spec("timelineのvalueが関数になっているとき、applyでtimeline.valueの値を入れられること"));
+        try { const timelineC = functionTimeline.apply(timelineA).apply(timelineB); }
+        catch (e) {
+            c.assert(false, e);
+        }
+        const timelineC = functionTimeline.apply(timelineA).apply(timelineB);
+        category()("複数のタイムラインをapplyしたとき、どちらを更新しても子のタイムラインも更新されること")(_ => {
+            (_ => {
+                c.log(spec("1つ目を更新しても子のtimelineが更新されること"));
+                timelineA.next(2);
+                const left = functionTimeline.value(2)(2);
+                const right = timelineC.value;
+                c.assert(left === right, timelineC);
+            })();
+            (_ => {
+                c.log(spec("2つ目を更新しても子のtimelineが更新されること"));
+                timelineB.next(3);
+                const left = functionTimeline.value(2)(3);
+                const right = timelineC.value;
+                c.assert(left === right, {left, right});
+            })();
+            }
+        );
+        
+    });
 });
