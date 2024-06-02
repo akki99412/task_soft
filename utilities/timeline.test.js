@@ -416,4 +416,41 @@ requirement(c.group)("undo、redoできる")(_ => {
         }
 
     });
+    category()("データの更新前後にtimelineの更新処理を設定できる")(_ => {
+        let logList = [];
+        const timelineA = Timeline.create()(1);
+        const logA = timelineA.map(parent =>logList.push({timeline: "timelineA", value: parent}));
+        const timelineB = timelineA.map(parent => parent * 2);
+        const logB = timelineB.map(parent => logList.push({ timeline: "timelineB", value: parent }));
+        const timelineAIsResolved = Timeline.create()(true);
+        const logResolved = timelineAIsResolved.map(parent => {
+            return logList.push({ timeline: "timelineAIsResolved", value: parent })
+        });
+
+        c.log(spec("変更前に更新されるtimelineを設定できること"));
+        try {
+            timelineA.lateBeforeMap(parent => false)(timelineAIsResolved);
+        } catch (e) {
+            c.assert(false, { e, timelineA, timelineAIsResolved });
+        }
+        c.log(spec("変更後に更新されるtimelineを設定できること"));
+        try {
+            timelineA.lateAfterMap(parent => true)(timelineAIsResolved);
+        } catch (e) {
+            c.assert(false, { e, timelineA, timelineAIsResolved });
+        }
+        logList = [];
+        c.log(spec("変更前後の処理が正しい順番で動作すること"));
+        timelineA.next(2);
+        const left = [
+            { timeline: "timelineAIsResolved", value: false },
+            { timeline: "timelineA", value: 2 },
+            { timeline: "timelineB", value: 4 },
+            { timeline: "timelineAIsResolved", value: true },
+        ];
+        c.assert(isEqualObjectJson(left)(logList), {logList, timelineA});
+        
+
+
+    })
 });
