@@ -16,3 +16,43 @@ const TASK_STATE = Object.freeze({
 const LOCAL_STORAGE_KEY = "repositories";
 
 const saveTime = 3;//second
+
+const boardList = [
+    {
+        "id": "SCHEDULED",
+        "title": "計画中",
+        "item": [
+        ]
+    },
+    {
+        "id": "SCHEDULED_TODAY",
+        "title": "今日の予定",
+        "item": [
+        ]
+    },
+    {
+        "id": "IN_PROGRESS",
+        "title": "実施中",
+        "item": [
+        ]
+    },
+    // {
+    //     "id": "// COMPLETED_TODAY",
+    //     "title": "今日完了",
+    //     "class": "red,waiting",
+    //     "item": [
+    //     ]
+    // },
+    {
+        "id": "COMPLETED",
+        "title": "完了",
+        "item": [
+        ]
+    },
+    {
+        "id": "POSTPONEMENT",
+        "title": "延期",
+        "item": [
+        ]
+    },
+];

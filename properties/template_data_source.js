@@ -17,6 +17,7 @@ diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
         connotative_task_id = { defaultValue: "", };
         row_num = { defaultValue: "", };
         implementation_time = { defaultValue: "", };
+        kanbanNum = { defaultValue: 0 };
     });
 
 diContainer.addForCallByValue("TASK_UI_TEMPLATES",

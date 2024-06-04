@@ -1,4 +1,5 @@
 // カンバンに表示されるカラムやカードを定義
+
 const dataContent = [
     {
         "id": "column-id-1",
