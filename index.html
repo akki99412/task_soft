@@ -52,7 +52,7 @@
     <!-- calendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script>
-      
+
 
     </script>
     <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
@@ -80,7 +80,7 @@
 
     <!-- ここにメッセージが表示される -->
     <!-- <div id="show-message">&nbsp;</div> -->
-    
+
     <!-- ここにカンバンが表示される -->
     <div id="kanban-canvas"></div>
     <button type=button id="saveButton">
@@ -114,23 +114,21 @@
     <script src="properties/const_values.js" charset="UTF-8"></script>
     <script src="properties/template_data_source.js" charset="UTF-8"></script>
 
-    <script src="repositories/secretKeyTimeline.js" charset="UTF-8"></script>
-    <script src="repositories/repositories.js" charset="UTF-8"></script>
-    <script src="useCases/repositories2table.js" charset="UTF-8"></script>
+    <!-- <script src="repositories/secretKeyTimeline.js" charset="UTF-8"></script> -->
+    <script src="timelines/timelines.js" charset="UTF-8"></script>
+
     <script src="views/table.js" charset="UTF-8"></script>
     <script src="views/calendar.js" charset="UTF-8"></script>
     <script src="views/gantt.js" charset="UTF-8"></script>
-    <script src="views/kanban.js"charset="UTF-8"></script>
-    <script src="useCases/view2repository.js" charset="UTF-8"></script>
-    <script src="repositories/localStrageGetter.js" charset="UTF-8"></script>
-    <script src="repositories/localStrageSetter.js" charset="UTF-8"></script>
+    <script src="views/kanban.js" charset="UTF-8"></script>
+    <!-- <script src="repositories/localStrageGetter.js" charset="UTF-8"></script>
+    <script src="repositories/localStrageSetter.js" charset="UTF-8"></script> -->
 
     <script>
         console.group();
     </script>
-    <script src="preview/test.js" charset="UTF-8"></script>
-    <script src="utilities/timeline.test.js" charset="UTF-8"></script>
-    <script src="repositories/repositories.test.js" charset="UTF-8"></script>
+    <!-- <script src="preview/test.js" charset="UTF-8"></script>
+    <script src="utilities/timeline.test.js" charset="UTF-8"></script> -->
     <script>
         console.groupEnd();
     </script>
@@ -161,32 +159,32 @@
             e.preventDefault();
             e.returnValue = "ページを離れようとしています。よろしいですか？"
         }
-        const beforeUnloadTimeline = repositories.map(parent =>
-            ({ isSaved: false })
-        );
-        loggerTimelines.push(
-            beforeUnloadTimeline.map(a => { c.groupCollapsed("beforeUnloadTimeline"); c.log(a); c.groupEnd(); return a })
-        );
+        // const beforeUnloadTimeline = repositories.map(parent =>
+        //     ({ isSaved: false })
+        // );
+        // loggerTimelines.push(
+        //     beforeUnloadTimeline.map(a => { c.groupCollapsed("beforeUnloadTimeline"); c.log(a); c.groupEnd(); return a })
+        // );
 
-        const beforeUnloadTimelineSetter = localStorageSetter.map(parent =>
-            beforeUnloadTimeline.next({ isSaved: true })
-        );
-        loggerTimelines.push(
-            beforeUnloadTimelineSetter.map(a => { c.groupCollapsed("beforeUnloadTimelineSetter"); c.log(a); c.groupEnd(); return a })
-        );
+        // const beforeUnloadTimelineSetter = localStorageSetter.map(parent =>
+        //     beforeUnloadTimeline.next({ isSaved: true })
+        // );
+        // loggerTimelines.push(
+        //     beforeUnloadTimelineSetter.map(a => { c.groupCollapsed("beforeUnloadTimelineSetter"); c.log(a); c.groupEnd(); return a })
+        // );
 
-        const beforeUnloadEventSetter = beforeUnloadTimeline.map(parent => {
-            if (parent.isSaved) {
-                window.removeEventListener("beforeunload", unloadFunction);
-            } else {
-                window.addEventListener("beforeunload", unloadFunction);
-            }
-            return parent.isSaved;
-        }
-        );
-        loggerTimelines.push(
-            beforeUnloadEventSetter.map(a => { c.group("beforeUnloadEventSetter"); c.log(a); c.groupEnd(); return a })
-        );
+        // const beforeUnloadEventSetter = beforeUnloadTimeline.map(parent => {
+        //     if (parent.isSaved) {
+        //         window.removeEventListener("beforeunload", unloadFunction);
+        //     } else {
+        //         window.addEventListener("beforeunload", unloadFunction);
+        //     }
+        //     return parent.isSaved;
+        // }
+        // );
+        // loggerTimelines.push(
+        //     beforeUnloadEventSetter.map(a => { c.group("beforeUnloadEventSetter"); c.log(a); c.groupEnd(); return a })
+        // );
 
 
     </script>

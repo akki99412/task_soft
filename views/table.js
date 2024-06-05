@@ -14,17 +14,19 @@
 //     onselection: Timeline.create()({}),
 // };
 let jspreadsheetObject = jspreadsheet(document.getElementById('spreadsheet'), {
-    data: [[]],
-    columns: repositories2Table.value.jspreadsheetColumns,
+    data: [[1, 2], [3, 4]],
 });
-const jspreadsheetTimelineOutput = repositories2Table.map(parent => ({
-    jspreadsheetData: jspreadsheetObject.getData(),
-    jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
-    header2Key: parent.header2Key
-}));
-loggerTimelines.push(
-    jspreadsheetTimelineOutput.map(a => { c.groupCollapsed("jspreadsheetTimelineOutput"); c.log(a); c.groupEnd(); return a })
-);
+// const jspreadsheetTimelineOutput = Timeline.create()().apply(jspreadsheetColumns).apply(jspreadsheetData);
+//     repositories2Table.map(parent => ({
+//     jspreadsheetData: jspreadsheetObject.getData(),
+//     jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
+//     header2Key: parent.header2Key
+// }));
+
+
+// loggerTimelines.push(
+//     jspreadsheetTimelineOutput.map(a => { c.groupCollapsed("jspreadsheetTimelineOutput"); c.log(a); c.groupEnd(); return a })
+// );
 
 
 
@@ -108,20 +110,19 @@ const createJspreadsheet =
             }
         });
         isConstructingJspreadsheet = false;
-        eventFunc();
+        // eventFunc();
         return jspreadsheetObject;
     };
 const updateJspreadsheet = spreadsheet => nextData => columns => eventFunc => {
     const nowData = spreadsheet.getData();
+    c.log(nowData);
     const nowColumns = spreadsheet.getConfig().columns;
     if (nowColumns !== columns && 0 < nowData[0].filter(datum => datum !== '').length) {
         return createJspreadsheet(nextData)(columns)(eventFunc);
         
     }
-    // if (nowData !== nextData && 0 < nowData[0].filter(datum => datum !== '').length) {
         spreadsheet.setData(JSON.stringify(nextData));
         return spreadsheet;
-    // }
 };
     
 
@@ -129,18 +130,19 @@ const updateJspreadsheet = spreadsheet => nextData => columns => eventFunc => {
 const jspreadsheetEventInnerFunc = _ => {
     // c.log({ string: "jspreadsheetObject.getData()", data: jspreadsheetObject.getData() });
     // c.log({ string: "jspreadsheetObject.getConfig().columns", data: jspreadsheetObject.getConfig().columns });
-    jspreadsheetTimelineOutput.next({
+    tableGetter.next({
         jspreadsheetData: jspreadsheetObject.getData(),
         jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
-        header2Key: jspreadsheetTimelineOutput.value.header2Key
     });
 };
 
 
-const jspreadsheetTimeline = repositories2Table.map(parent => updateJspreadsheet(jspreadsheetObject)(parent.jspreadsheetData)(parent.jspreadsheetColumns)(jspreadsheetEventInnerFunc));
-loggerTimelines.push(
-    jspreadsheetTimeline.map(a => { c.groupCollapsed("jspreadsheetTimeline"); c.log(a); c.groupEnd(); return a })
-);
+// const jspreadsheetTimeline = repositories2Table.map(parent => updateJspreadsheet(jspreadsheetObject)(parent.jspreadsheetData)(parent.jspreadsheetColumns)(jspreadsheetEventInnerFunc));
+
+const jspreadsheetSetter = Timeline.create()(updateJspreadsheet(jspreadsheetObject)).apply(jspreadsheetData).apply(jspreadsheetColumns).apply(Timeline.create()(jspreadsheetEventInnerFunc));
+// loggerTimelines.push(
+//     jspreadsheetTimeline.map(a => { c.groupCollapsed("jspreadsheetTimeline"); c.log(a); c.groupEnd(); return a })
+// );
 
 
 
