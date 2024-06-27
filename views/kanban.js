@@ -1,10 +1,66 @@
+class IKanbanData {
+    constructor({ boards = null, } = {}) {
+        this.boards = boards;
+    }
+}
+
+class KanbanMessage extends IKanbanData {
+    constructor(value) {
+        super(value);
+    }
+}
+class KanbanView extends IKanbanData {
+    constructor(value) {
+        super(value);
+    }
+}
+
+class IKanbanBoardData {
+    constructor({ id = null, title = null, classes = null, item = null, order = null } = {}) {
+        this.id = id;
+        this.title = title;
+        this.classes = classes;
+        this.item = item;
+        this.order = order;
+    }
+}
+
+class KanbanBoardMessage {
+    constructor({ el=null } = {}) {
+        this.el = el;
+    }
+}
+class KanbanBoardView extends IKanbanBoardData {
+    constructor(value) {
+        super(value);
+    }
+}
+class IKanbanItemData {
+    constructor({ id = null, title = null, classes = null, } = {}) {
+        this.id = id;
+        this.title = title;
+        this.classes = classes;
+    }
+}
+
+
+class KanbanItemMessage {
+    constructor({ el=null }={}) {
+        this.el = el;
+    }
+}
+class KanbanItemView extends IKanbanItemData {
+    constructor(value) {
+        super(value);
+    }
+}
 // カンバンに表示されるカラムやカードを定義
 
 const dataContent = [
     {
-        "id": "column-id-1",
-        "title": "準備中",
-        "class": "red,waiting",
+        "id": "SCHEDULED",
+        "title": TASK_STATE.SCHEDULED,
+        "class": "orange",
         "item": [
             {
                 "id": "item-id-1",
@@ -19,15 +75,62 @@ const dataContent = [
         ]
     },
     {
-        "id": "column-id-2",
-        "title": "実行中",
-        "class": "blue,in-progress",
+        "id": "SCHEDULED_TODAY",
+        "title": TASK_STATE.SCHEDULED_TODAY,
+        "class": "red",
+        "item": [
+        ]
+    },
+    {
+        "id": "IN_PROGRESS",
+        "title": TASK_STATE.IN_PROGRESS,
+        "class": "blue",
         "item": [
             {
                 "id": "item-id-3",
                 "title": "<div class='item-title'>CCC</div><div class='item-body'><img src='https://i.imgur.com/b1dGytP.jpeg' /></div>",
                 "class": "todo"
             }
+        ]
+    },
+    // {
+    //     "id": "// COMPLETED_TODAY",
+    //     "title": "今日完了",
+    //     "class": "red,waiting",
+    //     "item": [
+    //     ]
+    // },
+    {
+        "id": "COMPLETED",
+        "title": TASK_STATE.COMPLETED,
+        "class": "green,completed",
+        "item": [
+            {
+                "id": "item-id-4",
+                "title": "DDD",
+                "class": "done"
+            },
+            {
+                "id": "item-id-5",
+                "title": "EEE",
+                "class": "done"
+            }
+        ]
+    },
+    {
+        "id": "POSTPONEMENT",
+        "title": TASK_STATE.POSTPONEMENT,
+        "item": [
+        ]
+    },
+];
+[
+
+    {
+        "id": "column-id-2",
+        "title": "実行中",
+        "class": "blue,in-progress",
+        "item": [
         ]
     },
     {
@@ -48,7 +151,39 @@ const dataContent = [
         ]
     }
 ];
+const elTest = (el) => {
+    const kanbanItemMessage = new KanbanItemMessage({ id: el.dataset.eid, title: el.innerHTML, classes: el.dataset.class, });
+    c.log(kanbanItemMessage);
+    return kanbanItemMessage;
+}
+const boardTest = (el) => {
+    // const kanbanItemMessage = new KanbanItemMessage({ id: el.dataset.eid, title: el.innerHTML, classes: el.dataset.class, });
+    // c.log(kanbanItemMessage);
+    // return kanbanItemMessage;
+    // c.log({test:kanban.findBoard(el.dataset.id)});
+    // c.log(kanban.getBoardElements(el.dataset.id));
+    c.log("board list");
+    c.log();
+    const boardIds = Object.entries(TASK_STATE).map(([key, _]) => key);
+    c.log(boardIds);
+    const boardEls = boardIds.map((key) => kanban.findBoard(key));
+    c.log(boardEls);
+    const itemEls = boardIds.map((key) => kanban.getBoardElements(key));
+    c.log(itemEls);
+    const kanbanItems = itemEls.map(NodeList => {
+        const boards = [...NodeList];
+        return boards.map(el => ({ id: el.dataset.eid, title: el.innerHTML, classes: el.dataset.class, }));
+    });
+    c.log(kanbanItems);
+    const boards = boardEls.map(el => ({ id: el.dataset.id, title: el.innerHTML }));
+    c.log(boards);
 
+
+
+
+    // c.log(kanban);
+    return { el };
+}
 // ここで jKanban を実行する
 const kanban = new jKanban({
     element: '#kanban-canvas',  // カンバンを表示する場所のID
@@ -62,29 +197,48 @@ const kanban = new jKanban({
     // コールバック
     click: function (el) {
         // カードが左クリックされた時に実行
-        onKanbanItemClicked(el);
+        // onKanbanItemClicked(el);
+        // c.log(el);
+        // c.log(elTest(el));
+        // main.update(new KanbanItemMessage(el));
     },
     context: function (el, event) {
         // カードが右クリックされた時に実行
+        // c.log({ el, event });
+        // c.log(elTest(el));
     },
     dragEl: function (el, source) {
         // カードのドラッグが始まった時に実行
+        // c.log({ el, source });
+        // c.log(elTest(el));
     },
     dragendEl: function (el) {
         // カードがドラッグが終わった時に実行
+        // c.log(el);
+        // c.log(elTest(el));
     },
     dropEl: function (el, target, source, sibling) {
         // カードがドロップされたときに実行
-        onKanbanItemDropped(el, target, source, sibling);
+        // onKanbanItemDropped(el, target, source, sibling);
+        // c.log({ el, target, source, sibling });
+        // c.log(elTest(el));
+        main.update(new KanbanItemMessage({ el }));
     },
     dragBoard: function (el, source) {
         // カラムのドラッグを開始した時に実行
+        // c.log({ el, source });
+        // c.log(boardTest(el));
     },
     dragendBoard: function (el) {
         // カラムのドラッグが終わった時に実行
+        // c.log(el);
+        // c.log(boardTest(el));
+        main.update(new KanbanBoardMessage({ el }));
     },
     buttonClick: function (el, boardId) {
         // ボタンがクリックされた時に実行
+        // c.log({ el, boardId });
+        // c.log(elTest(el));
     }
 });
 

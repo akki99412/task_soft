@@ -59,3 +59,7 @@
 .kanban-board header.green {
     background-color: green;
 }
+
+.kanban-board header.orange {
+    background-color: orange;
+}

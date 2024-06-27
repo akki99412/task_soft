@@ -18,10 +18,14 @@ class ElmLike {
     }; 
     update = message => {
         if (this.isRendering) return;
-        this.model = this.updateFunction(this.model)(message);
-        this.isRendering = true;
-        this.renderFunction(this.viewFunction(this.model));
-        this.isRendering = false;
+        const model = this.updateFunction(this.model)(message);
+        if (model !== this.model) {
+            this.model = model;
+            this.isRendering = true;
+            this.renderFunction(this.viewFunction(this.model));
+            this.isRendering = false;
+            
+        }
     };
     // command = arg => this.functions.forEach(arg);
     // subscribe = arg => this.functions.push(arg);

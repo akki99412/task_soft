@@ -64,6 +64,11 @@
     <!-- jKanban の .js ファイルを読み込む -->
     <script src="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.js"></script>
     <link rel="stylesheet" href="jkanban.css">
+
+    //ショートカットキー
+    <script src="
+    https://cdn.jsdelivr.net/npm/hotkeys-js@3.13.7/dist/hotkeys.min.js
+    "></script>
 </head>
 
 <body>
@@ -83,20 +88,20 @@
 
     <!-- ここにカンバンが表示される -->
     <div id="kanban-canvas"></div>
-    <button type=button id="saveButton">
+    <button type=button id="$saveButton">
         save
     </button>
-    <button type=button id="exportJsonButton">
+    <button type=button id="$exportJsonButton">
         export JSON
     </button>
     <button type=button id="$importJsonButton">
         import JSON
     </button>
-    <button type=button id="loadButton">
+    <button type=button id="$loadButton">
         load
     </button>
-    <div class="json">
-        <textarea id="$json" cols="100" rows="50">
+    <div class="textarea">
+        <textarea id="$textarea" cols="100" rows="50">
     </textarea>
     </div>
 
@@ -109,6 +114,7 @@
     <script src="utilities/utilities.js" charset="UTF-8"></script>
     <script src="utilities/timeline.js" charset="UTF-8"></script>
     <script src="utilities/DiContainer.js" charset="UTF-8"></script>
+    <script src="utilities/elmLike.js" charset="UTF-8"></script>
 
 
     <script src="properties/const_values.js" charset="UTF-8"></script>
@@ -118,13 +124,15 @@
     <script src="useCases/useCases.js" charset="UTF-8"></script>
     <!-- <script src="timelines/timelines.js" charset="UTF-8"></script> -->
     
-    <script src="views/repositoryView.js" charset="UTF-8"></script>
+    <!-- <script src="views/repositoryView.js" charset="UTF-8"></script> -->
     <script src="views/table.js" charset="UTF-8"></script>
     <script src="views/calendar.js" charset="UTF-8"></script>
     <script src="views/gantt.js" charset="UTF-8"></script>
     <script src="views/kanban.js" charset="UTF-8"></script>
-    
+
     <script src="elm/main.js" charset="UTF-8"></script>
+
+    <script src="utilities/elmLike.test.js" charset="UTF-8"></script>
 <!-- <script src="repositories/localStrageGetter.js" charset="UTF-8"></script>
     <script src="repositories/localStrageSetter.js" charset="UTF-8"></script> -->
 
@@ -139,26 +147,33 @@
 
     <script>
 
-        document.getElementById("saveButton").onclick = function () {
-            clearTimeout(timeoutID);
-            c.log("timeoutID cleared")
-            delayRepositoryUpdate(repositories.value);
+        $saveButton.onclick = function () {
+            // clearTimeout(timeoutID);
+            // c.log("timeoutID cleared")
+            // delayRepositoryUpdate(repositories.value);
+            main.update(new ButtonMessage({id: $saveButton}));
         };
-        document.getElementById("exportJsonButton").onclick = function () {
-            c.log(JSON.stringify(repositories.value));
-            $json.value = (JSON.stringify(repositories.value));
+        $exportJsonButton.onclick = function () {
+            // c.log(JSON.stringify(repositories.value));
+            // $textarea.value = (JSON.stringify(repositories.value));
+            main.update(new ButtonMessage({id: $exportJsonButton }));
         };
         $importJsonButton.onclick = _ => {
-            repositorySetter.next(JSON.parse($json.value));
-
+            // repositorySetter.next(JSON.parse($json.value));
+            // main.update(new ButtonMessage({id: $importJsonButton }));
+            main.update(new ImportJsonMessage({value: $textarea.value}))
         }
 
-        document.getElementById("loadButton").onclick = function () {
-            clearTimeout(timeoutID);
-            c.log("timeoutID cleared")
-            getLocalStorage2Timeline(localStorageGetter);
-            repositorySetter.next(parseJson2repositories.value);
+        $loadButton.onclick = function () {
+            // clearTimeout(timeoutID);
+            // c.log("timeoutID cleared")
+            // getLocalStorage2Timeline(localStorageGetter);
+            // repositorySetter.next(parseJson2repositories.value);
+
+            main.update(new ButtonMessage({id: $loadButton}));
+            loadLocalStorage(secretKey)(main.update);
         };
+        
         const unloadFunction = e => {
             e.preventDefault();
             e.returnValue = "ページを離れようとしています。よろしいですか？"
@@ -193,7 +208,22 @@
 
     </script>
     <script>
-
+    document.addEventListener("keydown", (e) => {
+        if (!e.repeat) {
+            c.log(`Key "${e.key}" pressed [event: keydown]`);
+            c.log(e);
+        } else {
+            c.log(`Key "${e.key}" repeating [event: keydown]`);
+        }
+        if (e.key === "z" && e.ctrlKey&& !e.repeat) {
+            e.preventDefault();
+            main.update(new Undo());
+        }
+        if (e.key === "y" && e.ctrlKey&& !e.repeat) {
+            e.preventDefault();
+            main.update(new Redo());
+        }
+    });
 
 
     </script>
@@ -203,6 +233,17 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="calendar.css">
+    <!-- <script type="text/javascript">
+        hotkeys('ctrl+z,ctrl+y', function (event, handler) {
+            switch (handler.key) {
+                case 'ctrl+z': main.update(new Undo());
+                    break;
+                case 'ctrl+y': main.update(new Redo());
+                    break;
+                default: break;
+            }
+        });
+    </script> -->
 </body>
 
 </html>

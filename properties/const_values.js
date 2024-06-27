@@ -20,19 +20,19 @@ const saveTime = 3;//second
 const boardList = [
     {
         "id": "SCHEDULED",
-        "title": "計画中",
+        "title": TASK_STATE.SCHEDULED,
         "item": [
         ]
     },
     {
         "id": "SCHEDULED_TODAY",
-        "title": "今日の予定",
+        "title": TASK_STATE.SCHEDULED_TODAY,
         "item": [
         ]
     },
     {
         "id": "IN_PROGRESS",
-        "title": "実施中",
+        "title": TASK_STATE.IN_PROGRESS,
         "item": [
         ]
     },
@@ -45,14 +45,16 @@ const boardList = [
     // },
     {
         "id": "COMPLETED",
-        "title": "完了",
+        "title": TASK_STATE.COMPLETED,
         "item": [
         ]
     },
     {
         "id": "POSTPONEMENT",
-        "title": "延期",
+        "title": TASK_STATE.POSTPONEMENT,
         "item": [
         ]
     },
 ];
+
+const HISTORY_LENGTH = 100;

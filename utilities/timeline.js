@@ -188,6 +188,3 @@ class Timeline {
 }
 
 
-function main() {
-    return;
-}
