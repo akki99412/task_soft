@@ -154,9 +154,9 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
         jspreadsheetColumns: JSON.parse(JSON.stringify(table.getConfig().columns)),
     });
     // jspreadsheetObject.resetSelection(true);
-    c.log(view.tableView);
-    c.log(tableView);
-    isEqualObjectJson(view.tableView)(tableView);
+    // c.log(view.tableView);
+    // c.log(tableView);
+    // isEqualObjectJson(view.tableView)(tableView);
     secretKey.then(value => c.log(value));
 
     if (!isEqualObjectJson(view.tableView)(tableView)) {
@@ -164,9 +164,10 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
         updateJspreadsheet(table)(view.tableView.jspreadsheetData)(view.tableView.jspreadsheetColumns)(jspreadsheetEventInnerFunc);
 
     }
-    if (!isEqualObjectJson(view.ganttTasks)(ganttTasks)) {
+    if (!isEqualObjectJson(view.ganttTasks)(ganttTasks.data)) {
         c.log("update gantt");
-        gantt.refresh(view.ganttTasks);
+        ganttTasks.data = view.ganttTasks;
+        gantt.refresh(JSON.parse(JSON.stringify(view.ganttTasks)));
     }
 
 

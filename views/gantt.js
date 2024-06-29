@@ -22,7 +22,7 @@ class GanttView extends IGanttData {
     }
 }
 // タスクを用意
-let ganttTasks = [
+let ganttTasks = {data: [
     {
         id: 'id1',
         name: '確定申告する',
@@ -66,10 +66,10 @@ let ganttTasks = [
         progress: 20,
         dependencies: "id1",
     },
-];
+]};
 
 // gantt をセットアップ
-var gantt = new Gantt("#gantt", ganttTasks, {
+var gantt = new Gantt("#gantt", ganttTasks.data, {
     // ダブルクリック時
     on_click: (task) => {
         main.update(new GanttMessage(task));

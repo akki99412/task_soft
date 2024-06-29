@@ -100,6 +100,6 @@ const fillDefaultTaskData = taskDataProperties => taskDataRepository =>
 {
     // c.log(taskDataProperties);
     // c.log(taskDataRepository);
-    return taskDataRepository.map((data, i) => {
+    return taskDataRepository.map((data) => {
         return data.id === '' ? Object.fromEntries(Object.entries(taskDataProperties).map((obj) => { return [obj[0], obj[1].defaultValue] })) : data;
 })};
