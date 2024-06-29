@@ -102,27 +102,26 @@ const createJspreadsheet =
             minDimensions: [2, 1],//最小列数・行数 (例：[5, 3])。
 
             //イベント
-            // onchange: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onchange.next({instance, x1, y1, x2, y2, origin}),
-            // oninsertrow: (instance, x1, y1, x2, y2, origin) => {
-            //     //     
-            //     console.warn("oninsertrow");
-            // },
-            // oninsertcolumn: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.oninsertcolumn.next({instance, x1, y1, x2, y2, origin}),
-            // ondeleterow: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.ondeleterow.next({instance, x1, y1, x2, y2, origin}),
-            // ondeletecolumn: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.ondeletecolumn.next({instance, x1, y1, x2, y2, origin}),
-            // onsort: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onsort.next({instance, x1, y1, x2, y2, origin}),
-            // onresizerow: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onresizerow.next({instance, x1, y1, x2, y2, origin}),
-            // onresizecolumn: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onresizecolumn.next({instance, x1, y1, x2, y2, origin}),
-            // onmoverow: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onmoverow.next({instance, x1, y1, x2, y2, origin}),
-            // onmovecolumn: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onmovecolumn.next({instance, x1, y1, x2, y2, origin}),
-            // onload: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onload.next({instance, x1, y1, x2, y2, origin}),
-            // onpaste: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onpaste.next({instance, x1, y1, x2, y2, origin}),
-            // onselection: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onselection.next({instance, x1, y1, x2, y2, origin}),
+            onchange: (instance, x1, y1, x2, y2, origin) => c.log({event:onchange,instance, x1, y1, x2, y2, origin}),
+            oninsertrow: (instance, x1, y1, x2, y2, origin) => {
+                console.warn("oninsertrow");
+            },
+            oninsertcolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"oninsertcolumn",instance, x1, y1, x2, y2, origin}),
+            ondeleterow: (instance, x1, y1, x2, y2, origin) => c.log({event:"ondeleterow",instance, x1, y1, x2, y2, origin}),
+            ondeletecolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"ondeletecolumn",instance, x1, y1, x2, y2, origin}),
+            onsort: (instance, x1, y1, x2, y2, origin) => c.log({event:"onsort",instance, x1, y1, x2, y2, origin}),
+            onresizerow: (instance, x1, y1, x2, y2, origin) => c.log({event:"onresizerow",instance, x1, y1, x2, y2, origin}),
+            onresizecolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"onresizecolumn",instance, x1, y1, x2, y2, origin}),
+            onmoverow: (instance, x1, y1, x2, y2, origin) => c.log({event:"onmoverow",instance, x1, y1, x2, y2, origin}),
+            onmovecolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"onmovecolumn",instance, x1, y1, x2, y2, origin}),
+            onload: (instance, x1, y1, x2, y2, origin) => c.log({event:"onload",instance, x1, y1, x2, y2, origin}),
+            onpaste: (instance, x1, y1, x2, y2, origin) => c.log({event:"onpaste",instance, x1, y1, x2, y2, origin}),
+            onselection: (instance, x1, y1, x2, y2, origin) => c.log({event:"onselection",instance, x1, y1, x2, y2, origin}),
 
             onevent: function (a, b, c, d, e, f, g, h) {
-
+                console.log({event:"event", a, b, c, d, e, f, g, h});
                 if (a === "onselection") {
-                    console.log("onselection");
+                    // console.log("onselection");
                     // c.log({});
                     const columns = (jspreadsheetObject.getSelectedColumns());
                     const rows = (jspreadsheetObject.getSelectedRows(true));
@@ -136,17 +135,17 @@ const createJspreadsheet =
 
                 }
                 if (a === "oninsertrow") {
-                    console.log("oninsertrow");
+                    // console.log("oninsertrow");
                     // c.log({});
                     jspreadsheetObject.updateSelectionFromCoords(jspreadsheetPosition.column.min, jspreadsheetPosition.row.min, jspreadsheetPosition.column.max, jspreadsheetPosition.row.max);
                 };
                 if (isConstructingJspreadsheet) {
-                    console.log("constructing");
+                    // console.log("constructing");
                 } else {
-                    console.log(a);
+                    // console.log(a);
                     eventFunc();
                 }
-                console.log("event end");//なぜかエンターキーで行追加時にonevent関数を抜けた直後にjspreadsheetでエラーが発生する
+                // console.log("event end");//なぜかエンターキーで行追加時にonevent関数を抜けた直後にjspreadsheetでエラーが発生する
             }
         });
         jspreadsheetObject.ignoreHistory = true;

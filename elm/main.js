@@ -208,12 +208,69 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
 
     c.log("render end");
 };
+const zip = (...args) => {
+    const length = Math.min(...args.map(value => value.length));
+    let buffer = [];
+    for (let i = 0; i < length; i++) {
+        buffer.push(args.map(value => value[i]));
+    }
+    return buffer;
+};
+// c.log(zip([1, 2], [3, 4, 5], [6, 7, 8, 9]));
+
 const TableUpdate = model => message => {
+    // nop(model)(message);
+    const header2Kye = generateHeader2Key(model.taskUiProperties);
+    c.log(header2Kye);
+    const jspreadsheetData = message.jspreadsheetData;
+    const jspreadsheetColumns = message.jspreadsheetColumns;
+    const columns = (Object.fromEntries(jspreadsheetColumns.map((data, i) =>
+        [header2Kye[data.title],
+        Object.fromEntries(Object.entries(data)
+            .concat([["col_num", i]]))])));
+    c.log(columns);
+    const tableTaskDataProperties = Object.fromEntries(
+        Object.entries(columns).map(([key, value]) => [
+            key,
+            (_ => {
+                const { width, col_num, readOnly, align } = { ...value };
+                return ({ width, col_num, read_only: readOnly, align });
+            })()
+        ])
+    );
+    const jspreadsheetTaskDataProperties = Object.fromEntries(
+        Object.entries(columns).map(([key, value]) => [
+            key,
+            (_ => {
+                const { type, editor, source, options, } = { ...value };
+                return ({ type, editor, source, options });
+            })()
+        ])
+    );
+    // c.log(tableTaskDataProperties);
+    // jspreadsheetTaskDataProperties
+    const sortedKeys = Object.entries(columns)
+        .map(([key, value]) => ({ key, value }))
+        .sort((a, b) => a.value.col_num - b.value.col_num)
+        .map(data => data.key);
+    c.log(sortedKeys);
 
+    const taskDataEntity = fillDefaultTaskData
+        (diContainer.container.TASK_DATA_TEMPLATES)
+        (stateChange2implementationDate
+            (model.taskDataEntity)
+            (jspreadsheetData.map(row =>
+            Object.fromEntries(zip(sortedKeys, row).map(([key, data]) => [key,
+                key === "implementation_date" ? string2ImplementationDate(data) : data]))
+        )));
+    // c.log(taskDataEntity);
 
-    // c.log(message);
+    return { ...model, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity };
+};
+const nop = model => message => {
     const header2KeyUpdater = generateHeader2Key((diContainer.container.TASK_UI_TEMPLATES));
-    // c.log(header2KeyUpdater);
+    c.log(header2KeyUpdater);
+
     const jspreadsheetDataUpdater = message.jspreadsheetData;
     // c.log(jspreadsheetDataUpdater);
     const jspreadsheetColumnsUpdater = message.jspreadsheetColumns;
@@ -237,7 +294,8 @@ const TableUpdate = model => message => {
     // c.log(header2KeyGetter);
     // c.log(jspreadsheetDataUpdater);
     const tableHeaderKeys = generateTableHeaderKeys(model.tableTaskDataProperties);
-    // c.log(tableHeaderKeys);
+    c.log(tableHeaderKeys);
+
     const taskDataRepository = fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES)(stateChange2implementationDate(model.taskDataEntity)(jspreadsheetDataUpdater.map(data => {
         const buffer = Object.fromEntries(data.map((datum, i) => ([tableHeaderKeys[i],
         tableHeaderKeys[i] === "implementation_date" ? string2ImplementationDate(datum) : datum
@@ -306,7 +364,7 @@ const kanbanBoardUpdate = model => message => {
     return model;
 };
 const localStorageUpdate = model => message => {
-    return {...model, ...message};
+    return { ...model, ...message };
 };
 const kanbanItemUpdate = model => message => model;
 const saveButtonUpdate = model => message => model;
@@ -337,7 +395,7 @@ const importJsonUpdate = model => message => {
     return model;
 };
 const undoUpdate = model => message => {
-    model.index = model.index>0?model.index - 1:0;
+    model.index = model.index > 0 ? model.index - 1 : 0;
     const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity, } = model.history[model.index];
     const mainData = {
         taskUiProperties,
@@ -346,7 +404,7 @@ const undoUpdate = model => message => {
         taskDataEntity,
     };
     c.log("undo");
-    return {...model, ...mainData};
+    return { ...model, ...mainData };
 };
 const redoUpdate = model => message => {
     model.index = model.index > model.history.length - 2 ? model.history.length - 1 : model.index = model.index + 1;
@@ -481,7 +539,7 @@ const update = model => message => {
         }
         return model;
     } else {
-        const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity,}=dstModel;
+        const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity, } = dstModel;
         const mainData = {
             taskUiProperties,
             tableTaskDataProperties,
