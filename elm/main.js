@@ -256,14 +256,12 @@ const TableUpdate = model => message => {
         .map(data => data.key);
     c.log(sortedKeys);
 
-    const taskDataEntity = fillDefaultTaskData
-        (diContainer.container.TASK_DATA_TEMPLATES)
-        (stateChange2implementationDate
-            (model.taskDataEntity)
-            (jspreadsheetData.map(row =>
-            Object.fromEntries(zip(sortedKeys, row).map(([key, data]) => [key,
-                key === "implementation_date" ? string2ImplementationDate(data) : data]))
-        )));
+    const taskDataEntity = jspreadsheetData.map(row =>
+        Object.fromEntries(zip(sortedKeys, row).map(([key, data]) => [key,
+            key === "implementation_date" ? string2ImplementationDate(data) : data]))
+    );
+
+
     // c.log(taskDataEntity);
 
     return { ...model, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity };
@@ -540,26 +538,31 @@ const update = model => message => {
         }
         return model;
     } else {
-        const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity, } = dstModel;
+        const taskDataEntity = (fillDefaultTaskData
+            (diContainer.container.TASK_DATA_TEMPLATES)
+            (stateChange2implementationDate
+                (model.taskDataEntity)
+                (dstModel.taskDataEntity)));
+        
+        
+        
+        const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, } = dstModel;
         const mainData = {
             taskUiProperties,
             tableTaskDataProperties,
             jspreadsheetTaskDataProperties,
             taskDataEntity,
         };
-        // return ({
-        //     ...mainData,
-        //     textarea: "",
-        //     history: [mainData],
-        //     index: 0,
-        // })
-        // dstModel.history.push(mainData);
         const end = dstModel.index + 1;
         const start = 0 < (end - HISTORY_LENGTH) ? end - HISTORY_LENGTH : 0;
 
-        dstModel.history = dstModel.history.slice(start, end).concat([mainData]);
-        dstModel.index = dstModel.history.length - 1
-        return dstModel;
+
+        const history = dstModel.history.slice(start, end).concat([mainData]);
+        const index = dstModel.history.length - 1;
+
+        const bufferModel = { ...dstModel, taskDataEntity, history, index }
+        c.log(bufferModel);
+        return bufferModel;
     }
 };
 const main = new ElmLike({ init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(timeoutID)(textareaBuffer)(view) });
