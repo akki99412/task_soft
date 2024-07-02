@@ -99,7 +99,7 @@ const view = model => {
         start: dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         progress: 0,
-        dependencies: "",
+        dependencies: model.successor_task_id,
     }));
 
     const kanbanTasks =
@@ -154,18 +154,20 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
         jspreadsheetColumns: JSON.parse(JSON.stringify(table.getConfig().columns)),
     });
     // jspreadsheetObject.resetSelection(true);
-    // c.log(view.tableView);
-    // c.log(tableView);
     // isEqualObjectJson(view.tableView)(tableView);
     secretKey.then(value => c.log(value));
 
     if (!isEqualObjectJson(view.tableView)(tableView)) {
+        // c.log(JSON.stringify(view.tableView));
+        // c.log(JSON.stringify(tableView));
         c.log("updateJspreadsheet");
         updateJspreadsheet(table)(view.tableView.jspreadsheetData)(view.tableView.jspreadsheetColumns)(jspreadsheetEventInnerFunc);
 
     }
-    if (!isEqualObjectJson(view.ganttTasks)(ganttTasks.data)) {
+    if (!ganttTasks.isUpdate&&!isEqualObjectJson(view.ganttTasks)(ganttTasks.data)) {
         c.log("update gantt");
+        c.log(view.ganttTasks);
+        c.log(ganttTasks.data);
         ganttTasks.data = view.ganttTasks;
         gantt.refresh(JSON.parse(JSON.stringify(view.ganttTasks)));
     }
@@ -328,8 +330,8 @@ const nop = model => message => {
     return repository;
 };
 const ganttUpdate = model => message => {
-    c.log(message);
-    c.log(model.taskDataEntity.find(data => data.id === message.id));
+    // c.log(message);
+    // c.log(model.taskDataEntity.find(data => data.id === message.id));
     const taskData = model.taskDataEntity.find(data => data.id === message.id);
     const scheduled_date_time = dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone);
     const limit = dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone);
@@ -417,6 +419,13 @@ const redoUpdate = model => message => {
     c.log("redo");
     return { ...model, ...mainData };
 };
+
+const isDuplicated = (elements) => {
+    // Setを使って、配列の要素を一意にする
+    const setElements = new Set(elements);
+    return setElements.size !== elements.length;
+}
+
 const update = model => message => {
     c.log("update");
     c.log(model);
@@ -538,31 +547,50 @@ const update = model => message => {
         }
         return model;
     } else {
-        const taskDataEntity = (fillDefaultTaskData
-            (diContainer.container.TASK_DATA_TEMPLATES)
-            (stateChange2implementationDate
-                (model.taskDataEntity)
-                (dstModel.taskDataEntity)));
-        
-        
-        
-        const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, } = dstModel;
-        const mainData = {
-            taskUiProperties,
-            tableTaskDataProperties,
-            jspreadsheetTaskDataProperties,
-            taskDataEntity,
-        };
-        const end = dstModel.index + 1;
-        const start = 0 < (end - HISTORY_LENGTH) ? end - HISTORY_LENGTH : 0;
+        return (dstModel => {
+            const taskDataEntity =
+                pipe(dstModel.taskDataEntity)((a => a)
+                    ._(stateChange2implementationDate(model.taskDataEntity))
+                    ._(fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES))
+                    ._(data => {
+                        return [...data];
+                    })
+                )
+            // (fillDefaultTaskData
+            // (diContainer.container.TASK_DATA_TEMPLATES)
+            // (stateChange2implementationDate
+            //     (model.taskDataEntity)
+            //     (dstModel.taskDataEntity)));
+            const jspreadsheetTaskDataProperties =
+                pipe(dstModel.jspreadsheetTaskDataProperties)((a => a)
+                    ._(data => {
+                        const source = taskDataEntity.map(row => ({ id: row.id, name: row.title, title: row.id, groupe: "task", value: row.id, text: row.title }));
+                        const { type, editor, options, } = data.successor_task_id;
+                        const successor_task_id = { type, editor, source, options, };
+                        c.log(successor_task_id);
+                        return { ...data, successor_task_id };
+                    })
+                )
 
 
-        const history = dstModel.history.slice(start, end).concat([mainData]);
-        const index = dstModel.history.length - 1;
+            const { taskUiProperties, tableTaskDataProperties, } = dstModel;
+            const mainData = {
+                taskUiProperties,
+                tableTaskDataProperties,
+                jspreadsheetTaskDataProperties,
+                taskDataEntity,
+            };
+            const end = dstModel.index + 1;
+            const start = 0 < (end - HISTORY_LENGTH) ? end - HISTORY_LENGTH : 0;
 
-        const bufferModel = { ...dstModel, taskDataEntity, history, index }
-        c.log(bufferModel);
-        return bufferModel;
+
+            const history = dstModel.history.slice(start, end).concat([mainData]);
+            const index = dstModel.history.length - 1;
+
+            const bufferModel = { ...dstModel, taskDataEntity, jspreadsheetTaskDataProperties, history, index }
+            c.log(bufferModel);
+            return bufferModel;
+        })(dstModel);
     }
 };
 const main = new ElmLike({ init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(timeoutID)(textareaBuffer)(view) });
@@ -575,7 +603,7 @@ const loadLocalStorage = secretKey => func => {
         .then(key => (decrypt_string(key, getLocalStorage())))
         .then(value => func(new LocalStorageMessage(JSON.parse(value))));
 };
-loadLocalStorage(secretKey)(main.update);
+// loadLocalStorage(secretKey)(main.update);
 // secretKey.then(key => (decrypt_string(key, getLocalStorage()))).then(value => c.log(new LocalStorageMessage(JSON.parse(value))));
 
 

@@ -94,7 +94,7 @@ diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
         state = { type: "dropdown", editor: "", source: Object.values(TASK_STATE), options: [], };
         similar_tasks_id = { type: "hidden", editor: "", source: [], options: [], };
         similar_tasks = { type: "text", editor: "", source: [], options: [], };
-        successor_task_id = { type: "text", editor: "", source: [], options: [], };
+        successor_task_id = { type: "dropdown", editor: "", source: [], options: [], };
         successor_task = { type: "text", editor: "", source: [], options: [], };
         connotative_task_id = { type: "hidden", editor: "", source: [], options: [], };
         connotative_task = { type: "text", editor: "", source: [], options: [], };

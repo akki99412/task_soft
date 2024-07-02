@@ -55,6 +55,8 @@ let jspreadsheetPosition = {}
 let isConstructingJspreadsheet = false;
 const createJspreadsheet =
     nextData => columns => eventFunc => {
+        c.warn("create jspreadsheet");
+        c.log(columns);
         isConstructingJspreadsheet = true;
         const element = document.getElementById('spreadsheet');
         while (element.firstChild) {
@@ -104,7 +106,7 @@ const createJspreadsheet =
             //イベント
             onchange: (instance, x1, y1, x2, y2, origin) => c.log({event:onchange,instance, x1, y1, x2, y2, origin}),
             oninsertrow: (instance, x1, y1, x2, y2, origin) => {
-                console.warn("oninsertrow");
+                console.log("oninsertrow");
             },
             oninsertcolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"oninsertcolumn",instance, x1, y1, x2, y2, origin}),
             ondeleterow: (instance, x1, y1, x2, y2, origin) => c.log({event:"ondeleterow",instance, x1, y1, x2, y2, origin}),
