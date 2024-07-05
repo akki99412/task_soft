@@ -55,7 +55,7 @@ let jspreadsheetPosition = {}
 let isConstructingJspreadsheet = false;
 const createJspreadsheet =
     nextData => columns => eventFunc => {
-        c.warn("create jspreadsheet");
+        c.log("create jspreadsheet");
         c.log(columns);
         isConstructingJspreadsheet = true;
         const element = document.getElementById('spreadsheet');

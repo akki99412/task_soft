@@ -92,6 +92,9 @@ const view = model => {
     // c.log(taskDataEntity.map(model => ));
     // c.log(taskDataEntity.map(model => model.limit));
 
+    // const successorTask2dependencies = taskDataEntity.map(model => 
+    //     model.successor_task_id,
+    // );
     const ganttTasks = taskDataEntity.map(model => ({
         id: model.id,
         name: model.title,
@@ -99,7 +102,7 @@ const view = model => {
         start: dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         progress: 0,
-        dependencies: model.successor_task_id,
+        dependencies: model.successor_task_id.join(", "),
     }));
 
     const kanbanTasks =
@@ -164,7 +167,7 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
         updateJspreadsheet(table)(view.tableView.jspreadsheetData)(view.tableView.jspreadsheetColumns)(jspreadsheetEventInnerFunc);
 
     }
-    if (!ganttTasks.isUpdate&&!isEqualObjectJson(view.ganttTasks)(ganttTasks.data)) {
+    if (!ganttTasks.isUpdate && !isEqualObjectJson(view.ganttTasks)(ganttTasks.data)) {
         c.log("update gantt");
         c.log(view.ganttTasks);
         c.log(ganttTasks.data);
@@ -224,7 +227,7 @@ const zip = (...args) => {
 const TableUpdate = model => message => {
     // nop(model)(message);
     const header2Kye = generateHeader2Key(model.taskUiProperties);
-    c.log(header2Kye);
+    // c.log(header2Kye);
     const jspreadsheetData = message.jspreadsheetData;
     const jspreadsheetColumns = message.jspreadsheetColumns;
     const columns = (Object.fromEntries(jspreadsheetColumns.map((data, i) =>
@@ -245,8 +248,8 @@ const TableUpdate = model => message => {
         Object.entries(columns).map(([key, value]) => [
             key,
             (_ => {
-                const { type, editor, source, options, } = { ...value };
-                return ({ type, editor, source, options });
+                const { type, editor, source, options, autocomplete, multiple } = { ...value };
+                return ({ type, editor, source, options, autocomplete, multiple });
             })()
         ])
     );
@@ -256,11 +259,12 @@ const TableUpdate = model => message => {
         .map(([key, value]) => ({ key, value }))
         .sort((a, b) => a.value.col_num - b.value.col_num)
         .map(data => data.key);
-    c.log(sortedKeys);
+    // c.log(sortedKeys);
 
     const taskDataEntity = jspreadsheetData.map(row =>
         Object.fromEntries(zip(sortedKeys, row).map(([key, data]) => [key,
-            key === "implementation_date" ? string2ImplementationDate(data) : data]))
+            key === "implementation_date" ? string2ImplementationDate(data) : key === "successor_task_id" ? data.split(";")
+                : data]))
     );
 
 
@@ -555,6 +559,9 @@ const update = model => message => {
                     ._(data => {
                         return [...data];
                     })
+                    ._(data => {
+                        return [...data];
+                    })
                 )
             // (fillDefaultTaskData
             // (diContainer.container.TASK_DATA_TEMPLATES)
@@ -565,8 +572,8 @@ const update = model => message => {
                 pipe(dstModel.jspreadsheetTaskDataProperties)((a => a)
                     ._(data => {
                         const source = taskDataEntity.map(row => ({ id: row.id, name: row.title, title: row.id, groupe: "task", value: row.id, text: row.title }));
-                        const { type, editor, options, } = data.successor_task_id;
-                        const successor_task_id = { type, editor, source, options, };
+                        const { type, editor, options, autocomplete, multiple } = data.successor_task_id;
+                        const successor_task_id = { type, editor, source, options, autocomplete, multiple };
                         c.log(successor_task_id);
                         return { ...data, successor_task_id };
                     })

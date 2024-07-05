@@ -40,9 +40,10 @@ const repository2jspreadsheetData = taskDataEntity => tableHeaderKeys =>
     taskDataEntity
         .map(taskDatum =>
             tableHeaderKeys.map(key =>
-                key !== "implementation_date" ?
-                    taskDatum[key] :
-                    implementationDate2String(taskDatum[key])
+
+                key === "implementation_date" ? implementationDate2String(taskDatum[key])
+                    : key === "successor_task_id" ? (_ =>((taskDatum[key]).join(";")))()
+                    :taskDatum[key]
             )
         );
 
@@ -57,6 +58,8 @@ const repository2jspreadsheetColumns = keys =>
                 editor: jspreadsheetTaskDataProperties[key].editor === "" ? null : jspreadsheetTaskDataProperties[key].editor,
                 source: jspreadsheetTaskDataProperties[key].source,
                 options: jspreadsheetTaskDataProperties[key].options,
+                autocomplete: jspreadsheetTaskDataProperties[key].autocomplete,
+                multiple: jspreadsheetTaskDataProperties[key].multiple,
                 "name": tableTaskDataProperties[key].col_num.toString(),
                 "allowEmpty": false,
                 "align": tableTaskDataProperties[key].align,
@@ -96,10 +99,10 @@ const stateChange2implementationDate = srcTaskData => taskData => taskData.map((
         // task_table.setValueFromCoords(data_template.find(template => template.member == "table_implementation_time").table_col_num, x2, 
     } return data;
 });
-const fillDefaultTaskData = taskDataProperties => taskDataRepository =>
-{
+const fillDefaultTaskData = taskDataProperties => taskDataRepository => {
     // c.log(taskDataProperties);
     // c.log(taskDataRepository);
     return taskDataRepository.map((data) => {
         return data.id === '' ? Object.fromEntries(Object.entries(taskDataProperties).map((obj) => { return [obj[0], obj[1].defaultValue] })) : data;
-})};
+    })
+};
