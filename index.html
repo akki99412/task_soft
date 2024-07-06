@@ -52,19 +52,7 @@
     <!-- calendar -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                editable: true,
-                themeSystem: 'bootstrap5',
-                events: [
-                    { title: 'Meeting', start: new Date() },
-                    { title: 'make', start: new Date(), end: (dayjs().add(2, 'd').startOf('day').toDate()) }
-                ]
-            });
-            calendar.render();
-        });
+
 
     </script>
     <link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
@@ -76,6 +64,8 @@
     <!-- jKanban の .js ファイルを読み込む -->
     <script src="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.js"></script>
     <link rel="stylesheet" href="jkanban.css">
+
+
 </head>
 
 <body>
@@ -91,24 +81,24 @@
     <div id='calendar'></div>
 
     <!-- ここにメッセージが表示される -->
-    <div id="show-message">&nbsp;</div>
-    
+    <!-- <div id="show-message">&nbsp;</div> -->
+
     <!-- ここにカンバンが表示される -->
     <div id="kanban-canvas"></div>
-    <button type=button id="saveButton">
+    <button type=button id="$saveButton">
         save
     </button>
-    <button type=button id="exportJsonButton">
+    <button type=button id="$exportJsonButton">
         export JSON
     </button>
     <button type=button id="$importJsonButton">
         import JSON
     </button>
-    <button type=button id="loadButton">
+    <button type=button id="$loadButton">
         load
     </button>
-    <div class="json">
-        <textarea id="$json" cols="100" rows="50">
+    <div class="textarea">
+        <textarea id="$textarea" cols="100" rows="50">
     </textarea>
     </div>
 
@@ -121,305 +111,117 @@
     <script src="utilities/utilities.js" charset="UTF-8"></script>
     <script src="utilities/timeline.js" charset="UTF-8"></script>
     <script src="utilities/DiContainer.js" charset="UTF-8"></script>
+    <script src="utilities/elmLike.js" charset="UTF-8"></script>
 
 
     <script src="properties/const_values.js" charset="UTF-8"></script>
     <script src="properties/template_data_source.js" charset="UTF-8"></script>
 
-    <script src="repositories/secretKeyTimeline.js" charset="UTF-8"></script>
-    <script src="repositories/repositories.js" charset="UTF-8"></script>
-    <script src="useCases/repositories2table.js" charset="UTF-8"></script>
-    <script src="views/views.js" charset="UTF-8"></script>
-    <script src="useCases/view2repository.js" charset="UTF-8"></script>
-    <script src="repositories/localStrageGetter.js" charset="UTF-8"></script>
-    <script src="repositories/localStrageSetter.js" charset="UTF-8"></script>
+    <!-- <script src="repositories/secretKeyTimeline.js" charset="UTF-8"></script> -->
+    <script src="useCases/useCases.js" charset="UTF-8"></script>
+    <!-- <script src="timelines/timelines.js" charset="UTF-8"></script> -->
+    
+    <!-- <script src="views/repositoryView.js" charset="UTF-8"></script> -->
+    <script src="views/table.js" charset="UTF-8"></script>
+    <script src="views/calendar.js" charset="UTF-8"></script>
+    <script src="views/gantt.js" charset="UTF-8"></script>
+    <script src="views/kanban.js" charset="UTF-8"></script>
+
+    <script src="elm/main.js" charset="UTF-8"></script>
+
+    <script src="utilities/elmLike.test.js" charset="UTF-8"></script>
+<!-- <script src="repositories/localStrageGetter.js" charset="UTF-8"></script>
+    <script src="repositories/localStrageSetter.js" charset="UTF-8"></script> -->
 
     <script>
         console.group();
     </script>
-    <script src="preview/test.js" charset="UTF-8"></script>
-    <script src="utilities/timeline.test.js" charset="UTF-8"></script>
-    <script src="repositories/repositories.test.js" charset="UTF-8"></script>
+    <!-- <script src="preview/test.js" charset="UTF-8"></script>
+    <script src="utilities/timeline.test.js" charset="UTF-8"></script> -->
     <script>
         console.groupEnd();
     </script>
 
     <script>
 
-        document.getElementById("saveButton").onclick = function () {
-            clearTimeout(timeoutID);
-            c.log("timeoutID cleared")
-            delayRepositoryUpdate(repositories.value);
+        $saveButton.onclick = function () {
+            // clearTimeout(timeoutID);
+            // c.log("timeoutID cleared")
+            // delayRepositoryUpdate(repositories.value);
+            main.update(new ButtonMessage({id: $saveButton}));
         };
-        document.getElementById("exportJsonButton").onclick = function () {
-            c.log(JSON.stringify(repositories.value));
-            $json.value = (JSON.stringify(repositories.value));
+        $exportJsonButton.onclick = function () {
+            // c.log(JSON.stringify(repositories.value));
+            // $textarea.value = (JSON.stringify(repositories.value));
+            main.update(new ButtonMessage({id: $exportJsonButton }));
         };
         $importJsonButton.onclick = _ => {
-            repositorySetter.next(JSON.parse($json.value));
-
+            // repositorySetter.next(JSON.parse($json.value));
+            // main.update(new ButtonMessage({id: $importJsonButton }));
+            main.update(new ImportJsonMessage({value: $textarea.value}))
         }
 
-        document.getElementById("loadButton").onclick = function () {
-            clearTimeout(timeoutID);
-            c.log("timeoutID cleared")
-            getLocalStorage2Timeline(localStorageGetter);
-            repositorySetter.next(parseJson2repositories.value);
+        $loadButton.onclick = function () {
+            // clearTimeout(timeoutID);
+            // c.log("timeoutID cleared")
+            // getLocalStorage2Timeline(localStorageGetter);
+            // repositorySetter.next(parseJson2repositories.value);
+
+            main.update(new ButtonMessage({id: $loadButton}));
+            loadLocalStorage(secretKey)(main.update);
         };
+        
         const unloadFunction = e => {
             e.preventDefault();
             e.returnValue = "ページを離れようとしています。よろしいですか？"
         }
-        const beforeUnloadTimeline = repositories.map(parent =>
-            ({ isSaved: false })
-        );
-        loggerTimelines.push(
-            beforeUnloadTimeline.map(a => { c.groupCollapsed("beforeUnloadTimeline"); c.log(a); c.groupEnd(); return a })
-        );
+        // const beforeUnloadTimeline = repositories.map(parent =>
+        //     ({ isSaved: false })
+        // );
+        // loggerTimelines.push(
+        //     beforeUnloadTimeline.map(a => { c.groupCollapsed("beforeUnloadTimeline"); c.log(a); c.groupEnd(); return a })
+        // );
 
-        const beforeUnloadTimelineSetter = localStorageSetter.map(parent =>
-            beforeUnloadTimeline.next({ isSaved: true })
-        );
-        loggerTimelines.push(
-            beforeUnloadTimelineSetter.map(a => { c.groupCollapsed("beforeUnloadTimelineSetter"); c.log(a); c.groupEnd(); return a })
-        );
+        // const beforeUnloadTimelineSetter = localStorageSetter.map(parent =>
+        //     beforeUnloadTimeline.next({ isSaved: true })
+        // );
+        // loggerTimelines.push(
+        //     beforeUnloadTimelineSetter.map(a => { c.groupCollapsed("beforeUnloadTimelineSetter"); c.log(a); c.groupEnd(); return a })
+        // );
 
-        const beforeUnloadEventSetter = beforeUnloadTimeline.map(parent => {
-            if (parent.isSaved) {
-                window.removeEventListener("beforeunload", unloadFunction);
-            } else {
-                window.addEventListener("beforeunload", unloadFunction);
-            }
-            return parent.isSaved;
-        }
-        );
-        loggerTimelines.push(
-            beforeUnloadEventSetter.map(a => { c.group("beforeUnloadEventSetter"); c.log(a); c.groupEnd(); return a })
-        );
+        // const beforeUnloadEventSetter = beforeUnloadTimeline.map(parent => {
+        //     if (parent.isSaved) {
+        //         window.removeEventListener("beforeunload", unloadFunction);
+        //     } else {
+        //         window.addEventListener("beforeunload", unloadFunction);
+        //     }
+        //     return parent.isSaved;
+        // }
+        // );
+        // loggerTimelines.push(
+        //     beforeUnloadEventSetter.map(a => { c.group("beforeUnloadEventSetter"); c.log(a); c.groupEnd(); return a })
+        // );
 
-        (_ => {
-            // タスクを用意
-            var tasks = [
-                {
-                    id: 'id1',
-                    name: '確定申告する',
-                    description: '必ずやる!!',
-                    start: '2021-01-01',
-                    end: '2021-01-7',
-                    progress: 100,
-                    dependencies: "id2, id3"
-                },
-                {
-                    id: 'id2',
-                    name: 'クライアントに挨拶',
-                    description: '年賀状も確認した上で連絡する',
-                    start: '2021-01-4',
-                    end: '2021-01-8',
-                    progress: 100,
-                },
-                {
-                    id: 'id3',
-                    name: '請求書作成',
-                    description: 'みんなに稼働時間を記録してもらった上で請求を出す',
-                    start: '2021-01-5',
-                    end: '2021-01-6',
-                    progress: 40,
-                },
-                {
-                    id: 'id4',
-                    name: '案件A を開発',
-                    description: 'まずはフレームワークのアップデートやる!',
-                    start: '2021-01-5',
-                    end: '2021-01-11',
-                    progress: 50,
-                    dependencies: "id1",
-                },
-                {
-                    id: 'id5',
-                    name: 'フィードバック面談',
-                    description: '各メンバーシートを記入してもらった上で 1on1',
-                    start: '2021-01-12',
-                    end: '2021-01-16',
-                    progress: 20,
-                    dependencies: "id1",
-                },
-            ];
 
-            // gantt をセットアップ
-            var gantt = new Gantt("#gantt", tasks, {
-                // ダブルクリック時
-                on_click: (task) => {
-                    console.log(task.description);
-                },
-                // 日付変更時
-                on_date_change: (task, start, end) => {
-                    console.log(`${task.name}: change date`);
-                },
-                // 進捗変更時
-                on_progress_change: (task, progress) => {
-                    console.log(`${task.name}: change progress to ${progress}%`);
-                },
-            });
-        })();
     </script>
     <script>
-
-        // カンバンに表示されるカラムやカードを定義
-        const dataContent = [
-            {
-                "id": "column-id-1",
-                "title": "準備中",
-                "class": "red,waiting",
-                "item": [
-                    {
-                        "id": "item-id-1",
-                        "title": "AAA",
-                        "class": "todo"
-                    },
-                    {
-                        "id": "item-id-2",
-                        "title": "BBB",
-                        "class": "todo,orange",
-                    }
-                ]
-            },
-            {
-                "id": "column-id-2",
-                "title": "実行中",
-                "class": "blue,in-progress",
-                "item": [
-                    {
-                        "id": "item-id-3",
-                        "title": "<div class='item-title'>CCC</div><div class='item-body'><img src='https://i.imgur.com/b1dGytP.jpeg' /></div>",
-                        "class": "todo"
-                    }
-                ]
-            },
-            {
-                "id": "column-id-3",
-                "title": "完了",
-                "class": "green,completed",
-                "item": [
-                    {
-                        "id": "item-id-4",
-                        "title": "DDD",
-                        "class": "done"
-                    },
-                    {
-                        "id": "item-id-5",
-                        "title": "EEE",
-                        "class": "done"
-                    }
-                ]
-            }
-        ];
-
-        // ここで jKanban を実行する
-        const kanban = new jKanban({
-            element: '#kanban-canvas',  // カンバンを表示する場所のID
-            boards: dataContent,        // カンバンに表示されるカラムやカードのデータ
-            gutter: '16px',             // カンバンの余白
-            widthBoard: '250px',        // カラムの幅 (responsivePercentageの「true」設定により無視される)
-            responsivePercentage: true, // trueを選択時はカラム幅は％で指定され、gutterとwidthBoardの設定は不要
-            dragItems: true,            // trueを選択時はカードをドラッグ可能
-            dragBoards: true,           // カラムをドラッグ可能にするかどうか
-
-            // コールバック
-            click: function (el) {
-                // カードが左クリックされた時に実行
-                onKanbanItemClicked(el);
-            },
-            context: function (el, event) {
-                // カードが右クリックされた時に実行
-            },
-            dragEl: function (el, source) {
-                // カードのドラッグが始まった時に実行
-            },
-            dragendEl: function (el) {
-                // カードがドラッグが終わった時に実行
-            },
-            dropEl: function (el, target, source, sibling) {
-                // カードがドロップされたときに実行
-                onKanbanItemDropped(el, target, source, sibling);
-            },
-            dragBoard: function (el, source) {
-                // カラムのドラッグを開始した時に実行
-            },
-            dragendBoard: function (el) {
-                // カラムのドラッグが終わった時に実行
-            },
-            buttonClick: function (el, boardId) {
-                // ボタンがクリックされた時に実行
-            }
-        });
-
-        function onKanbanItemClicked(el) {
-            showMessage('カード「' + el.innerText + '」が左クリックされました。');
+    document.addEventListener("keydown", (e) => {
+        // if (!e.repeat) {
+        //     c.log(`Key "${e.key}" pressed [event: keydown]`);
+        //     c.log(e);
+        // } else {
+        //     c.log(`Key "${e.key}" repeating [event: keydown]`);
+        // }
+        if (e.key === "z" && e.ctrlKey&& !e.repeat) {
+            e.preventDefault();
+            main.update(new Undo());
         }
-
-        function onKanbanItemDropped(el, target, source, sibling) {
-            // 移動元カラムのタイトル
-            const sourceTitle = source.parentNode.querySelector('header').innerText;
-            // 移動元カラムのID
-            const sourceId = source.parentNode.dataset.id;
-            // 移動先カラムのタイトル
-            const targetTitle = target.parentNode.querySelector('header').innerText;
-            // 移動先カラムのID
-            const targetId = target.parentNode.dataset.id;
-
-            // 同じカラム内の移動か、それとも異なるカラム間の移動かを判別
-            const sameColumn = (sourceId === targetId) ? true : false;
-
-            // カラム内 or カラム間の移動によってメッセージを変える
-            const alertMsg = (sameColumn) ?
-                'カード「' + el.innerText + '」が、カラム『' + sourceTitle + '』内で移動しました。' :
-                'カード「' + el.innerText + '」が、カラム『' + sourceTitle + '』からカラム『' + targetTitle + '』へ移動しました。';
-
-            // メッセージを表示
-            showMessage(alertMsg);
-
-            // 異なるカラム間の移動なおかつ移動先カラムが「完了」の場合
-            // カードのステータスを「done」にする。
-            // 異なるカラム間の移動なおかつ移動先カラムが「完了」以外の場合
-            // カードのステータスを「todo」にする。
-            if (!sameColumn && targetTitle === '完了') {
-                setKanbanItemStatus(el, 'done');
-            } else if (!sameColumn && targetTitle !== '完了') {
-                setKanbanItemStatus(el, 'todo');
-            }
-
+        if (e.key === "y" && e.ctrlKey&& !e.repeat) {
+            e.preventDefault();
+            main.update(new Redo());
         }
+    });
 
-        function setKanbanItemStatus(el, status) {
-            // ステータスが「done」の場合は
-            // カードの「todo」クラスを「done」に変更する。
-            if (status === 'done') {
-                el.classList.remove('todo');
-                el.classList.add('done');
-                // ステータスが「done」以外の場合は
-                // カードの「done」クラスを「todo」に変更する。
-            } else {
-                el.classList.remove('done');
-                el.classList.add('todo');
-            }
-        }
-
-        function showMessage(msg) {
-            document.getElementById('show-message').innerHTML = msg;
-        }
-
-        // カードに data-class= 属性が設定されていたら、
-        // その値を取得してクラス名に追加する。
-        // 今回はカンマ区切りで複数が設定されているので、
-        // まずは配列に変換してから処理する。
-        document.querySelectorAll('.kanban-item').forEach(item => {
-            if (item.dataset.class) {
-                const arrayClass = item.dataset.class.split(',');
-                arrayClass.forEach(className => {
-                    item.classList.add(className);
-                });
-            }
-        });
 
     </script>
     <link rel="stylesheet" href="style.css">
@@ -428,6 +230,17 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="calendar.css">
+    <!-- <script type="text/javascript">
+        hotkeys('ctrl+z,ctrl+y', function (event, handler) {
+            switch (handler.key) {
+                case 'ctrl+z': main.update(new Undo());
+                    break;
+                case 'ctrl+y': main.update(new Redo());
+                    break;
+                default: break;
+            }
+        });
+    </script> -->
 </body>
 
 </html>

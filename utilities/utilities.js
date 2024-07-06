@@ -29,3 +29,4 @@ function saveTextToFile(text, filename) {
     link.download = filename;
     link.click();
 }
+// const zip=(...array)=>

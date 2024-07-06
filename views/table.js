@@ -1,3 +1,23 @@
+class IJspreadsheetData {
+    constructor({ jspreadsheetData = null, jspreadsheetColumns = null } = {}) {
+        this.jspreadsheetData = jspreadsheetData;
+        this.jspreadsheetColumns = jspreadsheetColumns;
+    }
+}
+
+class TableMessage extends IJspreadsheetData {
+    constructor(value) {
+        super(value);
+    }
+}
+class TableView extends IJspreadsheetData {
+    constructor(value) {
+        super(value);
+    }
+}
+
+
+c.log(new TableMessage({ jspreadsheetData: 100, jspreadsheetColumns: 200 }))
 // const jspreadsheetEvent = {
 //     onchange: Timeline.create()({}),
 //     oninsertrow: Timeline.create()({}),
@@ -14,17 +34,20 @@
 //     onselection: Timeline.create()({}),
 // };
 let jspreadsheetObject = jspreadsheet(document.getElementById('spreadsheet'), {
-    data: [[]],
-    columns: repositories2Table.value.jspreadsheetColumns,
+    data: [[1, 2], [3, 4]],
 });
-const jspreadsheetTimelineOutput = repositories2Table.map(parent => ({
-    jspreadsheetData: jspreadsheetObject.getData(),
-    jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
-    header2Key: parent.header2Key
-}));
-loggerTimelines.push(
-    jspreadsheetTimelineOutput.map(a => { c.groupCollapsed("jspreadsheetTimelineOutput"); c.log(a); c.groupEnd(); return a })
-);
+let jspreadsheetPosition = {}
+// const jspreadsheetTimelineOutput = Timeline.create()().apply(jspreadsheetColumns).apply(jspreadsheetData);
+//     repositories2Table.map(parent => ({
+//     jspreadsheetData: jspreadsheetObject.getData(),
+//     jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
+//     header2Key: parent.header2Key
+// }));
+
+
+// loggerTimelines.push(
+//     jspreadsheetTimelineOutput.map(a => { c.groupCollapsed("jspreadsheetTimelineOutput"); c.log(a); c.groupEnd(); return a })
+// );
 
 
 
@@ -32,6 +55,8 @@ loggerTimelines.push(
 let isConstructingJspreadsheet = false;
 const createJspreadsheet =
     nextData => columns => eventFunc => {
+        c.log("create jspreadsheet");
+        c.log(columns);
         isConstructingJspreadsheet = true;
         const element = document.getElementById('spreadsheet');
         while (element.firstChild) {
@@ -79,36 +104,55 @@ const createJspreadsheet =
             minDimensions: [2, 1],//最小列数・行数 (例：[5, 3])。
 
             //イベント
-            // onchange: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onchange.next({instance, x1, y1, x2, y2, origin}),
-            // oninsertrow: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.oninsertrow.next({instance, x1, y1, x2, y2, origin}),
-            // oninsertcolumn: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.oninsertcolumn.next({instance, x1, y1, x2, y2, origin}),
-            // ondeleterow: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.ondeleterow.next({instance, x1, y1, x2, y2, origin}),
-            // ondeletecolumn: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.ondeletecolumn.next({instance, x1, y1, x2, y2, origin}),
-            // onsort: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onsort.next({instance, x1, y1, x2, y2, origin}),
-            // onresizerow: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onresizerow.next({instance, x1, y1, x2, y2, origin}),
-            // onresizecolumn: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onresizecolumn.next({instance, x1, y1, x2, y2, origin}),
-            // onmoverow: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onmoverow.next({instance, x1, y1, x2, y2, origin}),
-            // onmovecolumn: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onmovecolumn.next({instance, x1, y1, x2, y2, origin}),
-            // onload: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onload.next({instance, x1, y1, x2, y2, origin}),
-            // onpaste: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onpaste.next({instance, x1, y1, x2, y2, origin}),
-            // onselection: (instance, x1, y1, x2, y2, origin) => jspreadsheetEvent.onselection.next({instance, x1, y1, x2, y2, origin}),
+            onchange: (instance, x1, y1, x2, y2, origin) => c.log({event:onchange,instance, x1, y1, x2, y2, origin}),
+            oninsertrow: (instance, x1, y1, x2, y2, origin) => {
+                console.log("oninsertrow");
+            },
+            oninsertcolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"oninsertcolumn",instance, x1, y1, x2, y2, origin}),
+            ondeleterow: (instance, x1, y1, x2, y2, origin) => c.log({event:"ondeleterow",instance, x1, y1, x2, y2, origin}),
+            ondeletecolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"ondeletecolumn",instance, x1, y1, x2, y2, origin}),
+            onsort: (instance, x1, y1, x2, y2, origin) => c.log({event:"onsort",instance, x1, y1, x2, y2, origin}),
+            onresizerow: (instance, x1, y1, x2, y2, origin) => c.log({event:"onresizerow",instance, x1, y1, x2, y2, origin}),
+            onresizecolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"onresizecolumn",instance, x1, y1, x2, y2, origin}),
+            onmoverow: (instance, x1, y1, x2, y2, origin) => c.log({event:"onmoverow",instance, x1, y1, x2, y2, origin}),
+            onmovecolumn: (instance, x1, y1, x2, y2, origin) => c.log({event:"onmovecolumn",instance, x1, y1, x2, y2, origin}),
+            onload: (instance, x1, y1, x2, y2, origin) => c.log({event:"onload",instance, x1, y1, x2, y2, origin}),
+            onpaste: (instance, x1, y1, x2, y2, origin) => c.log({event:"onpaste",instance, x1, y1, x2, y2, origin}),
+            onselection: (instance, x1, y1, x2, y2, origin) => c.log({event:"onselection",instance, x1, y1, x2, y2, origin}),
 
             onevent: function (a, b, c, d, e, f, g, h) {
+                console.log({event:"event", a, b, c, d, e, f, g, h});
+                if (a === "onselection") {
+                    // console.log("onselection");
+                    // c.log({});
+                    const columns = (jspreadsheetObject.getSelectedColumns());
+                    const rows = (jspreadsheetObject.getSelectedRows(true));
+                    if ((columns.length !== 0 && rows.length !== 0)) {
+                        jspreadsheetPosition = {
+                            column: { min: columns.reduce((a, b) => Math.min(a, b)), max: columns.reduce((a, b) => Math.max(a, b)) },
+                            row: { min: rows.reduce((a, b) => Math.min(a, b)), max: rows.reduce((a, b) => Math.max(a, b)) },
+                        };
+                    }
 
-                // if (a === "onmovecolumn") {
-                //     console.log("onmove");
-                //     return
-                // };
+
+                }
+                if (a === "oninsertrow") {
+                    // console.log("oninsertrow");
+                    // c.log({});
+                    jspreadsheetObject.updateSelectionFromCoords(jspreadsheetPosition.column.min, jspreadsheetPosition.row.min, jspreadsheetPosition.column.max, jspreadsheetPosition.row.max);
+                };
                 if (isConstructingJspreadsheet) {
-                    console.log("constructing");
+                    // console.log("constructing");
                 } else {
-                    console.log(a);
+                    // console.log(a);
                     eventFunc();
                 }
+                // console.log("event end");//なぜかエンターキーで行追加時にonevent関数を抜けた直後にjspreadsheetでエラーが発生する
             }
         });
+        jspreadsheetObject.ignoreHistory = true;
         isConstructingJspreadsheet = false;
-        eventFunc();
+        // eventFunc();
         return jspreadsheetObject;
     };
 const updateJspreadsheet = spreadsheet => nextData => columns => eventFunc => {
@@ -116,31 +160,34 @@ const updateJspreadsheet = spreadsheet => nextData => columns => eventFunc => {
     const nowColumns = spreadsheet.getConfig().columns;
     if (nowColumns !== columns && 0 < nowData[0].filter(datum => datum !== '').length) {
         return createJspreadsheet(nextData)(columns)(eventFunc);
-        
+
     }
-    // if (nowData !== nextData && 0 < nowData[0].filter(datum => datum !== '').length) {
-        spreadsheet.setData(JSON.stringify(nextData));
-        return spreadsheet;
-    // }
+    spreadsheet.setData(JSON.stringify(nextData));
+    return spreadsheet;
 };
-    
 
 
-const jspreadsheetEventInnerFunc = _ => {
+
+function jspreadsheetEventInnerFunc() {
     // c.log({ string: "jspreadsheetObject.getData()", data: jspreadsheetObject.getData() });
     // c.log({ string: "jspreadsheetObject.getConfig().columns", data: jspreadsheetObject.getConfig().columns });
-    jspreadsheetTimelineOutput.next({
+    // tableGetter.next({
+    //     jspreadsheetData: jspreadsheetObject.getData(),
+    //     jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
+    // });
+    main.update(new TableMessage({
         jspreadsheetData: jspreadsheetObject.getData(),
         jspreadsheetColumns: JSON.parse(JSON.stringify(jspreadsheetObject.getConfig().columns)),
-        header2Key: jspreadsheetTimelineOutput.value.header2Key
-    });
+    }))
 };
 
 
-const jspreadsheetTimeline = repositories2Table.map(parent => updateJspreadsheet(jspreadsheetObject)(parent.jspreadsheetData)(parent.jspreadsheetColumns)(jspreadsheetEventInnerFunc));
-loggerTimelines.push(
-    jspreadsheetTimeline.map(a => { c.groupCollapsed("jspreadsheetTimeline"); c.log(a); c.groupEnd(); return a })
-);
+// const jspreadsheetTimeline = repositories2Table.map(parent => updateJspreadsheet(jspreadsheetObject)(parent.jspreadsheetData)(parent.jspreadsheetColumns)(jspreadsheetEventInnerFunc));
+
+// const jspreadsheetSetter = Timeline.create()(updateJspreadsheet(jspreadsheetObject)).apply(jspreadsheetData).apply(jspreadsheetColumns).apply(Timeline.create()(jspreadsheetEventInnerFunc));
+// loggerTimelines.push(
+//     jspreadsheetTimeline.map(a => { c.groupCollapsed("jspreadsheetTimeline"); c.log(a); c.groupEnd(); return a })
+// );
 
 
 

@@ -1,22 +1,5 @@
 
-const notDuplicateTableTaskDataPropertiesColNum = (taskDataTemplate) => {
-    return Object.entries(taskDataTemplate)
-        .map(([key, value]) => { return { key: value, value: key } })
-        .sort((a, b) => a.key - b.key)
-        .map((data) => { return data.value });
-}
 
-const notDuplicateTableTaskDataColNum = data =>
-    Object.fromEntries(
-        Object.entries(data)
-            .map(([key, value]) => ({ key: key, value: value }))
-            .sort((a, b) => a.value.col_num - b.value.col_num)
-            .map((data, i) => {
-                data.value.col_num = i;
-                return data;
-            })
-            .map(data => ([data.key, data.value]))
-    );
 class TimelineSandwich {
     constructor(setterTimeline, getterTimeline) {
         this._setterTimeline = setterTimeline;
