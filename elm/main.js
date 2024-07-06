@@ -556,9 +556,11 @@ const update = model => message => {
                 pipe(dstModel.taskDataEntity)((a => a)
                     ._(stateChange2implementationDate(model.taskDataEntity))
                     ._(fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES))
-                    ._(data => {
-                        return [...data];
+                    ._(data => data.map(datum => {
+                        const successor_task_id = datum.successor_task_id.filter(value => value !== datum.id);
+                        return {...datum, successor_task_id}
                     })
+                    )
                     ._(data => {
                         return [...data];
                     })
