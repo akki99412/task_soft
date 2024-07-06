@@ -12,7 +12,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.min.js"></script>
     
-    <style>${style}</style>
+    ><style>
+        body {
+            font-family: sans-serif;
+            background: #ccc;
+        }
+    
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+    
+        /* custom class */
+        .gantt .bar-milestone .bar {
+            fill: tomato;
+            stroke : blue;
+            stroke-width: 1;
+            stroke-dasharray: 2 2;
+        }
+    
+        .heading {
+            text-align: center;
+        }
+    
+        .gantt-target.dark {
+            background-color: #252525;
+        }
+    </style>
   </head>
   <body>
     <h1>${title}</h1>
@@ -68,6 +94,17 @@
                     end: '2021-01-16',
                     progress: 20,
                     dependencies: "id1",
+                    important:true,
+                },
+                {
+                    id: 'id6',
+                    name: 'フィードバック面談',
+                    description: '各メンバーシートを記入してもらった上で 1on1',
+                    start: '2021-01-12',
+                    end: '2021-01-16',
+                    progress: 20,
+                    custom_class: 'bar-milestone',
+                    important: true
                 },
             ];
 

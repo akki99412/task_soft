@@ -14,6 +14,7 @@ diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
         state = { defaultValue: TASK_STATE.SCHEDULED, };
         similar_tasks_id = { defaultValue: "", };
         successor_task_id = { defaultValue: [""], };
+        dependency_task_id = { defaultValue: [""], };
         connotative_task_id = { defaultValue: "", };
         row_num = { defaultValue: "", };
         implementation_time = { defaultValue: "", };
@@ -40,6 +41,7 @@ diContainer.addForCallByValue("TASK_UI_TEMPLATES",
         similar_tasks_id = { header: "類似タスクid", };
         similar_tasks = { header: "類似タスク", };
         successor_task_id = { header: "後続タスクid", };
+        dependency_task_id = { header: "依存タスクid", };
         successor_task = { header: "後続タスク", };
         connotative_task_id = { header: "内包タスクid", };
         connotative_task = { header: "内包タスク", };
@@ -67,6 +69,7 @@ diContainer.addForCallByValue("TABLE_TASK_DATA_TEMPLATES",
         similar_tasks_id = { width: 200, col_num: 1, read_only: false, align: "left" };
         similar_tasks = { width: 200, col_num: 1, read_only: false, align: "left" };
         successor_task_id = { width: 200, col_num: 1, read_only: false, align: "left" };
+        dependency_task_id = { width: 200, col_num: 1, read_only: false, align: "left" };
         successor_task = { width: 200, col_num: 1, read_only: false, align: "left" };
         connotative_task_id = { width: 200, col_num: 1, read_only: false, align: "left" };
         connotative_task = { width: 200, col_num: 1, read_only: false, align: "left" };
@@ -93,8 +96,9 @@ diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
         implementation_date = { type: "text", editor: "", source: [], options: [], autocomplete:false, multiple:false };
         state = { type: "dropdown", editor: "", source: Object.values(TASK_STATE), options: [], autocomplete:false, multiple:false };
         similar_tasks_id = { type: "hidden", editor: "", source: [], options: [], autocomplete:false, multiple:false };
-        similar_tasks = { type: "text", editor: "", source: [], options: [], autocomplete:false, multiple:false };
-        successor_task_id = { type: "dropdown", editor: "", source: [], options: [], autocomplete:true, multiple:true };
+        similar_tasks = { type: "text", editor: "", source: [], options: [], autocomplete: false, multiple: false };
+        successor_task_id = { type: "dropdown", editor: "", source: [], options: [], autocomplete: true, multiple: true };
+        dependency_task_id = { type: "dropdown", editor: "", source: [], options: [], autocomplete: true, multiple: true };
         successor_task = { type: "text", editor: "", source: [], options: [], autocomplete:false, multiple:false };
         connotative_task_id = { type: "hidden", editor: "", source: [], options: [], autocomplete:false, multiple:false };
         connotative_task = { type: "text", editor: "", source: [], options: [], autocomplete:false, multiple:false };

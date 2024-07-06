@@ -101,10 +101,12 @@ const view = model => {
         description: model.memo,
         start: dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
-        progress: 0, 
+        progress: model.state === TASK_STATE.COMPLETED ? 100
+            : 0, 
         dependencies: taskDataEntity
             .filter(value => value.successor_task_id.includes(model.id))
             .map(value => value.id)
+            .concat(model.dependency_task_id)
             .join(", "),
     }));
 
@@ -266,7 +268,7 @@ const TableUpdate = model => message => {
 
     const taskDataEntity = jspreadsheetData.map(row =>
         Object.fromEntries(zip(sortedKeys, row).map(([key, data]) => [key,
-            key === "implementation_date" ? string2ImplementationDate(data) : key === "successor_task_id" ? data.split(";")
+            key === "implementation_date" ? string2ImplementationDate(data) : key === "successor_task_id" || key === "dependency_task_id" ? data.split(";")
                 : data]))
     );
 
@@ -577,10 +579,12 @@ const update = model => message => {
                 pipe(dstModel.jspreadsheetTaskDataProperties)((a => a)
                     ._(data => {
                         const source = taskDataEntity.map(row => ({ id: row.id, name: row.title, title: row.id, groupe: "task", value: row.id, text: row.title }));
-                        const { type, editor, options, autocomplete, multiple } = data.successor_task_id;
-                        const successor_task_id = { type, editor, source, options, autocomplete, multiple };
-                        c.log(successor_task_id);
-                        return { ...data, successor_task_id };
+                        const createJspreadsheetTaskDataProperties = ({ type, editor, source, options, autocomplete, multiple }) => ({ type, editor, source, options, autocomplete, multiple });
+                        const successor_task_id = createJspreadsheetTaskDataProperties({ ...data.successor_task_id, source });
+                        const dependency_task_id = createJspreadsheetTaskDataProperties({ ...data.successor_task_id, source });
+                        // const { type, editor, options, autocomplete, multiple } = data.successor_task_id;
+                        // const successor_task_id = { type, editor, source, options, autocomplete, multiple };
+                        return { ...data, successor_task_id, dependency_task_id };
                     })
                 )
 

@@ -42,8 +42,9 @@ const repository2jspreadsheetData = taskDataEntity => tableHeaderKeys =>
             tableHeaderKeys.map(key =>
 
                 key === "implementation_date" ? implementationDate2String(taskDatum[key])
-                    : key === "successor_task_id" ? (_ =>((taskDatum[key]).join(";")))()
-                    :taskDatum[key]
+                    : key === "successor_task_id" ? (_ => ((taskDatum[key]).join(";")))()
+                        : key === "dependency_task_id" ? (_ => ((taskDatum[key]).join(";")))()
+                            : taskDatum[key]
             )
         );
 
