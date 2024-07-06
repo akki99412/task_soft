@@ -101,8 +101,11 @@ const view = model => {
         description: model.memo,
         start: dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
-        progress: 0,
-        dependencies: model.successor_task_id.join(", "),
+        progress: 0, 
+        dependencies: taskDataEntity
+            .filter(value => value.successor_task_id.includes(model.id))
+            .map(value => value.id)
+            .join(", "),
     }));
 
     const kanbanTasks =
@@ -558,7 +561,7 @@ const update = model => message => {
                     ._(fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES))
                     ._(data => data.map(datum => {
                         const successor_task_id = datum.successor_task_id.filter(value => value !== datum.id);
-                        return {...datum, successor_task_id}
+                        return { ...datum, successor_task_id }
                     })
                     )
                     ._(data => {
