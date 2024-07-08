@@ -30,3 +30,22 @@ function saveTextToFile(text, filename) {
     link.click();
 }
 // const zip=(...array)=>
+
+
+class Observable {
+    constructor(value = null) {
+        this.observers = [];
+        this.value = value;
+    }
+    static Op = class {
+        static subscribe = (func) => (observable) => observable.observers.push(func);
+        static notify = value => observable => {
+            observable.value = value;
+            c.log(observable.observers);
+            observable.observers.forEach(func => func(value));
+        }
+    }
+    subscribe = (func) => Observable.Op.subscribe(func)(this);
+    // unsubscribe
+    notify = (value) => Observable.Op.notify(value)(this);
+}

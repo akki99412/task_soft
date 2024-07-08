@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <div id="mermaidContainer"></div>
+    <div id="mermaidContainer">test</div>
     <!-- <textarea id="svgCode"></textarea> -->
     <div id="svgContainer"></div>
     <button id="graphA">graphA</button>
@@ -46,9 +46,10 @@
 
         // mermaid 記法から SVG を作成し、シリアライズされた文字列を取得します。
         const mermaidRender = diagram=>_ => {
-            const mermaid_promise = mermaidAPI.render(svgId, diagram);
+            const mermaid_promise = mermaidAPI.render(svgId, diagram, container);
             // mermaid_promise.then(value =>svgCode.innerText = value.svg);
             mermaid_promise.then(value => svgContainer.insertAdjacentHTML('afterbegin', value.svg));
+            mermaid_promise.then(value=>console.log(value.svg));
         };
         mermaidRender(diagramB)();
             graphA.onclick = mermaidRender(diagramA);

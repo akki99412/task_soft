@@ -129,23 +129,6 @@ const view = model => {
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
     return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea };
 };
-class Observable {
-    constructor(value = null) {
-        this.observers = [];
-        this.value = value;
-    }
-    static Op = class {
-        static subscribe = (func) => (observable) => observable.observers.push(func);
-        static notify = value => observable => {
-            observable.value = value;
-            c.log(observable.observers);
-            observable.observers.forEach(func => func(value));
-        }
-    }
-    subscribe = (func) => Observable.Op.subscribe(func)(this);
-    // unsubscribe
-    notify = (value) => Observable.Op.notify(value)(this);
-}
 const textareaBuffer = new Observable("");
 window.addEventListener('load',
     _ => textareaBuffer.subscribe(
@@ -155,7 +138,7 @@ window.addEventListener('load',
         }
     )
 );
-const render = table => gantt => ganttTasks => calendar => kanban => timeout => textarea => view => {
+const render = table => gantt => ganttTasks => calendar => kanban => timeout => textarea => treeGraph=>view => {
     c.log("render");
     const tableView = new TableMessage({
         jspreadsheetData: JSON.parse(JSON.stringify(table.getData())),
@@ -609,7 +592,7 @@ const update = model => message => {
         })(dstModel);
     }
 };
-const main = new ElmLike({ init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(timeoutID)(textareaBuffer)(view) });
+const main = new ElmLike({ init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(timeoutID)(textareaBuffer)(treeGraph)(view) });
 main.init();
 
 
