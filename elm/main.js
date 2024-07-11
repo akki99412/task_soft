@@ -102,7 +102,7 @@ const view = model => {
         start: dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         progress: model.state === TASK_STATE.COMPLETED ? 100
-            : 0, 
+            : 0,
         dependencies: taskDataEntity
             .filter(value => value.successor_task_id.includes(model.id))
             .map(value => value.id)
@@ -124,10 +124,17 @@ const view = model => {
                 })
         }));
     const textarea = model.textarea;
+    const treeGraph = "flowchart LR\n"
+        + taskDataEntity.map(value =>
+            `subgraph ${value.id} [${value.title}]\n`
+            + "test1-->test2\n"
+            + "end"
+        ).join("\n");
+
 
 
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
-    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea };
+    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph };
 };
 const textareaBuffer = new Observable("");
 window.addEventListener('load',
@@ -138,7 +145,7 @@ window.addEventListener('load',
         }
     )
 );
-const render = table => gantt => ganttTasks => calendar => kanban => timeout => textarea => treeGraph=>view => {
+const render = table => gantt => ganttTasks => calendar => kanban => timeout => textarea => treeGraph => view => {
     c.log("render");
     const tableView = new TableMessage({
         jspreadsheetData: JSON.parse(JSON.stringify(table.getData())),
@@ -197,6 +204,13 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
         // c.log(textarea.value);
         // c.log(view.textarea);
         textarea.notify(view.textarea);
+
+    }
+    if ((treeGraph.value.value) !== (view.treeGraph)) {
+        c.log("update treeGraph");
+        // c.log(textarea.value);
+        // c.log(view.textarea);
+        treeGraph.notify({ value: view.treeGraph });
 
     }
 

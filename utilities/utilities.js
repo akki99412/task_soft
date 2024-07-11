@@ -41,7 +41,7 @@ class Observable {
         static subscribe = (func) => (observable) => observable.observers.push(func);
         static notify = value => observable => {
             observable.value = value;
-            c.log(observable.observers);
+            // c.log(observable.observers);
             observable.observers.forEach(func => func(value));
         }
     }

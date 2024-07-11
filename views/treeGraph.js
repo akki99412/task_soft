@@ -4,8 +4,9 @@ const svgId = "treeGraph";
 const mermaidWorkingContainer = document.getElementById("mermaidWorkingContainer");
 const mermaidSvgContainer = document.getElementById("mermaidSvgContainer");
 
-let diagramString = {
-    value: `
+const treeGraph = new Observable({
+    value:
+        `
 flowchart LR
     c1-->a2
     subgraph ide1 [one]
@@ -15,7 +16,8 @@ flowchart LR
     b1-->b2
     end
     b2-->a1
-    `};
+    `
+});
 
 mermaidAPI.initialize({
     startOnLoad: false,
@@ -24,8 +26,35 @@ mermaidAPI.initialize({
 
 const mermaidRender = svgId => diagram => container => svgContainer => {
     console.log(diagram);
-    const mermaid_promise = mermaidAPI.render(svgId, diagram, container);
-    mermaid_promise.then(value => svgContainer.insertAdjacentHTML('afterbegin', value.svg));
-    // mermaid_promise.then(value => console.log(value.svg));
+    const mermaidPromise = mermaidAPI.render(svgId, diagram, container);
+    return mermaidPromise.then(value => svgContainer.insertAdjacentHTML('afterbegin', value.svg));
+    // mermaidPromise.then(value => console.log(value.svg));
 };
-mermaidRender(svgId)(diagramString.value)(mermaidWorkingContainer)(mermaidSvgContainer);
+
+
+let treeGraphPromise = (Promise.resolve());
+
+
+treeGraph.subscribe(diagram =>{
+    treeGraphPromise = treeGraphPromise.then(_=>mermaidRender(svgId)(diagram.value)(mermaidSvgContainer)(mermaidSvgContainer))
+});
+
+
+treeGraph.notify({
+    value:
+        `
+flowchart LR
+    c1-->a2
+    subgraph ide1 [one]
+    a1-->a2
+    end
+    `});
+treeGraph.notify({
+    value:
+        `
+flowchart LR
+    test-->test2
+    subgraph ide1 [one]
+    test3-->a2
+    end
+    `});
