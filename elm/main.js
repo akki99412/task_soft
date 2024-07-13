@@ -135,16 +135,16 @@ const view = model => {
             return dstData;
         }
     );
-    console.log({taskDependencies});
+    console.log({ taskDependencies });
 
-    const buildTree = taskDependencies => parentId=>taskId => {
+    const buildTree = taskDependencies => parentId => taskId => {
         const data = taskDependencies.filter(value => value.id === taskId);
         if (data.length === 0) return "";
         const datum = data[0];
 
         const header = `subgraph ${parentId}${datum.id} [${datum.title}]\n`;
         const body = datum.connotative_task_id.map(value => buildTree(taskDependencies)(datum.id)(value)).join("\n");
-        return header + body + "\nend";
+        return header + body + "\nend\n";
 
     }
     const treeGraph = "flowchart LR\n"
@@ -153,10 +153,20 @@ const view = model => {
             .map(value => {
                 return buildTree(taskDependencies)("")(value.id)
             })
+            .join("\n")
+        + taskDependencies
+            .map(data => {
+                console.log(data.successor_task_id);
+                const successor_task_id = data.successor_task_id
+                    .map(datum => datum === '' ? "" : `${data.id} ----> ${datum}`).join("\n");
+                const dependency_task_id = data.dependency_task_id
+                    .map(datum => datum === '' ? "" : `${datum} ====> ${data.id}`).join("\n");
+                return successor_task_id+dependency_task_id;
+            }
+            )
             .join("\n");
 
-
-
+    console.log(treeGraph);
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
     return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph };
 };
