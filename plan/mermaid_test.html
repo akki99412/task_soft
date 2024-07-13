@@ -27,12 +27,14 @@
     participant previewer
     main->>renderer: Open file
     renderer->>previewer: Refresh preview`;
-        const diagramB = `sequenceDiagram
-    participant mainB
-    participant rendererB
-    participant previewerB
-    mainB->>rendererB: Open file
-    rendererB->>previewerB: Refresh preview`;
+        const diagramB = `
+flowchart LR
+    test-->test2
+    subgraph ide1 [one]
+    test3-->a2
+    end
+    test4-->ide1
+    `;
         const svgId = "mermaidExample";
         const container = document.getElementById("mermaidContainer");
         const svgCode = document.getElementById("svgCode");
@@ -45,15 +47,17 @@
         });
 
         // mermaid 記法から SVG を作成し、シリアライズされた文字列を取得します。
-        const mermaidRender = diagram=>_ => {
+        const mermaidRender = diagram => _ => {
             const mermaid_promise = mermaidAPI.render(svgId, diagram, container);
             // mermaid_promise.then(value =>svgCode.innerText = value.svg);
             mermaid_promise.then(value => svgContainer.insertAdjacentHTML('afterbegin', value.svg));
-            mermaid_promise.then(value=>console.log(value.svg));
+            mermaid_promise.then(value => console.log(value.svg));
         };
         mermaidRender(diagramB)();
-            graphA.onclick = mermaidRender(diagramA);
-                graphB.onclick = mermaidRender(diagramB);
+
+        // mermaidRender(diagramA)();
+        graphA.onclick = mermaidRender(diagramA);
+        graphB.onclick = mermaidRender(diagramB);
     </script>
 </body>
 

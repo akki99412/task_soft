@@ -124,12 +124,36 @@ const view = model => {
                 })
         }));
     const textarea = model.textarea;
+    const taskDependencies = taskDataEntity.map(
+        data => {
+            const { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, } = data;
+            const extension_task_id = taskDataEntity.filter(value => value.connotative_task_id.includes(data.id)).map(value => value.id);
+
+
+            const dstData = { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, extension_task_id, };
+
+            return dstData;
+        }
+    );
+    console.log({taskDependencies});
+
+    const buildTree = taskDependencies => parentId=>taskId => {
+        const data = taskDependencies.filter(value => value.id === taskId);
+        if (data.length === 0) return "";
+        const datum = data[0];
+
+        const header = `subgraph ${parentId}${datum.id} [${datum.title}]\n`;
+        const body = datum.connotative_task_id.map(value => buildTree(taskDependencies)(datum.id)(value)).join("\n");
+        return header + body + "\nend";
+
+    }
     const treeGraph = "flowchart LR\n"
-        + taskDataEntity.map(value =>
-            `subgraph ${value.id} [${value.title}]\n`
-            + "test1-->test2\n"
-            + "end"
-        ).join("\n");
+        + taskDependencies
+            .filter(value => value.extension_task_id.length === 0)
+            .map(value => {
+                return buildTree(taskDependencies)("")(value.id)
+            })
+            .join("\n");
 
 
 
@@ -265,8 +289,10 @@ const TableUpdate = model => message => {
 
     const taskDataEntity = jspreadsheetData.map(row =>
         Object.fromEntries(zip(sortedKeys, row).map(([key, data]) => [key,
-            key === "implementation_date" ? string2ImplementationDate(data) : key === "successor_task_id" || key === "dependency_task_id" ? data.split(";")
-                : data]))
+            key === "implementation_date" ? string2ImplementationDate(data)
+                : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key)
+                    ? data.split(";")
+                    : data]))
     );
 
 
@@ -559,8 +585,11 @@ const update = model => message => {
                     ._(stateChange2implementationDate(model.taskDataEntity))
                     ._(fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES))
                     ._(data => data.map(datum => {
+                        //タスク同士の関係で自分を指しているidを取り除く処理
                         const successor_task_id = datum.successor_task_id.filter(value => value !== datum.id);
-                        return { ...datum, successor_task_id }
+                        const dependency_task_id = datum.dependency_task_id.filter(value => value !== datum.id);
+                        const connotative_task_id = datum.connotative_task_id.filter(value => value !== datum.id);
+                        return { ...datum, successor_task_id, dependency_task_id, connotative_task_id }
                     })
                     )
                     ._(data => {
@@ -578,10 +607,11 @@ const update = model => message => {
                         const source = taskDataEntity.map(row => ({ id: row.id, name: row.title, title: row.id, groupe: "task", value: row.id, text: row.title }));
                         const createJspreadsheetTaskDataProperties = ({ type, editor, source, options, autocomplete, multiple }) => ({ type, editor, source, options, autocomplete, multiple });
                         const successor_task_id = createJspreadsheetTaskDataProperties({ ...data.successor_task_id, source });
-                        const dependency_task_id = createJspreadsheetTaskDataProperties({ ...data.successor_task_id, source });
+                        const dependency_task_id = createJspreadsheetTaskDataProperties({ ...data.dependency_task_id, source });
+                        const connotative_task_id = createJspreadsheetTaskDataProperties({ ...data.connotative_task_id, source });
                         // const { type, editor, options, autocomplete, multiple } = data.successor_task_id;
                         // const successor_task_id = { type, editor, source, options, autocomplete, multiple };
-                        return { ...data, successor_task_id, dependency_task_id };
+                        return { ...data, successor_task_id, dependency_task_id, connotative_task_id };
                     })
                 )
 

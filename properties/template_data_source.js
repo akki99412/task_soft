@@ -15,7 +15,7 @@ diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
         similar_tasks_id = { defaultValue: "", };
         successor_task_id = { defaultValue: [""], };
         dependency_task_id = { defaultValue: [""], };
-        connotative_task_id = { defaultValue: "", };
+        connotative_task_id = { defaultValue: [""], };
         row_num = { defaultValue: "", };
         implementation_time = { defaultValue: "", };
         kanbanNum = { defaultValue: 0 };
@@ -100,7 +100,7 @@ diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
         successor_task_id = { type: "dropdown", editor: "", source: [], options: [], autocomplete: true, multiple: true };
         dependency_task_id = { type: "dropdown", editor: "", source: [], options: [], autocomplete: true, multiple: true };
         successor_task = { type: "text", editor: "", source: [], options: [], autocomplete:false, multiple:false };
-        connotative_task_id = { type: "hidden", editor: "", source: [], options: [], autocomplete:false, multiple:false };
+        connotative_task_id = { type: "dropdown", editor: "", source: [], options: [], autocomplete:true, multiple:true };
         connotative_task = { type: "text", editor: "", source: [], options: [], autocomplete:false, multiple:false };
         row_num = { type: "hidden", editor: "", source: [], options: [], autocomplete:false, multiple:false };
         implementation_time = { type: "text", editor: "", source: [], options: [], autocomplete:false, multiple:false };
