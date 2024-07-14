@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>mermaidAPI.render() 実行例</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        textarea#svgCode {
+            width: 90%;
+            height: 50vh
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mermaidContainer">test</div>
+    <!-- <textarea id="svgCode"></textarea> -->
+    <div id="svgContainer"></div>
+    <button id="graphA">graphA</button>
+    <button id="graphB">graphB</button>
+    <script>
+        const mermaidAPI = mermaid.mermaidAPI;
+        const diagramA = `sequenceDiagram
+    participant main
+    participant renderer
+    participant previewer
+    main->>renderer: Open file
+    renderer->>previewer: Refresh preview`;
+        const diagramB = `
+flowchart LR
+    test-->test2
+    subgraph ide1 [one]
+    test3-->a2
+    end
+    test4-->ide1
+    `;
+        const svgId = "mermaidExample";
+        const container = document.getElementById("mermaidContainer");
+        const svgCode = document.getElementById("svgCode");
+        const svgContainer = document.getElementById("svgContainer");
+
+        // mermaidAPI をまず初期化します
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: "dark"
+        });
+
+        // mermaid 記法から SVG を作成し、シリアライズされた文字列を取得します。
+        const mermaidRender = diagram => _ => {
+            const mermaid_promise = mermaidAPI.render(svgId, diagram, container);
+            // mermaid_promise.then(value =>svgCode.innerText = value.svg);
+            mermaid_promise.then(value => svgContainer.insertAdjacentHTML('afterbegin', value.svg));
+            mermaid_promise.then(value => console.log(value.svg));
+        };
+        mermaidRender(diagramB)();
+
+        // mermaidRender(diagramA)();
+        graphA.onclick = mermaidRender(diagramA);
+        graphB.onclick = mermaidRender(diagramB);
+    </script>
+</body>
+
+</html>

@@ -65,7 +65,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.js"></script>
     <link rel="stylesheet" href="jkanban.css">
 
-
+    <!-- mermaid -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 </head>
 
 <body>
@@ -75,6 +76,10 @@
         new Darkmode().showWidget();
     </script> -->
     <div id="spreadsheet"></div>
+    <div class="mermaid" id="mermaidSvgContainer"></div>
+    <div id="mermaidWorkingContainer"></div>
+    <!-- <textarea id="svgCode"></textarea> -->
+    <div id="svgContainer"></div>
     <div class='gantt-wrap gantt-target dark'>
         <svg class="gantt-target dark" id="gantt"></svg>
     </div>
@@ -120,17 +125,18 @@
     <!-- <script src="repositories/secretKeyTimeline.js" charset="UTF-8"></script> -->
     <script src="useCases/useCases.js" charset="UTF-8"></script>
     <!-- <script src="timelines/timelines.js" charset="UTF-8"></script> -->
-    
+
     <!-- <script src="views/repositoryView.js" charset="UTF-8"></script> -->
     <script src="views/table.js" charset="UTF-8"></script>
     <script src="views/calendar.js" charset="UTF-8"></script>
     <script src="views/gantt.js" charset="UTF-8"></script>
     <script src="views/kanban.js" charset="UTF-8"></script>
+    <script src="views/treeGraph.js" charset="UTF-8"></script>
 
     <script src="elm/main.js" charset="UTF-8"></script>
 
     <script src="utilities/elmLike.test.js" charset="UTF-8"></script>
-<!-- <script src="repositories/localStrageGetter.js" charset="UTF-8"></script>
+    <!-- <script src="repositories/localStrageGetter.js" charset="UTF-8"></script>
     <script src="repositories/localStrageSetter.js" charset="UTF-8"></script> -->
 
     <script>
@@ -148,17 +154,17 @@
             // clearTimeout(timeoutID);
             // c.log("timeoutID cleared")
             // delayRepositoryUpdate(repositories.value);
-            main.update(new ButtonMessage({id: $saveButton}));
+            main.update(new ButtonMessage({ id: $saveButton }));
         };
         $exportJsonButton.onclick = function () {
             // c.log(JSON.stringify(repositories.value));
             // $textarea.value = (JSON.stringify(repositories.value));
-            main.update(new ButtonMessage({id: $exportJsonButton }));
+            main.update(new ButtonMessage({ id: $exportJsonButton }));
         };
         $importJsonButton.onclick = _ => {
             // repositorySetter.next(JSON.parse($json.value));
             // main.update(new ButtonMessage({id: $importJsonButton }));
-            main.update(new ImportJsonMessage({value: $textarea.value}))
+            main.update(new ImportJsonMessage({ value: $textarea.value }))
         }
 
         $loadButton.onclick = function () {
@@ -167,10 +173,10 @@
             // getLocalStorage2Timeline(localStorageGetter);
             // repositorySetter.next(parseJson2repositories.value);
 
-            main.update(new ButtonMessage({id: $loadButton}));
+            main.update(new ButtonMessage({ id: $loadButton }));
             loadLocalStorage(secretKey)(main.update);
         };
-        
+
         const unloadFunction = e => {
             e.preventDefault();
             e.returnValue = "ページを離れようとしています。よろしいですか？"
@@ -205,22 +211,22 @@
 
     </script>
     <script>
-    document.addEventListener("keydown", (e) => {
-        // if (!e.repeat) {
-        //     c.log(`Key "${e.key}" pressed [event: keydown]`);
-        //     c.log(e);
-        // } else {
-        //     c.log(`Key "${e.key}" repeating [event: keydown]`);
-        // }
-        if (e.key === "z" && e.ctrlKey&& !e.repeat) {
-            e.preventDefault();
-            main.update(new Undo());
-        }
-        if (e.key === "y" && e.ctrlKey&& !e.repeat) {
-            e.preventDefault();
-            main.update(new Redo());
-        }
-    });
+        document.addEventListener("keydown", (e) => {
+            // if (!e.repeat) {
+            //     c.log(`Key "${e.key}" pressed [event: keydown]`);
+            //     c.log(e);
+            // } else {
+            //     c.log(`Key "${e.key}" repeating [event: keydown]`);
+            // }
+            if (e.key === "z" && e.ctrlKey && !e.repeat) {
+                e.preventDefault();
+                main.update(new Undo());
+            }
+            if (e.key === "y" && e.ctrlKey && !e.repeat) {
+                e.preventDefault();
+                main.update(new Redo());
+            }
+        });
 
 
     </script>
