@@ -36,6 +36,7 @@ diContainer.addForCallByValue("TASK_UI_TEMPLATES",
         completion_date_time = { header: "完了予定日時", };
         completion_date = { header: "完了予定日", };
         completion_time = { header: "完了予定時間", };
+        completion_rate = { header: "完了率", };
         implementation_date = { header: "実際の実施日時", };
         state = { header: "ステータス", };
         similar_tasks_id = { header: "類似タスクid", };
@@ -64,6 +65,7 @@ diContainer.addForCallByValue("TABLE_TASK_DATA_TEMPLATES",
         completion_date_time = { width: 200, col_num: 1, read_only: false, align: "left" };
         completion_date = { width: 200, col_num: 1, read_only: false, align: "left" };
         completion_time = { width: 200, col_num: 1, read_only: false, align: "left" };
+        completion_rate = { width: 200, col_num: 1, read_only: true, align: "left" };
         implementation_date = { width: 200, col_num: 1, read_only: false, align: "left" };
         state = { width: 200, col_num: 1, read_only: false, align: "left" };
         similar_tasks_id = { width: 200, col_num: 1, read_only: false, align: "left" };
@@ -92,7 +94,8 @@ diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
         scheduled_time = { type: "text", editor: clock_editor, source: [], options: { format: DEFAULT_FORMAT.TIME }, autocomplete:false, multiple:false };
         completion_date_time = { type: "hidden", editor: "", source: [], options: [], autocomplete:false, multiple:false };
         completion_date = { type: "calendar", editor: "", source: [], options: { format: DEFAULT_FORMAT.DATE } };
-        completion_time = { type: "text", editor: clock_editor, source: [], options: [], autocomplete:false, multiple:false };
+        completion_time = { type: "text", editor: clock_editor, source: [], options: [], autocomplete: false, multiple: false };
+        completion_rate = { type: "numeric", editor: "", source: [], options: [], autocomplete: false, multiple: false };
         implementation_date = { type: "text", editor: "", source: [], options: [], autocomplete:false, multiple:false };
         state = { type: "dropdown", editor: "", source: Object.values(TASK_STATE), options: [], autocomplete:false, multiple:false };
         similar_tasks_id = { type: "hidden", editor: "", source: [], options: [], autocomplete:false, multiple:false };

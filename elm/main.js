@@ -79,8 +79,42 @@ const view = model => {
     const taskUiProperties = model.taskUiProperties;
     const tableTaskDataProperties = model.tableTaskDataProperties;
     const jspreadsheetTaskDataProperties = model.jspreadsheetTaskDataProperties;
-    const taskDataEntity = model.taskDataEntity;
+    const taskDependencies = model.taskDataEntity.map(
+        data => {
+            const { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, } = data;
+            const extension_task_id = model.taskDataEntity.filter(value => value.connotative_task_id.includes(data.id)).map(value => value.id);
+            console.log(0<connotative_task_id.filter(value => value !== '').length?-1:0);
+            const completion_rate = data.state === TASK_STATE.COMPLETED ? 100
+                : 0<connotative_task_id.filter(value => value !== '').length  ? -1
+                    : 0;
 
+            const dstData = { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, extension_task_id, completion_rate, };
+
+            return dstData;
+        }
+    );
+    // console.log({ taskDependencies });
+    //完了率の計算(木構造で、関数プログラミング的に書く方法が思いつかなかった)
+    for (let i = 0; taskDependencies.map(value => value.completion_rate).includes(-1); i++) {
+        const data = taskDependencies[i % taskDependencies.length];
+        if (data.completion_rate !== -1) return;
+        const connotative_task = taskDependencies.filter(value => data.connotative_task_id.includes(value.id));
+        if (
+            connotative_task.some(value => value.completion_rate === -1)) {
+            continue;
+        }
+        console.log({connotative_task});
+        const total = connotative_task
+            .map(value => value.completion_rate)
+            .reduce((sum, element) => sum + element, 0);
+        const average = total / connotative_task.length;
+        data.completion_rate = average;
+    }
+    const taskDataEntity = model.taskDataEntity
+        .map(value => ({
+            ...value,
+            completion_rate: taskDependencies.filter(data => data.id === value.id)[0].completion_rate,
+        }));
 
 
     const tableHeaderKeys = generateTableHeaderKeys(tableTaskDataProperties);
@@ -124,18 +158,6 @@ const view = model => {
                 })
         }));
     const textarea = model.textarea;
-    const taskDependencies = taskDataEntity.map(
-        data => {
-            const { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, } = data;
-            const extension_task_id = taskDataEntity.filter(value => value.connotative_task_id.includes(data.id)).map(value => value.id);
-
-
-            const dstData = { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, extension_task_id, };
-
-            return dstData;
-        }
-    );
-    console.log({ taskDependencies });
 
     const buildTree = taskDependencies => parentId => taskId => {
         const data = taskDependencies.filter(value => value.id === taskId);
@@ -161,7 +183,7 @@ const view = model => {
                     .map(datum => datum === '' ? "" : `${data.id} ----> ${datum}`).join("\n");
                 const dependency_task_id = data.dependency_task_id
                     .map(datum => datum === '' ? "" : `${datum} ====> ${data.id}`).join("\n");
-                return successor_task_id+dependency_task_id;
+                return successor_task_id + dependency_task_id;
             }
             )
             .join("\n");
@@ -300,8 +322,7 @@ const TableUpdate = model => message => {
     const taskDataEntity = jspreadsheetData.map(row =>
         Object.fromEntries(zip(sortedKeys, row).map(([key, data]) => [key,
             key === "implementation_date" ? string2ImplementationDate(data)
-                : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key)
-                    ? data.split(";")
+                : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key) ? data.split(";")
                     : data]))
     );
 
@@ -602,6 +623,7 @@ const update = model => message => {
                         return { ...datum, successor_task_id, dependency_task_id, connotative_task_id }
                     })
                     )
+                    ._(data => data)
                     ._(data => {
                         return [...data];
                     })
