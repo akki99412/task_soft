@@ -76,6 +76,7 @@ const init = _ => {
 };
 const view = model => {
     c.log("view");
+    c.log(model);
     const taskUiProperties = model.taskUiProperties;
     const tableTaskDataProperties = model.tableTaskDataProperties;
     const jspreadsheetTaskDataProperties = model.jspreadsheetTaskDataProperties;
@@ -83,7 +84,6 @@ const view = model => {
         data => {
             const { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, } = data;
             const extension_task_id = model.taskDataEntity.filter(value => value.connotative_task_id.includes(data.id)).map(value => value.id);
-            console.log(0<connotative_task_id.filter(value => value !== '').length?-1:0);
             const completion_rate = data.state === TASK_STATE.COMPLETED ? 100
                 : 0<connotative_task_id.filter(value => value !== '').length  ? -1
                     : 0;
@@ -97,13 +97,13 @@ const view = model => {
     //完了率の計算(木構造で、関数プログラミング的に書く方法が思いつかなかった)
     for (let i = 0; taskDependencies.map(value => value.completion_rate).includes(-1); i++) {
         const data = taskDependencies[i % taskDependencies.length];
-        if (data.completion_rate !== -1) return;
+        if (data.completion_rate !== -1) continue;
         const connotative_task = taskDependencies.filter(value => data.connotative_task_id.includes(value.id));
         if (
             connotative_task.some(value => value.completion_rate === -1)) {
             continue;
         }
-        console.log({connotative_task});
+        // console.log({connotative_task});
         const total = connotative_task
             .map(value => value.completion_rate)
             .reduce((sum, element) => sum + element, 0);
@@ -135,12 +135,12 @@ const view = model => {
         description: model.memo,
         start: dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
         end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
-        progress: model.state === TASK_STATE.COMPLETED ? 100
-            : 0,
+        progress: model.completion_rate,
         dependencies: taskDataEntity
             .filter(value => value.successor_task_id.includes(model.id))
             .map(value => value.id)
             .concat(model.dependency_task_id)
+            .concat(model.connotative_task_id)
             .join(", "),
     }));
 
@@ -178,7 +178,7 @@ const view = model => {
             .join("\n")
         + taskDependencies
             .map(data => {
-                console.log(data.successor_task_id);
+                // console.log(data.successor_task_id);
                 const successor_task_id = data.successor_task_id
                     .map(datum => datum === '' ? "" : `${data.id} ----> ${datum}`).join("\n");
                 const dependency_task_id = data.dependency_task_id
@@ -188,21 +188,23 @@ const view = model => {
             )
             .join("\n");
 
-    console.log(treeGraph);
+    // console.log(treeGraph);
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
+    // console.log({ tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph });
     return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph };
 };
 const textareaBuffer = new Observable("");
 window.addEventListener('load',
     _ => textareaBuffer.subscribe(
         value => {
-            c.log(value);
+            // c.log(value);
             $textarea.value = value
         }
     )
 );
 const render = table => gantt => ganttTasks => calendar => kanban => timeout => textarea => treeGraph => view => {
     c.log("render");
+    c.log(view);
     const tableView = new TableMessage({
         jspreadsheetData: JSON.parse(JSON.stringify(table.getData())),
         jspreadsheetColumns: JSON.parse(JSON.stringify(table.getConfig().columns)),
@@ -220,8 +222,8 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
     }
     if (!ganttTasks.isUpdate && !isEqualObjectJson(view.ganttTasks)(ganttTasks.data)) {
         c.log("update gantt");
-        c.log(view.ganttTasks);
-        c.log(ganttTasks.data);
+        // c.log(view.ganttTasks);
+        // c.log(ganttTasks.data);
         ganttTasks.data = view.ganttTasks;
         gantt.refresh(JSON.parse(JSON.stringify(view.ganttTasks)));
     }
@@ -292,7 +294,7 @@ const TableUpdate = model => message => {
         [header2Kye[data.title],
         Object.fromEntries(Object.entries(data)
             .concat([["col_num", i]]))])));
-    c.log(columns);
+    // c.log(columns);
     const tableTaskDataProperties = Object.fromEntries(
         Object.entries(columns).map(([key, value]) => [
             key,
@@ -585,7 +587,7 @@ const update = model => message => {
 
 
                     c.log(dstModel);
-                    c.log(dstModel == model);
+                    // c.log(dstModel == model);
                     return dstModel;
                 }
             default:
