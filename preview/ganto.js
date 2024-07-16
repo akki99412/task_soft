@@ -46,15 +46,15 @@ window.onload = function () {
     // gantt をセットアップ
     var gantt = new Gantt("#gantt", tasks, {
         // ダブルクリック時
-        on_click: (task) => {
+        onClick: (task) => {
             console.log(task.description);
         },
         // 日付変更時
-        on_date_change: (task, start, end) => {
+        onDateChange: (task, start, end) => {
             console.log(`${task.name}: change date`);
         },
         // 進捗変更時
-        on_progress_change: (task, progress) => {
+        onProgressChange: (task, progress) => {
             console.log(`${task.name}: change progress to ${progress}%`);
         },
     });

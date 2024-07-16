@@ -51,7 +51,7 @@ const header2KeyUpdater = Timeline.create()(generateHeader2Key).apply(Timeline.c
 const jspreadsheetDataUpdater = tableGetter.map(parent => parent.jspreadsheetData);
 const jspreadsheetColumnsUpdater = tableGetter.map(parent => parent.jspreadsheetColumns);
 const columnsUpdater = jspreadsheetColumnsUpdater.map(jspreadsheetColumns=>Object.fromEntries(jspreadsheetColumns.map((data, i) =>
-    [data.title, Object.fromEntries(Object.entries(data).concat([["col_num", i]]))])));
+    [data.title, Object.fromEntries(Object.entries(data).concat([["colNum", i]]))])));
 loggerTimelines.push(
     tableGetter.map(a => { c.groupCollapsed("tableGetter"); c.log(a); c.groupEnd(); return a })
 );
@@ -151,8 +151,8 @@ const ganttTasks = Timeline.create()(taskDataEntity => taskDataEntity.map(parent
     id: parent.id,
     name: parent.title,
     description: parent.memo,
-    start: parent.scheduled_date_time,
-    end: parent.completion_date_time,
+    start: parent.scheduledDateTime,
+    end: parent.completionDateTime,
     // progress:parent.id,
 })))
     .apply(taskDataEntity);

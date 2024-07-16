@@ -13,25 +13,25 @@ c.log(string2ImplementationDate(""));
 // c.log([].length);
 // c.log("split");
 // c.log("".split(/\s*-\s*/));
-c.log("dayjs().tz(time_zone)");
-c.log(dayjs().tz(time_zone));
+c.log("dayjs().tz(timeZone)");
+c.log(dayjs().tz(timeZone));
 
 const table2Repositories = jspreadsheetTimelineOutput.map(parent => {
     const target = repositories.value;
     const columns = Object.fromEntries(parent.jspreadsheetColumns.map((data, i) =>
-        [data.title, Object.fromEntries(Object.entries(data).concat([["col_num", i]]))]));
+        [data.title, Object.fromEntries(Object.entries(data).concat([["colNum", i]]))]));
     const taskUiProperties =
         Object.fromEntries(Object.entries(parent.header2Key).map(([header, key]) =>
             ([key, Object.fromEntries(Object.entries(target.taskUiProperties[key]).map(([k, value]) => ([k, k === "header" ? columns[header].title : value])))])
         ));
 
     const tableTaskDataProperties = Object.fromEntries(Object.entries(parent.header2Key).map(([header, key]) =>
-        ([key, Object.fromEntries(Object.entries(target.tableTaskDataProperties[key]).map(([k, value]) => ([k, k === "read_only" ? columns[header]["readOnly"] : k === "width" || k === "col_num" ? columns[header][k] : value])))])
+        ([key, Object.fromEntries(Object.entries(target.tableTaskDataProperties[key]).map(([k, value]) => ([k, k === "readOnly" ? columns[header]["readOnly"] : k === "width" || k === "colNum" ? columns[header][k] : value])))])
     ));
     const jspreadsheetTaskDataProperties = Object.fromEntries(Object.entries(parent.header2Key).map(([header, key]) =>
         ([key, Object.fromEntries(Object.entries(target.jspreadsheetTaskDataProperties[key]).map(([k, value]) => ([k, k === "type" || k === "source" || k === "options" ? columns[header][k] : value])))])
     ));
-    const keys = Object.entries(columns).sort((a, b) => a[1].col_num - b[1].col_num).map(data => parent.header2Key[data[0]]);
+    const keys = Object.entries(columns).sort((a, b) => a[1].colNum - b[1].colNum).map(data => parent.header2Key[data[0]]);
     // c.log(keys);
     // c.log(taskDataProperties.value);
     // c.log(Object.fromEntries(
@@ -39,7 +39,7 @@ const table2Repositories = jspreadsheetTimelineOutput.map(parent => {
     // ));
     const taskDataRepository = parent.jspreadsheetData.map(data => {
         const buffer = Object.fromEntries(data.map((datum, i) => ([keys[i],
-        keys[i] === "implementation_date" ? string2ImplementationDate(datum) : datum
+        keys[i] === "implementationDate" ? string2ImplementationDate(datum) : datum
         ])))
         // c.log(buffer);
         // if (buffer.id === "") return Object.fromEntries(Object.entries(taskDataProperties.value).map((obj) => { return [obj[0], obj[1].defaultValue] }));

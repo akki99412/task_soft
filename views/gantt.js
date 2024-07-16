@@ -1,12 +1,12 @@
 class IGanttData {
-    constructor({ id=null, name=null, start=null, end=null, progress=null, dependencies=null, custom_class=null,description=null } = {}) {
+    constructor({ id=null, name=null, start=null, end=null, progress=null, dependencies=null, customClass=null,description=null } = {}) {
         this.id=id;
         this.name=name;
         this.start=start;
         this.end=end;
         this.progress=progress;
         this.dependencies=dependencies;
-        this.custom_class = custom_class;
+        this.customClass = customClass;
         this.description = description;
     }
 }
@@ -73,13 +73,13 @@ let ganttTasks = {data: [
 // gantt をセットアップ
 var gantt = new Gantt("#gantt", ganttTasks.data, {
     // ダブルクリック時
-    on_click: (task) => {
+    onClick: (task) => {
         ganttTasks.isUpdate = true;
         main.update(new GanttMessage(task));
         ganttTasks.isUpdate = false;
     },
     // 日付変更時
-    on_date_change: (task, start, end) => {
+    onDateChange: (task, start, end) => {
         ganttTasks.isUpdate = true;
         // console.log(`${task.name}: change date start: ${start} end: ${end}`);
         // c.log({ task, start, end });
@@ -90,7 +90,7 @@ var gantt = new Gantt("#gantt", ganttTasks.data, {
         ganttTasks.isUpdate = false;
     },
     // 進捗変更時
-    on_progress_change: (task, progress) => {
+    onProgressChange: (task, progress) => {
         ganttTasks.isUpdate = true;
         // console.log(`${task.name}: change progress to ${progress}%`);
         // c.log({ task, progress });
@@ -99,13 +99,13 @@ var gantt = new Gantt("#gantt", ganttTasks.data, {
         main.update(new GanttMessage(data));
         ganttTasks.isUpdate = false;
     },
-    // on_double_click: (task) => {
+    // onDoubleClick: (task) => {
     //   console.log("Double Click", task);
     // },
-    // on_view_change: (mode) => {
+    // onViewChange: (mode) => {
     //   console.log("View Change", mode);
     // },
-    // on_hover: (task, x, y) => {
+    // onHover: (task, x, y) => {
     //   console.log("Hover", x, y);
     // },
     readonly: false,

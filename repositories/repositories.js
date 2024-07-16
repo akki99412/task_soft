@@ -2,23 +2,23 @@
 
 class TimelineSandwich {
     constructor(setterTimeline, getterTimeline) {
-        this._setterTimeline = setterTimeline;
-        this._getterTimeline = getterTimeline;
+        this.SetterTimeline = setterTimeline;
+        this.GetterTimeline = getterTimeline;
     }
     static create = (setterTimeline) => (getterTimeline) => new TimelineSandwich(setterTimeline, getterTimeline);
     next = data =>
-        this._setterTimeline.next(data);
+        this.SetterTimeline.next(data);
 
     get getter() {
-        return this._getterTimeline;
+        return this.GetterTimeline;
     }
     get value() {
         return this.getter.value;
     }
 
-    bind = data => this._getterTimeline.bind(data);
-    map = data => this._getterTimeline.map(data);
-    apply = data => this._getterTimeline.apply(data);
+    bind = data => this.GetterTimeline.bind(data);
+    map = data => this.GetterTimeline.map(data);
+    apply = data => this.GetterTimeline.apply(data);
 
 }
 const taskDataProperties = Timeline.create()(diContainer.container.TASK_DATA_TEMPLATES);
@@ -48,19 +48,19 @@ const repositories = repositorySetter.map(parent => ({
             c.log(repositories.value.taskDataRepository[i].state);
             if (repositories.value.taskDataRepository[i].state !== TASK_STATE.IN_PROGRESS && data.id === repositories.value.taskDataRepository[i].id) {
 
-                data.implementation_date.push({ start: (dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME)), end: "" });
+                data.implementationDate.push({ start: (dayjs().tz(timeZone).format(DEFAULT_FORMAT.DATE_TIME)), end: "" });
                 // console.warn("change to in progress");
             }
         } else if (data.state !== TASK_STATE.IN_PROGRESS) {
             if (i<repositories.value.taskDataRepository.length  && repositories.value.taskDataRepository[i].state === TASK_STATE.IN_PROGRESS && data.id === repositories.value.taskDataRepository[i].id) {
-                data.implementation_date[data.implementation_date.length - 1].end = dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME);
-                const sum_time = data.implementation_date.reduce(function (sum, element) {
+                data.implementationDate[data.implementationDate.length - 1].end = dayjs().tz(timeZone).format(DEFAULT_FORMAT.DATE_TIME);
+                const sumTime = data.implementationDate.reduce(function (sum, element) {
                     return sum + dayjs(element.end).diff(dayjs(element.start), 'hour');
                 }, 0);
-                // c.log(sum_time);
-                data.implementation_time = sum_time;
+                // c.log(sumTime);
+                data.implementationTime = sumTime;
             }
-            // task_table.setValueFromCoords(data_template.find(template => template.member == "table_implementation_time").table_col_num, x2, 
+            // taskTable.setValueFromCoords(dataTemplate.find(template => template.member == "tableImplementationTime").tableColNum, x2, 
         }
         return data.id === "" ? Object.fromEntries(Object.entries(taskDataProperties.value).map((obj) => { return [obj[0], obj[1].defaultValue] })) : data
     }

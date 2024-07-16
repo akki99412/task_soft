@@ -1,6 +1,6 @@
-const implementationDate2String = implementation_date => {
-    // c.log(implementation_date);
-    const stringifyList = implementation_date.map((data) => {
+const implementationDate2String = implementationDate => {
+    // c.log(implementationDate);
+    const stringifyList = implementationDate.map((data) => {
         if (data.start === undefined) return "";
         return data.start + " - " + data.end
     });
@@ -24,13 +24,13 @@ c.log("make start table finish");
 const repositories2Table = repositories.map(parent => {
     const tableHeaderKeys = Object.entries(parent.tableTaskDataProperties)
         .map(([key, value]) => ({ key, value }))
-        .sort((a, b) => a.value.col_num - b.value.col_num)
+        .sort((a, b) => a.value.colNum - b.value.colNum)
         .map(parent => parent.key);
     // c.log(tableHeaderKeys);
     const jspreadsheetColumns = tableHeaderKeys.map(key => ({
         title: parent.taskUiProperties[key].header,
         width: parent.tableTaskDataProperties[key].width,
-        readOnly: parent.tableTaskDataProperties[key].read_only,
+        readOnly: parent.tableTaskDataProperties[key].readOnly,
         type: parent.jspreadsheetTaskDataProperties[key].type,
         editor: parent.jspreadsheetTaskDataProperties[key].editor,
         source: parent.jspreadsheetTaskDataProperties[key].source,
@@ -40,7 +40,7 @@ const repositories2Table = repositories.map(parent => {
     const jspreadsheetData = parent.taskDataRepository
         .map(taskDatum =>
             tableHeaderKeys.map(key =>
-                key !== "implementation_date" ?
+                key !== "implementationDate" ?
                     taskDatum[key] :
                     implementationDate2String(taskDatum[key])
             )

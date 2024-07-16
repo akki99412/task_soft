@@ -2,12 +2,12 @@
 let secretKey = {};
 
 (async _ => {
-    if (secret_key_string === "") {
-        let generated_key = await auto_generate_key();
-        saveTextToFile("const secret_key_string=\'" + JSON.stringify(generated_key) + "\'", "key_file.js");
-        return generated_key;
+    if (secretKeyString === "") {
+        let generatedKey = await autoGenerateKey();
+        saveTextToFile("const secretKeyString=\'" + JSON.stringify(generatedKey) + "\'", "keyFile.js");
+        return generatedKey;
     } else {
-        return await import_secret_key(JSON.parse(secret_key_string));
+        return await importSecretKey(JSON.parse(secretKeyString));
     }
 })().then(value => secretKey=value);
 

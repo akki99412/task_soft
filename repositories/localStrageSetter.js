@@ -39,7 +39,7 @@ const encryptTimelineSetter = Timeline.create()(secretKey => async parent => {
     // c.log(secretKey);
     // c.log(secretKey === null);
     if (secretKey !== null && parent !== "{}") {
-        const buffer = await encrypt_string(secretKey, parent);
+        const buffer = await encryptString(secretKey, parent);
         encryptTimelineGetter.next(buffer);
         return buffer;
     } else {

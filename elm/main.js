@@ -1,11 +1,11 @@
 
 const secretKey = (async _ => {
-    if (secret_key_string === "") {
-        let generated_key = await auto_generate_key();
-        saveTextToFile("const secret_key_string=\'" + JSON.stringify(generated_key) + "\'", "key_file.js");
-        return generated_key;
+    if (secretKeyString === "") {
+        let generatedKey = await autoGenerateKey();
+        saveTextToFile("const secretKeyString=\'" + JSON.stringify(generatedKey) + "\'", "keyFile.js");
+        return generatedKey;
     } else {
-        return await import_secret_key(JSON.parse(secret_key_string));
+        return await importSecretKey(JSON.parse(secretKeyString));
     }
 })();
 
@@ -94,38 +94,38 @@ const view = model => {
     const jspreadsheetTaskDataProperties = model.jspreadsheetTaskDataProperties;
     const taskDependencies = model.taskDataEntity.map(
         data => {
-            const { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, } = data;
-            const extension_task_id = model.taskDataEntity.filter(value => value.connotative_task_id.includes(data.id)).map(value => value.id);
-            const completion_rate = data.state === TASK_STATE.COMPLETED ? 100
-                : 0 < connotative_task_id.filter(value => value !== '').length ? -1
+            const { title, id, similarTasksId, successorTaskId, dependencyTaskId, connotativeTaskId, } = data;
+            const extensionTaskId = model.taskDataEntity.filter(value => value.connotativeTaskId.includes(data.id)).map(value => value.id);
+            const completionRate = data.state === TASK_STATE.COMPLETED ? 100
+                : 0 < connotativeTaskId.filter(value => value !== '').length ? -1
                     : 0;
 
-            const dstData = { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, extension_task_id, completion_rate, };
+            const dstData = { title, id, similarTasksId, successorTaskId, dependencyTaskId, connotativeTaskId, extensionTaskId, completionRate, };
 
             return dstData;
         }
     );
     // console.log({ taskDependencies });
     //完了率の計算(木構造で、関数プログラミング的に書く方法が思いつかなかった)
-    for (let i = 0; taskDependencies.map(value => value.completion_rate).includes(-1); i++) {
+    for (let i = 0; taskDependencies.map(value => value.completionRate).includes(-1); i++) {
         const data = taskDependencies[i % taskDependencies.length];
-        if (data.completion_rate !== -1) continue;
-        const connotative_task = taskDependencies.filter(value => data.connotative_task_id.includes(value.id));
+        if (data.completionRate !== -1) continue;
+        const connotativeTask = taskDependencies.filter(value => data.connotativeTaskId.includes(value.id));
         if (
-            connotative_task.some(value => value.completion_rate === -1)) {
+            connotativeTask.some(value => value.completionRate === -1)) {
             continue;
         }
-        // console.log({connotative_task});
-        const total = connotative_task
-            .map(value => value.completion_rate)
+        // console.log({connotativeTask});
+        const total = connotativeTask
+            .map(value => value.completionRate)
             .reduce((sum, element) => sum + element, 0);
-        const average = total / connotative_task.length;
-        data.completion_rate = average;
+        const average = total / connotativeTask.length;
+        data.completionRate = average;
     }
     const taskDataEntity = model.taskDataEntity
         .map(value => ({
             ...value,
-            completion_rate: taskDependencies.filter(data => data.id === value.id)[0].completion_rate,
+            completionRate: taskDependencies.filter(data => data.id === value.id)[0].completionRate,
         }));
 
 
@@ -139,20 +139,20 @@ const view = model => {
     // c.log(taskDataEntity.map(model => model.limit));
 
     // const successorTask2dependencies = taskDataEntity.map(model => 
-    //     model.successor_task_id,
+    //     model.successorTaskId,
     // );
     const ganttTasks = taskDataEntity.map(model => ({
         id: model.id,
         name: model.title,
         description: model.memo,
-        start: dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
-        end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
-        progress: model.completion_rate,
+        start: dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
+        end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
+        progress: model.completionRate,
         dependencies: taskDataEntity
-            .filter(value => value.successor_task_id.includes(model.id))
+            .filter(value => value.successorTaskId.includes(model.id))
             .map(value => value.id)
-            .concat(model.dependency_task_id)
-            .concat(model.connotative_task_id)
+            .concat(model.dependencyTaskId)
+            .concat(model.connotativeTaskId)
             .join(", "),
     }));
 
@@ -177,25 +177,25 @@ const view = model => {
         const datum = data[0];
 
         const header = `subgraph ${parentId}${datum.id} [${datum.title}]\n`;
-        const body = datum.connotative_task_id.map(value => buildTree(taskDependencies)(datum.id)(value)).join("\n");
+        const body = datum.connotativeTaskId.map(value => buildTree(taskDependencies)(datum.id)(value)).join("\n");
         return header + body + "\nend\n";
 
     }
     const treeGraph = "flowchart LR\n"
         + taskDependencies
-            .filter(value => value.extension_task_id.length === 0)
+            .filter(value => value.extensionTaskId.length === 0)
             .map(value => {
                 return buildTree(taskDependencies)("")(value.id)
             })
             .join("\n")
         + taskDependencies
             .map(data => {
-                // console.log(data.successor_task_id);
-                const successor_task_id = data.successor_task_id
+                // console.log(data.successorTaskId);
+                const successorTaskId = data.successorTaskId
                     .map(datum => datum === '' ? "" : `${data.id} ----> ${datum}`).join("\n");
-                const dependency_task_id = data.dependency_task_id
+                const dependencyTaskId = data.dependencyTaskId
                     .map(datum => datum === '' ? "" : `${datum} ====> ${data.id}`).join("\n");
-                return successor_task_id + dependency_task_id;
+                return successorTaskId + dependencyTaskId;
             }
             )
             .join("\n");
@@ -259,10 +259,10 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
     });
     const encryptData = Promise.all([secretKey, delayModel,])
         .then(([secretKey, delayModel]) => {
-            return encrypt_string(secretKey, delayModel);
+            return encryptString(secretKey, delayModel);
         });
     // Promise.all([secretKey, encryptData,])
-    //     .then(([key, encryptData]) => (decrypt_string(key, encryptData)))
+    //     .then(([key, encryptData]) => (decryptString(key, encryptData)))
     //     .then(value => c.log(JSON.parse(value)));
     encryptData.then(value => {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(value));
@@ -308,14 +308,14 @@ const TableUpdate = model => message => {
     const columns = (Object.fromEntries(jspreadsheetColumns.map((data, i) =>
         [header2Kye[data.title],
         Object.fromEntries(Object.entries(data)
-            .concat([["col_num", i]]))])));
+            .concat([["colNum", i]]))])));
     // c.log(columns);
     const tableTaskDataProperties = Object.fromEntries(
         Object.entries(columns).map(([key, value]) => [
             key,
             (_ => {
-                const { width, col_num, readOnly, align } = { ...value };
-                return ({ width, col_num, read_only: readOnly, align });
+                const { width, colNum, readOnly, align } = { ...value };
+                return ({ width, colNum, readOnly: readOnly, align });
             })()
         ])
     );
@@ -332,7 +332,7 @@ const TableUpdate = model => message => {
     // jspreadsheetTaskDataProperties
     const sortedKeys = Object.entries(columns)
         .map(([key, value]) => ({ key, value }))
-        .sort((a, b) => a.value.col_num - b.value.col_num)
+        .sort((a, b) => a.value.colNum - b.value.colNum)
         .map(data => data.key);
     // c.log(sortedKeys);
     const taskDataKeys = Object.entries(model.taskDataEntity[0])
@@ -345,8 +345,8 @@ const TableUpdate = model => message => {
     //                 taskDataKeys.includes(key)
     //             )
     //             .map(([key, data]) => [key,
-    //                 key === "implementation_date" ? string2ImplementationDate(data)
-    //                     : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key) ? data.split(";")
+    //                 key === "implementationDate" ? string2ImplementationDate(data)
+    //                     : ["successorTaskId", "dependencyTaskId", "connotativeTaskId"].includes(key) ? data.split(";")
     //                         : data]
     //             ))
     // ));
@@ -357,8 +357,8 @@ const TableUpdate = model => message => {
                     taskDataKeys.includes(key)
                 )
                 .map(([key, data]) => [key,
-                    key === "implementation_date" ? string2ImplementationDate(data)
-                        : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key) ? data.split(";")
+                    key === "implementationDate" ? string2ImplementationDate(data)
+                        : ["successorTaskId", "dependencyTaskId", "connotativeTaskId"].includes(key) ? data.split(";")
                             : data]
                 ));
         const oldData = model.taskDataEntity.filter(value => value.id === newData.id)[0];
@@ -380,7 +380,7 @@ const nop = model => message => {
     const jspreadsheetColumnsUpdater = message.jspreadsheetColumns;
     // c.log(jspreadsheetColumnsUpdater);
     const columnsUpdater = (Object.fromEntries(jspreadsheetColumnsUpdater.map((data, i) =>
-        [data.title, Object.fromEntries(Object.entries(data).concat([["col_num", i]]))])));
+        [data.title, Object.fromEntries(Object.entries(data).concat([["colNum", i]]))])));
     // c.log(columnsUpdater);
     // c.log(model.jspreadsheetTaskDataProperties);
     // c.log(header2KeyUpdater);
@@ -402,7 +402,7 @@ const nop = model => message => {
 
     const taskDataRepository = fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES)(stateChange2implementationDate(model.taskDataEntity)(jspreadsheetDataUpdater.map(data => {
         const buffer = Object.fromEntries(data.map((datum, i) => ([tableHeaderKeys[i],
-        tableHeaderKeys[i] === "implementation_date" ? string2ImplementationDate(datum) : datum
+        tableHeaderKeys[i] === "implementationDate" ? string2ImplementationDate(datum) : datum
         ])))
         // c.log(buffer);
         // if (buffer.id === "") return Object.fromEntries(Object.entries(taskDataProperties.value).map((obj) => { return [obj[0], obj[1].defaultValue] }));
@@ -436,19 +436,19 @@ const ganttUpdate = model => message => {
     // c.log(message);
     // c.log(model.taskDataEntity.find(data => data.id === message.id));
     const taskData = model.taskDataEntity.find(data => data.id === message.id);
-    const scheduled_date_time = dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone);
-    const limit = dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone);
+    const scheduledDateTime = dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone);
+    const limit = dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone);
     // c.log();
     // c.log();
     taskData.id = message.id;
     taskData.title = message.name;
     taskData.memo = message.description;
-    taskData.scheduled_date_time = dayjs(message.start).tz(time_zone)
-        .hour(scheduled_date_time.format("H"))
-        .minute(scheduled_date_time.format("m"))
-        .second(scheduled_date_time.format("s"))
+    taskData.scheduledDateTime = dayjs(message.start).tz(timeZone)
+        .hour(scheduledDateTime.format("H"))
+        .minute(scheduledDateTime.format("m"))
+        .second(scheduledDateTime.format("s"))
         .format(DEFAULT_FORMAT.DATE_TIME);
-    taskData.limit = dayjs(message.end).tz(time_zone)
+    taskData.limit = dayjs(message.end).tz(timeZone)
         .hour(limit.format("H"))
         .minute(limit.format("m"))
         .second(limit.format("s"))
@@ -457,11 +457,11 @@ const ganttUpdate = model => message => {
 
     // taskData.progress = message.progress;
     // taskData.dependencies = message.dependencies;
-    // taskData.custom_class = message.custom_class;
+    // taskData.customClass = message.customClass;
 
 
-    //             start: dayjs.tz(model.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
-    //                 end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, time_zone).format("YYYY-MM-DD"),
+    //             start: dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
+    //                 end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
     return JSON.parse(JSON.stringify(model));
 };
 const kanbanBoardUpdate = model => message => {
@@ -655,10 +655,10 @@ const update = model => message => {
                         ._(fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES))
                         ._(data => data.map(datum => {
                             //タスク同士の関係で自分を指しているidを取り除く処理
-                            const successor_task_id = datum.successor_task_id.filter(value => value !== datum.id);
-                            const dependency_task_id = datum.dependency_task_id.filter(value => value !== datum.id);
-                            const connotative_task_id = datum.connotative_task_id.filter(value => value !== datum.id);
-                            return { ...datum, successor_task_id, dependency_task_id, connotative_task_id }
+                            const successorTaskId = datum.successorTaskId.filter(value => value !== datum.id);
+                            const dependencyTaskId = datum.dependencyTaskId.filter(value => value !== datum.id);
+                            const connotativeTaskId = datum.connotativeTaskId.filter(value => value !== datum.id);
+                            return { ...datum, successorTaskId, dependencyTaskId, connotativeTaskId }
                         })
                         )
                         ._(data => data)
@@ -676,12 +676,12 @@ const update = model => message => {
                         ._(data => {
                             const source = taskDataEntity.map(row => ({ id: row.id, name: row.title, title: row.id, groupe: "task", value: row.id, text: row.title }));
                             const createJspreadsheetTaskDataProperties = ({ type, editor, source, options, autocomplete, multiple }) => ({ type, editor, source, options, autocomplete, multiple });
-                            const successor_task_id = createJspreadsheetTaskDataProperties({ ...data.successor_task_id, source });
-                            const dependency_task_id = createJspreadsheetTaskDataProperties({ ...data.dependency_task_id, source });
-                            const connotative_task_id = createJspreadsheetTaskDataProperties({ ...data.connotative_task_id, source });
-                            // const { type, editor, options, autocomplete, multiple } = data.successor_task_id;
-                            // const successor_task_id = { type, editor, source, options, autocomplete, multiple };
-                            return { ...data, successor_task_id, dependency_task_id, connotative_task_id };
+                            const successorTaskId = createJspreadsheetTaskDataProperties({ ...data.successorTaskId, source });
+                            const dependencyTaskId = createJspreadsheetTaskDataProperties({ ...data.dependencyTaskId, source });
+                            const connotativeTaskId = createJspreadsheetTaskDataProperties({ ...data.connotativeTaskId, source });
+                            // const { type, editor, options, autocomplete, multiple } = data.successorTaskId;
+                            // const successorTaskId = { type, editor, source, options, autocomplete, multiple };
+                            return { ...data, successorTaskId, dependencyTaskId, connotativeTaskId };
                         })
                     )
 
@@ -717,10 +717,10 @@ main.init();
 const loadLocalStorage = secretKey => func => {
     const getLocalStorage = _ => (JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
     secretKey
-        .then(key => (decrypt_string(key, getLocalStorage())))
+        .then(key => (decryptString(key, getLocalStorage())))
         .then(value => func(new LocalStorageMessage(JSON.parse(value))));
 };
 // loadLocalStorage(secretKey)(main.update);
-// secretKey.then(key => (decrypt_string(key, getLocalStorage()))).then(value => c.log(new LocalStorageMessage(JSON.parse(value))));
+// secretKey.then(key => (decryptString(key, getLocalStorage()))).then(value => c.log(new LocalStorageMessage(JSON.parse(value))));
 
 

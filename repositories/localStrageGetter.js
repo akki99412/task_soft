@@ -12,7 +12,7 @@ loggerTimelines.push(
 const decryptTimelineGetter = Timeline.create()(null);
 const decryptTimelineSetter = Timeline.create()(secretKey => async parent => {
     if (secretKey !== null && parent !== undefined && 'data' in parent) {
-        const buffer = await decrypt_string(secretKey, parent);
+        const buffer = await decryptString(secretKey, parent);
         decryptTimelineGetter.next(buffer);
         return buffer;
     } else {

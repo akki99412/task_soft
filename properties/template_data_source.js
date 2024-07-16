@@ -1,23 +1,23 @@
-const time_zone = "Asia/Tokyo";
+const timeZone = "Asia/Tokyo";
 diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
     class {
         title = { defaultValue: "概要", };
         id = { get defaultValue() { return self.crypto.randomUUID(); } };
-        receipt = { get defaultValue() { return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME); } };
+        receipt = { get defaultValue() { return dayjs().tz(timeZone).format(DEFAULT_FORMAT.DATE_TIME); } };
         memo = { defaultValue: "詳細" };
         tag = { defaultValue: "#タグ" };
-        limit = { get defaultValue() { return dayjs().add(1, 'd').tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME); } };
-        man_hours = { defaultValue: 1 };
-        scheduled_date_time = { get defaultValue() { return dayjs().tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME); }, };
-        completion_date_time = { get defaultValue() { return dayjs().add(1, 'd').tz(time_zone).format(DEFAULT_FORMAT.DATE_TIME); }, };
-        implementation_date = { defaultValue: [{}], };
+        limit = { get defaultValue() { return dayjs().add(1, 'd').tz(timeZone).format(DEFAULT_FORMAT.DATE_TIME); } };
+        manHours = { defaultValue: 1 };
+        scheduledDateTime = { get defaultValue() { return dayjs().tz(timeZone).format(DEFAULT_FORMAT.DATE_TIME); }, };
+        completionDateTime = { get defaultValue() { return dayjs().add(1, 'd').tz(timeZone).format(DEFAULT_FORMAT.DATE_TIME); }, };
+        implementationDate = { defaultValue: [{}], };
         state = { defaultValue: TASK_STATE.SCHEDULED, };
-        similar_tasks_id = { defaultValue: "", };
-        successor_task_id = { defaultValue: [""], };
-        dependency_task_id = { defaultValue: [""], };
-        connotative_task_id = { defaultValue: [""], };
-        row_num = { defaultValue: "", };
-        implementation_time = { defaultValue: "", };
+        similarTasksId = { defaultValue: "", };
+        successorTaskId = { defaultValue: [""], };
+        dependencyTaskId = { defaultValue: [""], };
+        connotativeTaskId = { defaultValue: [""], };
+        rowNum = { defaultValue: "", };
+        implementationTime = { defaultValue: "", };
         kanbanNum = { defaultValue: 0 };
     });
 
@@ -29,54 +29,54 @@ diContainer.addForCallByValue("TASK_UI_TEMPLATES",
         memo = { header: "メモ", };
         tag = { header: "タグ", };
         limit = { header: "期限", };
-        man_hours = { header: "予定工数", };
-        scheduled_date_time = { header: "着手予定日時", };
-        scheduled_date = { header: "着手予定日", };
-        scheduled_time = { header: "着手予定時間", };
-        completion_date_time = { header: "完了予定日時", };
-        completion_date = { header: "完了予定日", };
-        completion_time = { header: "完了予定時間", };
-        completion_rate = { header: "完了率", };
-        implementation_date = { header: "実際の実施日時", };
+        manHours = { header: "予定工数", };
+        scheduledDateTime = { header: "着手予定日時", };
+        scheduledDate = { header: "着手予定日", };
+        scheduledTime = { header: "着手予定時間", };
+        completionDateTime = { header: "完了予定日時", };
+        completionDate = { header: "完了予定日", };
+        completionTime = { header: "完了予定時間", };
+        completionRate = { header: "完了率", };
+        implementationDate = { header: "実際の実施日時", };
         state = { header: "ステータス", };
-        similar_tasks_id = { header: "類似タスクid", };
-        similar_tasks = { header: "類似タスク", };
-        successor_task_id = { header: "後続タスクid", };
-        dependency_task_id = { header: "依存タスクid", };
-        successor_task = { header: "後続タスク", };
-        connotative_task_id = { header: "内包タスクid", };
-        connotative_task = { header: "内包タスク", };
-        row_num = { header: "テーブル番号", };
-        implementation_time = { header: "かかった時間", };
+        similarTasksId = { header: "類似タスクid", };
+        similarTasks = { header: "類似タスク", };
+        successorTaskId = { header: "後続タスクid", };
+        dependencyTaskId = { header: "依存タスクid", };
+        successorTask = { header: "後続タスク", };
+        connotativeTaskId = { header: "内包タスクid", };
+        connotativeTask = { header: "内包タスク", };
+        rowNum = { header: "テーブル番号", };
+        implementationTime = { header: "かかった時間", };
     });
 
 diContainer.addForCallByValue("TABLE_TASK_DATA_TEMPLATES",
     class {
-        title = { width: 200, col_num: 1, read_only: false, align: "left" };
-        id = { width: 200, col_num: 1, read_only: true, align: "left" };
-        receipt = { width: 200, col_num: 1, read_only: false, align: "left" };
-        memo = { width: 200, col_num: 1, read_only: false, align: "left" };
-        tag = { width: 200, col_num: 1, read_only: false, align: "left" };
-        limit = { width: 200, col_num: 1, read_only: false, align: "left" };
-        man_hours = { width: 200, col_num: 1, read_only: false, align: "left" };
-        // scheduled_date_time = { width: 200, col_num: 1, read_only: false, align: "left" };
-        scheduled_date = { width: 200, col_num: 1, read_only: false, align: "left" };
-        scheduled_time = { width: 200, col_num: 1, read_only: false, align: "left" };
-        // completion_date_time = { width: 200, col_num: 1, read_only: false, align: "left" };
-        completion_date = { width: 200, col_num: 1, read_only: false, align: "left" };
-        completion_time = { width: 200, col_num: 1, read_only: false, align: "left" };
-        completion_rate = { width: 200, col_num: 1, read_only: true, align: "left" };
-        implementation_date = { width: 200, col_num: 1, read_only: false, align: "left" };
-        state = { width: 200, col_num: 1, read_only: false, align: "left" };
-        similar_tasks_id = { width: 200, col_num: 1, read_only: false, align: "left" };
-        // similar_tasks = { width: 200, col_num: 1, read_only: false, align: "left" };
-        successor_task_id = { width: 200, col_num: 1, read_only: false, align: "left" };
-        dependency_task_id = { width: 200, col_num: 1, read_only: false, align: "left" };
-        // successor_task = { width: 200, col_num: 1, read_only: false, align: "left" };
-        connotative_task_id = { width: 200, col_num: 1, read_only: false, align: "left" };
-        connotative_task = { width: 200, col_num: 1, read_only: false, align: "left" };
-        // row_num = { width: 200, col_num: 1, read_only: false, align: "left" };
-        implementation_time = { width: 200, col_num: 1, read_only: true, align: "left" };
+        title = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        id = { width: 200, colNum: 1, readOnly: true, align: "left" };
+        receipt = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        memo = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        tag = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        limit = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        manHours = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        // scheduledDateTime = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        scheduledDate = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        scheduledTime = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        // completionDateTime = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        completionDate = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        completionTime = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        completionRate = { width: 200, colNum: 1, readOnly: true, align: "left" };
+        implementationDate = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        state = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        similarTasksId = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        // similarTasks = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        successorTaskId = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        dependencyTaskId = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        // successorTask = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        connotativeTaskId = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        connotativeTask = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        // rowNum = { width: 200, colNum: 1, readOnly: false, align: "left" };
+        implementationTime = { width: 200, colNum: 1, readOnly: true, align: "left" };
 
     });
 
@@ -88,32 +88,32 @@ diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
         memo = { type: "html", editor: null, source: [], options: [], autocomplete:false, multiple:false };
         tag = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
         limit = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        man_hours = { type: "numeric", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        scheduled_date_time = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        scheduled_date = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete:false, multiple:false };
-        scheduled_time = { type: "text", editor: clock_editor, source: [], options: { format: DEFAULT_FORMAT.TIME }, autocomplete:false, multiple:false };
-        completion_date_time = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        completion_date = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE } };
-        completion_time = { type: "text", editor: clock_editor, source: [], options: [], autocomplete: false, multiple: false };
-        completion_rate = { type: "numeric", editor: null, source: [], options: [], autocomplete: false, multiple: false };
-        implementation_date = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        manHours = { type: "numeric", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        scheduledDateTime = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        scheduledDate = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete:false, multiple:false };
+        scheduledTime = { type: "text", editor: clockEditor, source: [], options: { format: DEFAULT_FORMAT.TIME }, autocomplete:false, multiple:false };
+        completionDateTime = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        completionDate = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE } };
+        completionTime = { type: "text", editor: clockEditor, source: [], options: [], autocomplete: false, multiple: false };
+        completionRate = { type: "numeric", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        implementationDate = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
         state = { type: "dropdown", editor: null, source: Object.values(TASK_STATE), options: [], autocomplete:false, multiple:false };
-        similar_tasks_id = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        similar_tasks = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
-        successor_task_id = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
-        dependency_task_id = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
-        successor_task = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        connotative_task_id = { type: "dropdown", editor: null, source: [], options: [], autocomplete:true, multiple:true };
-        connotative_task = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        row_num = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        implementation_time = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        similarTasksId = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        similarTasks = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        successorTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
+        dependencyTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
+        successorTask = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        connotativeTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete:true, multiple:true };
+        connotativeTask = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        rowNum = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        implementationTime = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
     });
 
 
 
-var clock_editor = {
+var clockEditor = {
     // Methods
-    picked_time: "00:00",
+    pickedTime: "00:00",
     closeEditor: function (cell, save) {
         var value = cell.children[0].value;
         ;
@@ -134,21 +134,21 @@ var clock_editor = {
                 setTimeout(function () {
                     // To avoid double call
                     if (cell.children[0]) {
-                        task_table.closeEditor(cell, true);
+                        taskTable.closeEditor(cell, true);
                     }
                 });
             },
         }).change(function () {
-            picked_time = this.value;
+            pickedTime = this.value;
             console.log(cell);
-            task_table.setValue(cell, picked_time);
-            cell.innerHTML = picked_time;
-            // task_table.setValue(cell, this.picked_time);
-            // cell.innerHTML = picked_time;
+            taskTable.setValue(cell, pickedTime);
+            cell.innerHTML = pickedTime;
+            // taskTable.setValue(cell, this.pickedTime);
+            // cell.innerHTML = pickedTime;
             // if (cell.children[0]) {
-            //     task_table.closeEditor(cell, true);
+            //     taskTable.closeEditor(cell, true);
             // }
-            data_change_callback();
+            dataChangeCallback();
         });;
         // Focus on the element
         element.focus();
@@ -165,13 +165,13 @@ var clock_editor = {
 };
 
 
-function update_data_template() {
-    var headers = task_table.getHeaders().split(",");
+function updateDataTemplate() {
+    var headers = taskTable.getHeaders().split(",");
     headers.forEach((header, i) => {
         // console.log(header);
-        data_template.find(template => template.header === header).col_num = i;
+        dataTemplate.find(template => template.header === header).colNum = i;
     });
-    data_template.sort((a, b) => a.col_num - b.col_num);
+    dataTemplate.sort((a, b) => a.colNum - b.colNum);
 }
 class interval {
     start = "";
@@ -186,11 +186,11 @@ class interval {
     }
 
     constructor(start) {
-        let type_of_start = Object.prototype.toString.call(start);
-        if (type_of_start == "[object String]") {
+        let typeOfStart = Object.prototype.toString.call(start);
+        if (typeOfStart == "[object String]") {
             this.start = dayjs(start.split("/")[0]);
             this.end = dayjs(start.split("/")[1]);
-        } else if (type_of_start == "[object Array]") {
+        } else if (typeOfStart == "[object Array]") {
             this.start = start[0];
             this.end = start[1];
         } else {

@@ -1,4 +1,4 @@
-async function password_generate_key() {
+async function passwordGenerateKey() {
     // パスワードとして使う文字列。（ユーザーの入力を受け付ける）
     let password = prompt('パスワードを入力して下さい'); // 例：'開けゴマ'
 
@@ -51,7 +51,7 @@ async function password_generate_key() {
         JSON.stringify(Array.from(salt)));
 
 }
-// password_generate_key();
+// passwordGenerateKey();
 // saltの復元。
 // let salt = localStorage.getItem('passwordSalt');
 
@@ -60,7 +60,7 @@ async function password_generate_key() {
 
 
 
-async function auto_generate_key() {
+async function autoGenerateKey() {
     let secretKey = await crypto.subtle.generateKey(
         // アルゴリズムと鍵長。ここでは最長の256bitを指定している。
         { name: 'AES-GCM', length: 256 },
@@ -77,11 +77,11 @@ async function auto_generate_key() {
     // JSON Web Key（JWK）形式でのエクスポート。
     let exportedSecretKey = await crypto.subtle.exportKey('jwk', secretKey);
     // console.log(exportedSecretKey);
-    // => Object { alg: "A256GCM", ext: true, k: "DAvha1Scb8jTqk1KUTQlMRdffegdam0AylWRbQTOOfc", key_ops: (2) […], kty: "oct" }
+    // => Object { alg: "A256GCM", ext: true, k: "DAvha1Scb8jTqk1KUTQlMRdffegdam0AylWRbQTOOfc", keyOps: (2) […], kty: "oct" }
     return exportedSecretKey;
 }
 
-async function import_secret_key(exportedSecretKey) {
+async function importSecretKey(exportedSecretKey) {
     // JWK形式からのインポート。
     let importedSecretKey = await crypto.subtle.importKey(
         'jwk',
@@ -150,10 +150,10 @@ function getInvocationField() {
     // console.log(counter);
     return counter;
 }
-async function encrypt_string(secretKey, src_string) {
+async function encryptString(secretKey, srcString) {
 
     // データをTyped Arrayに変換。
-    let inputData = (new TextEncoder()).encode(src_string);
+    let inputData = (new TextEncoder()).encode(srcString);
     // console.log(inputData);
     // => Uint8Array(27) [ 230, 154, 151, 229, 143, 183, 229, 140, 150, 227, … ]
 
@@ -207,7 +207,7 @@ async function encrypt_string(secretKey, src_string) {
     };
 }
 
-async function decrypt_string(secretKey, encryptedResult) {
+async function decryptString(secretKey, encryptedResult) {
     // let encryptedResult = JSON.parse(localStorage.getItem('encryptedData'));
     // let encryptedBase64String = encryptedData.data;
     // // 通常のArrayとして保存しておいた初期ベクトルをUint8Arrayに戻す
