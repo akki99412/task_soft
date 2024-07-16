@@ -265,8 +265,8 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
     //     .then(([key, encryptData]) => (decryptString(key, encryptData)))
     //     .then(value => c.log(JSON.parse(value)));
     encryptData.then(value => {
+        c.log(value);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(value));
-        // c.log(value);
         c.log("saved!!");
     });
 
@@ -435,24 +435,26 @@ const nop = model => message => {
 const ganttUpdate = model => message => {
     // c.log(message);
     // c.log(model.taskDataEntity.find(data => data.id === message.id));
-    const taskData = model.taskDataEntity.find(data => data.id === message.id);
-    const scheduledDateTime = dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone);
-    const limit = dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone);
+    const srcTaskData = model.taskDataEntity.find(data => data.id === message.id);
+    const modelScheduledDateTime = dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone);
+    const modelLimit = dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone);
     // c.log();
     // c.log();
-    taskData.id = message.id;
-    taskData.title = message.name;
-    taskData.memo = message.description;
-    taskData.scheduledDateTime = dayjs(message.start).tz(timeZone)
-        .hour(scheduledDateTime.format("H"))
-        .minute(scheduledDateTime.format("m"))
-        .second(scheduledDateTime.format("s"))
+    const id = message.id;
+    const title = message.name;
+    const memo = message.description;
+    const scheduledDateTime = dayjs(message.start).tz(timeZone)
+        .hour(modelScheduledDateTime.format("H"))
+        .minute(modelScheduledDateTime.format("m"))
+        .second(modelScheduledDateTime.format("s"))
         .format(DEFAULT_FORMAT.DATE_TIME);
-    taskData.limit = dayjs(message.end).tz(timeZone)
-        .hour(limit.format("H"))
-        .minute(limit.format("m"))
-        .second(limit.format("s"))
+    const limit = dayjs(message.end).tz(timeZone)
+        .hour(modelLimit.format("H"))
+        .minute(modelLimit.format("m"))
+        .second(modelLimit.format("s"))
         .format(DEFAULT_FORMAT.DATE_TIME);
+    const dstTaskData = { ...srcTaskData, id, title, memo, scheduledDateTime, limit, };
+    const taskDataEntity = model.taskDataEntity.map(value => value.id === dstTaskData.id ? dstTaskData : value);
 
 
     // taskData.progress = message.progress;
@@ -462,7 +464,8 @@ const ganttUpdate = model => message => {
 
     //             start: dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
     //                 end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
-    return JSON.parse(JSON.stringify(model));
+    // return JSON.parse(JSON.stringify(model));
+    return { ...model, taskDataEntity }
 };
 const kanbanBoardUpdate = model => message => {
     return model;
@@ -550,7 +553,7 @@ const update = model => message => {
                     const dstModel = ganttUpdate(model)(message);
 
                     c.log(dstModel);
-                    return dstModel;
+                    return { ...dstModel };
 
                     break;
                 }
@@ -643,7 +646,9 @@ const update = model => message => {
                     return redoUpdate(model)(message);
                     break;
                 }
-                default: return model;
+                default:
+                    c.log("no change");
+                    return model;
 
             }
             return model;
@@ -701,12 +706,13 @@ const update = model => message => {
                 const index = history.length - 1;
 
                 const bufferModel = { ...dstModel, taskDataEntity, jspreadsheetTaskDataProperties, history, index }
-                c.log({bufferModel});
+                c.log({ bufferModel });
                 return bufferModel;
             })(dstModel);
         }
     })();
     c.log((newModel));
+    c.log(newModel === model);
     c.groupEnd();
     return newModel;
 };

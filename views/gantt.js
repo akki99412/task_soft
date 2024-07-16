@@ -69,29 +69,33 @@ let ganttTasks = {data: [
 ],
     isUpdate: false,
 };
+c.log("gantt");
 
 // gantt をセットアップ
-var gantt = new Gantt("#gantt", ganttTasks.data, {
+let gantt = new Gantt("#gantt", ganttTasks.data, {
     // ダブルクリック時
-    onClick: (task) => {
+    on_click: (task) => {
+        c.log("test");
         ganttTasks.isUpdate = true;
         main.update(new GanttMessage(task));
         ganttTasks.isUpdate = false;
     },
     // 日付変更時
-    onDateChange: (task, start, end) => {
+    on_date_change: (task, start, end) => {
         ganttTasks.isUpdate = true;
         // console.log(`${task.name}: change date start: ${start} end: ${end}`);
         // c.log({ task, start, end });
         let data = new GanttMessage(task);
         data.start = start;
         data.end = end;
+        c.log("test");
         main.update(new GanttMessage(data));
         ganttTasks.isUpdate = false;
     },
     // 進捗変更時
-    onProgressChange: (task, progress) => {
+    on_progress_change: (task, progress) => {
         ganttTasks.isUpdate = true;
+        c.log("test");
         // console.log(`${task.name}: change progress to ${progress}%`);
         // c.log({ task, progress });
         let data = new GanttMessage(task);
