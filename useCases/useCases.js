@@ -43,6 +43,12 @@ const repository2jspreadsheetData = taskDataEntity => tableHeaderKeys =>
 
                 key === "implementation_date" ? implementationDate2String(taskDatum[key])
                     : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key) ? (_ => ((taskDatum[key]).join(";")))()
+                        : key === "scheduled_date" ? dayjs.tz(taskDatum.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format(DEFAULT_FORMAT.DATE) 
+                            : key === "scheduled_time" ? dayjs.tz(taskDatum.scheduled_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format(DEFAULT_FORMAT.TIME) 
+                                : key === "completion_date" ? dayjs.tz(taskDatum.completion_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format(DEFAULT_FORMAT.DATE) 
+                                    : key === "completion_time" ? dayjs.tz(taskDatum.completion_date_time, DEFAULT_FORMAT.DATE_TIME, time_zone).format(DEFAULT_FORMAT.TIME) 
+                                        : key ==="connotative_task"?""
+                            
                         : taskDatum[key]
             )
         );

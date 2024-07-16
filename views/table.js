@@ -17,7 +17,7 @@ class TableView extends IJspreadsheetData {
 }
 
 
-c.log(new TableMessage({ jspreadsheetData: 100, jspreadsheetColumns: 200 }))
+// c.log(new TableMessage({ jspreadsheetData: 100, jspreadsheetColumns: 200 }))
 // const jspreadsheetEvent = {
 //     onchange: Timeline.create()({}),
 //     oninsertrow: Timeline.create()({}),
@@ -121,7 +121,7 @@ const createJspreadsheet =
             onselection: (instance, x1, y1, x2, y2, origin) => c.log({event:"onselection",instance, x1, y1, x2, y2, origin}),
 
             onevent: function (a, b, c, d, e, f, g, h) {
-                console.log({event:"event", a, b, c, d, e, f, g, h});
+                // console.log({event:"event", a, b, c, d, e, f, g, h});
                 if (a === "onselection") {
                     // console.log("onselection");
                     // c.log({});

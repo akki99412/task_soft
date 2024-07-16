@@ -154,7 +154,7 @@ async function encrypt_string(secretKey, src_string) {
 
     // データをTyped Arrayに変換。
     let inputData = (new TextEncoder()).encode(src_string);
-    console.log(inputData);
+    // console.log(inputData);
     // => Uint8Array(27) [ 230, 154, 151, 229, 143, 183, 229, 140, 150, 227, … ]
 
 
@@ -200,7 +200,7 @@ async function encrypt_string(secretKey, src_string) {
             iv: invocationPart
         }));
     // console.log("encrypt");
-    console.log(JSON.parse(localStorage.getItem('encryptedData')));
+    // console.log(JSON.parse(localStorage.getItem('encryptedData')));
     return {
         data: encryptedBase64String,
         iv: invocationPart

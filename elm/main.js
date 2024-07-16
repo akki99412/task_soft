@@ -9,6 +9,14 @@ const secretKey = (async _ => {
     }
 })();
 
+class IMainData {
+    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, } = {}) {
+        this.taskUiProperties = taskUiProperties;
+        this.tableTaskDataProperties = tableTaskDataProperties;
+        this.jspreadsheetTaskDataProperties = jspreadsheetTaskDataProperties;
+        this.taskDataEntity = taskDataEntity;
+    }
+}
 class ILocalStorageData {
     constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, } = {}) {
         this.taskUiProperties = taskUiProperties;
@@ -61,21 +69,25 @@ class Redo { }
 
 
 const init = _ => {
+    console.groupCollapsed("init");
     const mainData = {
         taskUiProperties: diContainer.container.TASK_UI_TEMPLATES,
         tableTaskDataProperties: notDuplicateTableTaskDataColNum(diContainer.container.TABLE_TASK_DATA_TEMPLATES),
         jspreadsheetTaskDataProperties: diContainer.container.JSPREADSHEET_TASK_DATA_TEMPLATES,
         taskDataEntity: [Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map(([key, value]) => [key, value.defaultValue]))],
     };
-    return ({
+    const module = {
         ...mainData,
         textarea: "",
         history: [mainData],
         index: 0,
-    })
+    };
+    console.log(module);
+    console.groupEnd();
+    return (module)
 };
 const view = model => {
-    c.log("view");
+    c.groupCollapsed("view");
     c.log(model);
     const taskUiProperties = model.taskUiProperties;
     const tableTaskDataProperties = model.tableTaskDataProperties;
@@ -85,7 +97,7 @@ const view = model => {
             const { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, } = data;
             const extension_task_id = model.taskDataEntity.filter(value => value.connotative_task_id.includes(data.id)).map(value => value.id);
             const completion_rate = data.state === TASK_STATE.COMPLETED ? 100
-                : 0<connotative_task_id.filter(value => value !== '').length  ? -1
+                : 0 < connotative_task_id.filter(value => value !== '').length ? -1
                     : 0;
 
             const dstData = { title, id, similar_tasks_id, successor_task_id, dependency_task_id, connotative_task_id, extension_task_id, completion_rate, };
@@ -191,6 +203,8 @@ const view = model => {
     // console.log(treeGraph);
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
     // console.log({ tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph });
+
+    c.groupEnd();
     return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph };
 };
 const textareaBuffer = new Observable("");
@@ -203,7 +217,7 @@ window.addEventListener('load',
     )
 );
 const render = table => gantt => ganttTasks => calendar => kanban => timeout => textarea => treeGraph => view => {
-    c.log("render");
+    c.groupCollapsed("render");
     c.log(view);
     const tableView = new TableMessage({
         jspreadsheetData: JSON.parse(JSON.stringify(table.getData())),
@@ -211,11 +225,11 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
     });
     // jspreadsheetObject.resetSelection(true);
     // isEqualObjectJson(view.tableView)(tableView);
-    secretKey.then(value => c.log(value));
+    // secretKey.then(value => c.log(value));
 
     if (!isEqualObjectJson(view.tableView)(tableView)) {
-        // c.log(JSON.stringify(view.tableView));
-        // c.log(JSON.stringify(tableView));
+        c.log(JSON.stringify(view.tableView));
+        c.log(JSON.stringify(tableView));
         c.log("updateJspreadsheet");
         updateJspreadsheet(table)(view.tableView.jspreadsheetData)(view.tableView.jspreadsheetColumns)(jspreadsheetEventInnerFunc);
 
@@ -273,6 +287,7 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
     }
 
     c.log("render end");
+    c.groupEnd();
 };
 const zip = (...args) => {
     const length = Math.min(...args.map(value => value.length));
@@ -320,12 +335,35 @@ const TableUpdate = model => message => {
         .sort((a, b) => a.value.col_num - b.value.col_num)
         .map(data => data.key);
     // c.log(sortedKeys);
-
-    const taskDataEntity = jspreadsheetData.map(row =>
-        Object.fromEntries(zip(sortedKeys, row).map(([key, data]) => [key,
-            key === "implementation_date" ? string2ImplementationDate(data)
-                : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key) ? data.split(";")
-                    : data]))
+    const taskDataKeys = Object.entries(model.taskDataEntity[0])
+        .map(([k, _]) => k);
+    // c.log(taskDataKeys);
+    // c.log(jspreadsheetData.map(row =>
+    //     Object.fromEntries(
+    //         zip(sortedKeys, row)
+    //             .filter(([key, _]) =>
+    //                 taskDataKeys.includes(key)
+    //             )
+    //             .map(([key, data]) => [key,
+    //                 key === "implementation_date" ? string2ImplementationDate(data)
+    //                     : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key) ? data.split(";")
+    //                         : data]
+    //             ))
+    // ));
+    const taskDataEntity = jspreadsheetData.map(row => {
+        const newData = Object.fromEntries(
+            zip(sortedKeys, row)
+                .filter(([key, _]) =>
+                    taskDataKeys.includes(key)
+                )
+                .map(([key, data]) => [key,
+                    key === "implementation_date" ? string2ImplementationDate(data)
+                        : ["successor_task_id", "dependency_task_id", "connotative_task_id"].includes(key) ? data.split(";")
+                            : data]
+                ));
+        const oldData = model.taskDataEntity.filter(value => value.id === newData.id)[0];
+        return { ...oldData, ...newData }
+    }
     );
 
 
@@ -492,9 +530,10 @@ const isDuplicated = (elements) => {
 }
 
 const update = model => message => {
-    c.log("update");
+    c.group("update");
     c.log(model);
     c.log(message);
+    // c.log(JSON.stringify(model));
     const dstModel = (model => {
         switch (message.constructor.name) {
             case new TableMessage().constructor.name:
@@ -502,7 +541,6 @@ const update = model => message => {
                     const dstModel = TableUpdate(model)(message);
 
                     c.log(dstModel);
-                    c.log(dstModel == model);
                     return dstModel;
                     break;
                 }
@@ -512,7 +550,6 @@ const update = model => message => {
                     const dstModel = ganttUpdate(model)(message);
 
                     c.log(dstModel);
-                    c.log(dstModel == model);
                     return dstModel;
 
                     break;
@@ -523,7 +560,6 @@ const update = model => message => {
                     const dstModel = kanbanBoardUpdate(model)(message);
 
                     c.log(dstModel);
-                    c.log(dstModel == model);
                     return dstModel;
 
                     break;
@@ -534,7 +570,6 @@ const update = model => message => {
                     const dstModel = kanbanItemUpdate(model)(message);
 
                     c.log(dstModel);
-                    c.log(dstModel == model);
                     return dstModel;
 
                     break;
@@ -545,7 +580,6 @@ const update = model => message => {
                     const dstModel = localStorageUpdate(model)(message);
 
                     c.log(dstModel);
-                    c.log(dstModel == model);
                     return dstModel;
                 }
             case new ImportJsonMessage().constructor.name:
@@ -554,7 +588,6 @@ const update = model => message => {
                     const dstModel = importJsonUpdate(model)(message);
 
                     c.log(dstModel);
-                    c.log(dstModel == model);
                     return dstModel;
                 }
             case new ButtonMessage().constructor.name:
@@ -595,80 +628,87 @@ const update = model => message => {
                 return model;
         }
     })(model);
-    if (dstModel === model) {
-        switch (message.constructor.name) {
-            case new Undo().constructor.name: {
-                c.log("Undo")
-                return undoUpdate(model)(message);
-                break;
-            }
-            case new Redo().constructor.name: {
-                c.log("Redo")
-                return redoUpdate(model)(message);
-                break;
-            }
-            default: return model;
+    // c.log(JSON.stringify(dstModel));
+    c.log(isEqualObjectJson(new IMainData(dstModel))(new IMainData(model)))
+    const newModel = (_ => {
+        if (isEqualObjectJson(new IMainData(dstModel))(new IMainData(model))) {
+            switch (message.constructor.name) {
+                case new Undo().constructor.name: {
+                    c.log("Undo")
+                    return undoUpdate(model)(message);
+                    break;
+                }
+                case new Redo().constructor.name: {
+                    c.log("Redo")
+                    return redoUpdate(model)(message);
+                    break;
+                }
+                default: return model;
 
-        }
-        return model;
-    } else {
-        return (dstModel => {
-            const taskDataEntity =
-                pipe(dstModel.taskDataEntity)((a => a)
-                    ._(stateChange2implementationDate(model.taskDataEntity))
-                    ._(fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES))
-                    ._(data => data.map(datum => {
-                        //タスク同士の関係で自分を指しているidを取り除く処理
-                        const successor_task_id = datum.successor_task_id.filter(value => value !== datum.id);
-                        const dependency_task_id = datum.dependency_task_id.filter(value => value !== datum.id);
-                        const connotative_task_id = datum.connotative_task_id.filter(value => value !== datum.id);
-                        return { ...datum, successor_task_id, dependency_task_id, connotative_task_id }
-                    })
+            }
+            return model;
+        } else {
+            return (dstModel => {
+                const taskDataEntity =
+                    pipe(dstModel.taskDataEntity)((a => a)
+                        ._(stateChange2implementationDate(model.taskDataEntity))
+                        ._(fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES))
+                        ._(data => data.map(datum => {
+                            //タスク同士の関係で自分を指しているidを取り除く処理
+                            const successor_task_id = datum.successor_task_id.filter(value => value !== datum.id);
+                            const dependency_task_id = datum.dependency_task_id.filter(value => value !== datum.id);
+                            const connotative_task_id = datum.connotative_task_id.filter(value => value !== datum.id);
+                            return { ...datum, successor_task_id, dependency_task_id, connotative_task_id }
+                        })
+                        )
+                        ._(data => data)
+                        ._(data => {
+                            return [...data];
+                        })
                     )
-                    ._(data => data)
-                    ._(data => {
-                        return [...data];
-                    })
-                )
-            // (fillDefaultTaskData
-            // (diContainer.container.TASK_DATA_TEMPLATES)
-            // (stateChange2implementationDate
-            //     (model.taskDataEntity)
-            //     (dstModel.taskDataEntity)));
-            const jspreadsheetTaskDataProperties =
-                pipe(dstModel.jspreadsheetTaskDataProperties)((a => a)
-                    ._(data => {
-                        const source = taskDataEntity.map(row => ({ id: row.id, name: row.title, title: row.id, groupe: "task", value: row.id, text: row.title }));
-                        const createJspreadsheetTaskDataProperties = ({ type, editor, source, options, autocomplete, multiple }) => ({ type, editor, source, options, autocomplete, multiple });
-                        const successor_task_id = createJspreadsheetTaskDataProperties({ ...data.successor_task_id, source });
-                        const dependency_task_id = createJspreadsheetTaskDataProperties({ ...data.dependency_task_id, source });
-                        const connotative_task_id = createJspreadsheetTaskDataProperties({ ...data.connotative_task_id, source });
-                        // const { type, editor, options, autocomplete, multiple } = data.successor_task_id;
-                        // const successor_task_id = { type, editor, source, options, autocomplete, multiple };
-                        return { ...data, successor_task_id, dependency_task_id, connotative_task_id };
-                    })
-                )
+                // (fillDefaultTaskData
+                // (diContainer.container.TASK_DATA_TEMPLATES)
+                // (stateChange2implementationDate
+                //     (model.taskDataEntity)
+                //     (dstModel.taskDataEntity)));
+                const jspreadsheetTaskDataProperties =
+                    pipe(dstModel.jspreadsheetTaskDataProperties)((a => a)
+                        ._(data => {
+                            const source = taskDataEntity.map(row => ({ id: row.id, name: row.title, title: row.id, groupe: "task", value: row.id, text: row.title }));
+                            const createJspreadsheetTaskDataProperties = ({ type, editor, source, options, autocomplete, multiple }) => ({ type, editor, source, options, autocomplete, multiple });
+                            const successor_task_id = createJspreadsheetTaskDataProperties({ ...data.successor_task_id, source });
+                            const dependency_task_id = createJspreadsheetTaskDataProperties({ ...data.dependency_task_id, source });
+                            const connotative_task_id = createJspreadsheetTaskDataProperties({ ...data.connotative_task_id, source });
+                            // const { type, editor, options, autocomplete, multiple } = data.successor_task_id;
+                            // const successor_task_id = { type, editor, source, options, autocomplete, multiple };
+                            return { ...data, successor_task_id, dependency_task_id, connotative_task_id };
+                        })
+                    )
 
 
-            const { taskUiProperties, tableTaskDataProperties, } = dstModel;
-            const mainData = {
-                taskUiProperties,
-                tableTaskDataProperties,
-                jspreadsheetTaskDataProperties,
-                taskDataEntity,
-            };
-            const end = dstModel.index + 1;
-            const start = 0 < (end - HISTORY_LENGTH) ? end - HISTORY_LENGTH : 0;
+                const { taskUiProperties, tableTaskDataProperties, } = dstModel;
+                const mainData = {
+                    taskUiProperties,
+                    tableTaskDataProperties,
+                    jspreadsheetTaskDataProperties,
+                    taskDataEntity,
+                };
+                const end = dstModel.index + 1;
+                const start = 0 < (end - HISTORY_LENGTH) ? end - HISTORY_LENGTH : 0;
 
+                c.log("add history");
+                const history = dstModel.history.slice(start, end).concat([mainData]);
+                const index = history.length - 1;
 
-            const history = dstModel.history.slice(start, end).concat([mainData]);
-            const index = dstModel.history.length - 1;
-
-            const bufferModel = { ...dstModel, taskDataEntity, jspreadsheetTaskDataProperties, history, index }
-            c.log(bufferModel);
-            return bufferModel;
-        })(dstModel);
-    }
+                const bufferModel = { ...dstModel, taskDataEntity, jspreadsheetTaskDataProperties, history, index }
+                c.log({bufferModel});
+                return bufferModel;
+            })(dstModel);
+        }
+    })();
+    c.log((newModel));
+    c.groupEnd();
+    return newModel;
 };
 const main = new ElmLike({ init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(timeoutID)(textareaBuffer)(treeGraph)(view) });
 main.init();

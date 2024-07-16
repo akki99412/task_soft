@@ -25,7 +25,7 @@ mermaidAPI.initialize({
 });
 
 const mermaidRender = svgId => diagram => container => svgContainer => {
-    console.log(diagram);
+    // console.log(diagram);
     const mermaidPromise = mermaidAPI.render(svgId, diagram, container);
     return mermaidPromise.then(value => svgContainer.insertAdjacentHTML('afterbegin', value.svg));
     // mermaidPromise.then(value => console.log(value.svg));
