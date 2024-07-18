@@ -10,11 +10,12 @@ const secretKey = (async _ => {
 })();
 
 class IMainData {
-    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, } = {}) {
+    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, textarea = null } = {}) {
         this.taskUiProperties = taskUiProperties;
         this.tableTaskDataProperties = tableTaskDataProperties;
         this.jspreadsheetTaskDataProperties = jspreadsheetTaskDataProperties;
         this.taskDataEntity = taskDataEntity;
+        this.textarea = textarea;
     }
 }
 class ILocalStorageData {
@@ -43,7 +44,15 @@ class ImportJsonMessage {
 }
 
 
-let timeoutID = 0;
+// let timeoutID = {0};
+const saveTimeout = new Observable({ id: 0, doneSave: false, });
+saveTimeout.subscribe(value => {
+    if (value.doneSave) {
+        console.log("saved");
+    } else {
+        console.warn("reset")
+    }
+});
 
 class IButtonData {
     constructor({ id = null } = {}) {
@@ -216,7 +225,7 @@ window.addEventListener('load',
         }
     )
 );
-const render = table => gantt => ganttTasks => calendar => kanban => timeout => textarea => treeGraph => view => {
+const render = table => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => view => {
     c.groupCollapsed("render");
     c.log(view);
     const tableView = new TableMessage({
@@ -245,14 +254,14 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
 
 
 
-
-    clearTimeout(timeoutID);
+    saveTimeout.notify({ id: clearTimeout(saveTimeout.value.id), doneSave: false });
     const delayModel = new Promise(resolve => {
-        timeoutID = setTimeout(_ => {
-            c.log("reset timeoutID");
-            resolve(view.model);
-        },
-            saveTime * 1000);
+        saveTimeout.notify({
+            id: setTimeout(_ => {
+                resolve(view.model);
+            }, saveTime * 1000),
+            doneSave: false
+        });
         // c.log(parent);
     }).then(value => {
         return JSON.stringify(value);
@@ -265,9 +274,9 @@ const render = table => gantt => ganttTasks => calendar => kanban => timeout => 
     //     .then(([key, encryptData]) => (decryptString(key, encryptData)))
     //     .then(value => c.log(JSON.parse(value)));
     encryptData.then(value => {
-        c.log(value);
+        // c.log(value);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(value));
-        c.log("saved!!");
+        saveTimeout.notify({...saveTimeout, doneSave:true});
     });
 
 
@@ -470,31 +479,49 @@ const ganttUpdate = model => message => {
 const kanbanBoardUpdate = model => message => {
     return model;
 };
-const localStorageUpdate = model => message => {
-    return { ...model, ...message };
-};
 const kanbanItemUpdate = model => message => model;
 const saveButtonUpdate = model => message => model;
 const exportJsonButtonUpdate = model => message => {
-    model.textarea = JSON.stringify({
+    const textarea = JSON.stringify({
         taskUiProperties: model.taskUiProperties,
         tableTaskDataProperties: model.tableTaskDataProperties,
         jspreadsheetTaskDataProperties: model.jspreadsheetTaskDataProperties,
         taskDataEntity: model.taskDataEntity,
     });
-    return JSON.parse(JSON.stringify(model));
+    return { ...model, textarea };
 };
 const importJsonButtonUpdate = model => message => model;
 const loadButtonUpdate = model => message => model;
+const localStorageUpdate = model => message => {
+    try {
+        const srcModel = (message);
+        const taskDataEntity = srcModel.taskDataEntity.map(value => {
+            const defaultTaskData = Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map((obj) => { return [obj[0], obj[1].defaultValue] }));
+            return { ...defaultTaskData, ...value }
+
+        })
+
+        const newModel = { ...model, ...srcModel, taskDataEntity };
+        view(model);
+        return newModel;
+    } catch (e) {
+        c.log(e);
+        return model;
+    }
+    return model;
+};
 const importJsonUpdate = model => message => {
     try {
-        const dstModel = JSON.parse(message.value);
-        view(dstModel);
-        c.log(model);
-        c.log(dstModel);
-        model = { ...model, ...dstModel };
-        c.log(model);
-        return JSON.parse(JSON.stringify(model));
+        const srcModel = JSON.parse(message.value);
+        const taskDataEntity = srcModel.taskDataEntity.map(value => {
+            const defaultTaskData = Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map((obj) => { return [obj[0], obj[1].defaultValue] }));
+            return { ...defaultTaskData, ...value }
+
+        })
+
+        const newModel = { ...model, ...srcModel, taskDataEntity };
+        view(model);
+        return newModel;
     } catch (e) {
         c.log(e);
         return model;
@@ -716,7 +743,7 @@ const update = model => message => {
     c.groupEnd();
     return newModel;
 };
-const main = new ElmLike({ init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(timeoutID)(textareaBuffer)(treeGraph)(view) });
+const main = new ElmLike({ init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(view) });
 main.init();
 
 
@@ -726,7 +753,7 @@ const loadLocalStorage = secretKey => func => {
         .then(key => (decryptString(key, getLocalStorage())))
         .then(value => func(new LocalStorageMessage(JSON.parse(value))));
 };
-// loadLocalStorage(secretKey)(main.update);
+loadLocalStorage(secretKey)(main.update);
 // secretKey.then(key => (decryptString(key, getLocalStorage()))).then(value => c.log(new LocalStorageMessage(JSON.parse(value))));
 
 
