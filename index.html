@@ -180,7 +180,14 @@
         const unloadFunction = e => {
             e.preventDefault();
             e.returnValue = "ページを離れようとしています。よろしいですか？"
-        }
+        };
+        saveTimeout.subscribe(value => {
+            if (value.doneSave) {
+                window.removeEventListener("beforeunload", unloadFunction);
+            } else {
+                window.addEventListener("beforeunload", unloadFunction);
+            }
+        });
         // const beforeUnloadTimeline = repositories.map(parent =>
         //     ({ isSaved: false })
         // );
