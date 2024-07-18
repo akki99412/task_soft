@@ -21,6 +21,7 @@
         <span class="input-group-addon">
             <span class="glyphicon glyphicon-time"></span>
         </span>
+        <button id="getData">get data</button>
     </div>
     <div id="custom"></div>
     <div id="clockpicker_buffer"></div>
@@ -79,10 +80,13 @@
             columns: [
                 { type: 'text', title: 'Course Title', width: 300 },
                 { type: 'text', title: 'Time', width: 100, editor: customColumn },
-            ]
+            ],
+            filters: true,
+            search: true,
         });
+        getData.onclick=_=>console.log(myTable.getData());
     </script>
-    <script src="other/diContainer.js" charset="UTF-8"></script>
+    <!-- <script src="other/diContainer.js" charset="UTF-8"></script> -->
     <script type="text/javascript">
         $('.clockpicker').clockpicker();
         let test = { a: 0, b: { a: 3, b: 4 } };
@@ -239,15 +243,15 @@
 
             console.log("di test");
             class TestClass{ a = 10; b = 20; c = 30 };
-            diContainer.addForCallByReference("Obj1", obj1);
-            diContainer.addForCallByValue("Obj2",  TestClass);
+            // diContainer.addForCallByReference("Obj1", obj1);
+            // diContainer.addForCallByValue("Obj2",  TestClass);
 
-            let injectedObject1 = { Obj1, Obj2 } = diContainer.container;
-                injectedObject1.Obj2.a = 3000;
-            let injectedObject2 = { Obj1, Obj2 } = diContainer.container;
-            injectedObject1.Obj1.a=1000;
-            console.log(injectedObject1);
-            console.log(injectedObject2);
+            // let injectedObject1 = { Obj1, Obj2 } = diContainer.container;
+            //     injectedObject1.Obj2.a = 3000;
+            // let injectedObject2 = { Obj1, Obj2 } = diContainer.container;
+            // injectedObject1.Obj1.a=1000;
+            // console.log(injectedObject1);
+            // console.log(injectedObject2);
 
 
 

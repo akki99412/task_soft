@@ -102,6 +102,7 @@ const createJspreadsheet =
             tableOverflow: true,//テーブルの高さや横幅を超えた場合にスクロールバーを表示するか(デフォルト: false)。
             wordWrap: true,//ALT + Enterでセル内改行を許可するか(デフォルト: false)。
             minDimensions: [2, 1],//最小列数・行数 (例：[5, 3])。
+            filters: true,
 
             //イベント
             onchange: (instance, x1, y1, x2, y2, origin) => c.log({event:onchange,instance, x1, y1, x2, y2, origin}),
