@@ -10,12 +10,13 @@ const secretKey = (async _ => {
 })();
 
 class IMainData {
-    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, textarea = null } = {}) {
+    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, textarea = null, relationFilter = null } = {}) {
         this.taskUiProperties = taskUiProperties;
         this.tableTaskDataProperties = tableTaskDataProperties;
         this.jspreadsheetTaskDataProperties = jspreadsheetTaskDataProperties;
         this.taskDataEntity = taskDataEntity;
         this.textarea = textarea;
+        this.relationFilter = relationFilter;
     }
 }
 class ILocalStorageData {
@@ -69,6 +70,21 @@ class ButtonView extends IButtonData {
         super(id);
     }
 }
+class IDropdownMenuData {
+    constructor({ id = null } = {}) {
+        this.id = id;
+    }
+}
+class DropdownMenuMessage extends IDropdownMenuData {
+    constructor(id) {
+        super(id);
+    }
+}
+class DropdownMenuView extends IDropdownMenuData {
+    constructor(id) {
+        super(id);
+    }
+}
 class Undo { }
 class Redo { }
 
@@ -84,6 +100,12 @@ const init = _ => {
         tableTaskDataProperties: notDuplicateTableTaskDataColNum(diContainer.container.TABLE_TASK_DATA_TEMPLATES),
         jspreadsheetTaskDataProperties: diContainer.container.JSPREADSHEET_TASK_DATA_TEMPLATES,
         taskDataEntity: [Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map(([key, value]) => [key, value.defaultValue]))],
+        relationFilter: {
+            connotative: false,
+            dependency: false,
+            successor: false,
+            similar: false,
+        }
     };
     const module = {
         ...mainData,
@@ -212,9 +234,9 @@ const view = model => {
     // console.log(treeGraph);
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
     // console.log({ tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph });
-
+    const relationFilter = model.relationFilter;
     c.groupEnd();
-    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph };
+    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph, ...relationFilter, };
 };
 const textareaBuffer = new Observable("");
 window.addEventListener('load',
@@ -225,7 +247,48 @@ window.addEventListener('load',
         }
     )
 );
-const render = table => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => view => {
+const showConnotativeTask = new Observable(false);
+showConnotativeTask.subscribe(
+    value => {
+        if (value) {
+            $connotativeTaskDropdownMenu.classList.add("active");
+        } else {
+            $connotativeTaskDropdownMenu.classList.remove("active");
+        }
+    }
+)
+const showDependencyTask = new Observable(false);
+showDependencyTask.subscribe(
+    value => {
+        if (value) {
+            $dependencyTaskDropdownMenu.classList.add("active");
+        } else {
+            $dependencyTaskDropdownMenu.classList.remove("active");
+        }
+    }
+)
+const showSuccessorTask = new Observable(false);
+showSuccessorTask.subscribe(
+    value => {
+        if (value) {
+            $successorTaskDropdownMenu.classList.add("active");
+        } else {
+            $successorTaskDropdownMenu.classList.remove("active");
+        }
+    }
+)
+const showSimilarTask = new Observable(false);
+showSimilarTask.subscribe(
+    value => {
+        if (value) {
+            $similarTasksDropdownMenu.classList.add("active");
+        } else {
+            $similarTasksDropdownMenu.classList.remove("active");
+        }
+    }
+)
+
+const render = table => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => view => {
     c.groupCollapsed("render");
     c.log(view);
     const tableView = new TableMessage({
@@ -276,7 +339,7 @@ const render = table => gantt => ganttTasks => calendar => kanban => saveTimeout
     encryptData.then(value => {
         // c.log(value);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(value));
-        saveTimeout.notify({...saveTimeout, doneSave:true});
+        saveTimeout.notify({ ...saveTimeout, doneSave: true });
     });
 
 
@@ -293,6 +356,22 @@ const render = table => gantt => ganttTasks => calendar => kanban => saveTimeout
         // c.log(view.textarea);
         treeGraph.notify({ value: view.treeGraph });
 
+    }
+    if(showConnotativeTask!==view.connotative){
+        c.log("update showConnotativeTask");
+        showConnotativeTask.notify(view.connotative)
+    }
+    if(showDependencyTask!==view.dependency){
+        c.log("update showDependencyTask");
+        showDependencyTask.notify(view.dependency)
+    }
+    if(showSuccessorTask!==view.successor){
+        c.log("update showSuccessorTask");
+        showSuccessorTask.notify(view.successor)
+    }
+    if(showSimilarTask!==view.similar){
+        c.log("update showSimilarTask");
+        showSimilarTask.notify(view.similar)
     }
 
     c.log("render end");
@@ -558,7 +637,10 @@ const isDuplicated = (elements) => {
     const setElements = new Set(elements);
     return setElements.size !== elements.length;
 }
-
+const connotativeTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, connotative: !model.relationFilter.connotative } });
+const dependencyTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, dependency: !model.relationFilter.dependency } });
+const successorTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, successor: !model.relationFilter.successor } });
+const similarTasksDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, similar: !model.relationFilter.similar } });
 const update = model => message => {
     c.group("update");
     c.log(model);
@@ -653,6 +735,41 @@ const update = model => message => {
                     // c.log(dstModel == model);
                     return dstModel;
                 }
+            case new DropdownMenuMessage().constructor.name:
+                {
+                    c.log("DropdownMenuMessage");
+                    const dstModel = (_ => {
+                        switch (message.id) {
+                            case $connotativeTaskDropdownMenu.id: {
+                                c.log("connotativeTaskDropdownMenu");
+                                return connotativeTaskDropdownMenuUpdate(model)(message);
+                                break;
+                            }
+                            case $dependencyTaskDropdownMenu.id: {
+                                c.log("dependencyTaskDropdownMenu");
+                                return dependencyTaskDropdownMenuUpdate(model)(message);
+                                break;
+                            }
+                            case $successorTaskDropdownMenu.id: {
+                                c.log("successorTaskDropdownMenu")
+                                return successorTaskDropdownMenuUpdate(model)(message);
+                                break;
+                            }
+                            case $similarTasksDropdownMenu.id: {
+                                c.log("similarTasksDropdownMenu")
+                                return similarTasksDropdownMenuUpdate(model)(message);
+                                break;
+                            }
+                            default:
+                                console.log("default");
+                        }
+                    })();
+
+
+                    c.log(dstModel);
+                    // c.log(dstModel == model);
+                    return dstModel;
+                }
             default:
                 c.log("default");
                 return model;
@@ -718,12 +835,13 @@ const update = model => message => {
                     )
 
 
-                const { taskUiProperties, tableTaskDataProperties, } = dstModel;
+                const { taskUiProperties, tableTaskDataProperties, relationFilter } = dstModel;
                 const mainData = {
                     taskUiProperties,
                     tableTaskDataProperties,
                     jspreadsheetTaskDataProperties,
                     taskDataEntity,
+                    relationFilter,
                 };
                 const end = dstModel.index + 1;
                 const start = 0 < (end - HISTORY_LENGTH) ? end - HISTORY_LENGTH : 0;
@@ -743,7 +861,9 @@ const update = model => message => {
     c.groupEnd();
     return newModel;
 };
-const main = new ElmLike({ init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(view) });
+const main = new ElmLike({
+    init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(showConnotativeTask)(showDependencyTask)(showSuccessorTask)(showSimilarTask)(view)
+});
 main.init();
 
 

@@ -70,47 +70,75 @@
 </head>
 
 <body>
-    <script>console.log(dayjs().add(1, 'd').startOf('day').toDate());</script>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="dropdown" id="myDropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside" aria-expanded="false">
+                        関係フィルター
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button class="dropdown-item" type="button" id="$connotativeTaskDropdownMenu">内包タスク</button>
+                        </li>
+                        <li><button class="dropdown-item" type="button" id="$dependencyTaskDropdownMenu">依存タスク</button>
+                        </li>
+                        <li><button class="dropdown-item" type="button" id="$successorTaskDropdownMenu">後続タスク</button>
+                        </li>
+                        <li><button class="dropdown-item disabled" type="button" id="$similarTasksDropdownMenu">類似タスク</button>
+                        </li>
+                    </ul>
+                </div>
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
     <!-- <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.3.4/lib/darkmode-js.min.js"></script>
     <script>
         new Darkmode().showWidget();
     </script> -->
-    <div id="spreadsheet"></div>
-    <div class="mermaid" id="mermaidSvgContainer"></div>
-    <div id="mermaidWorkingContainer"></div>
-    <!-- <textarea id="svgCode"></textarea> -->
-    <div id="svgContainer"></div>
-    <div class='gantt-wrap gantt-target dark'>
-        <svg class="gantt-target dark" id="gantt"></svg>
-    </div>
-    <div id='calendar'></div>
+    <main class="container">
 
-    <!-- ここにメッセージが表示される -->
-    <!-- <div id="show-message">&nbsp;</div> -->
+        <div id="spreadsheet"></div>
+        <div class="mermaid" id="mermaidSvgContainer"></div>
+        <div id="mermaidWorkingContainer"></div>
+        <!-- <textarea id="svgCode"></textarea> -->
+        <div id="svgContainer"></div>
+        <div class='gantt-wrap gantt-target dark'>
+            <svg class="gantt-target dark" id="gantt"></svg>
+        </div>
+        <div id='calendar'></div>
 
-    <!-- ここにカンバンが表示される -->
-    <div id="kanban-canvas"></div>
-    <button type=button id="$saveButton">
-        save
-    </button>
-    <button type=button id="$exportJsonButton">
-        export JSON
-    </button>
-    <button type=button id="$importJsonButton">
-        import JSON
-    </button>
-    <button type=button id="$loadButton">
-        load
-    </button>
-    <div class="textarea">
-        <textarea id="$textarea" cols="100" rows="50">
-    </textarea>
-    </div>
+        <!-- ここにメッセージが表示される -->
+        <!-- <div id="show-message">&nbsp;</div> -->
+
+        <!-- ここにカンバンが表示される -->
+        <div id="kanban-canvas"></div>
+        <button type=button id="$saveButton">
+            save
+        </button>
+        <button type=button id="$exportJsonButton">
+            export JSON
+        </button>
+        <button type=button id="$importJsonButton">
+            import JSON
+        </button>
+        <button type=button id="$loadButton">
+            load
+        </button>
+        <div class="textarea">
+            <textarea id="$textarea" cols="100" rows="50"></textarea>
+        </div>
+
+    </main>
 
 
 
-
-    </script>
     <script src="utilities/compose.js" charset="UTF-8"></script>
     <script src="utilities/pipe.js" charset="UTF-8"></script>
     <script src="utilities/utilities.js" charset="UTF-8"></script>
@@ -176,7 +204,25 @@
             main.update(new ButtonMessage({ id: $loadButton }));
             loadLocalStorage(secretKey)(main.update);
         };
-
+        $connotativeTaskDropdownMenu.onclick = _ => {
+            console.log($connotativeTaskDropdownMenu.id);
+            main.update(new DropdownMenuMessage({ id: $connotativeTaskDropdownMenu.id }));
+        }
+        $dependencyTaskDropdownMenu.onclick = _ => {
+            main.update(new DropdownMenuMessage({ id: $dependencyTaskDropdownMenu.id }));
+        }
+        $successorTaskDropdownMenu.onclick = _ => {
+            main.update(new DropdownMenuMessage({ id: $successorTaskDropdownMenu.id }));
+        }
+        $similarTasksDropdownMenu.onclick = _ => {
+            main.update(new DropdownMenuMessage({ id: $similarTasksDropdownMenu.id }));
+        }
+        $saveButton.onclick = function () {
+            // clearTimeout(timeoutID);
+            // c.log("timeoutID cleared")
+            // delayRepositoryUpdate(repositories.value);
+            main.update(new ButtonMessage({ id: $saveButton }));
+        };
         const unloadFunction = e => {
             e.preventDefault();
             e.returnValue = "ページを離れようとしています。よろしいですか？"
@@ -235,10 +281,10 @@
             }
         });
 
-
     </script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="gantt.css">
+    <link href="navbar-fixed.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
