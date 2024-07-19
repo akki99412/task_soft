@@ -20,11 +20,12 @@ class IMainData {
     }
 }
 class ILocalStorageData {
-    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, } = {}) {
+    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, relationFilter=null } = {}) {
         this.taskUiProperties = taskUiProperties;
         this.tableTaskDataProperties = tableTaskDataProperties;
         this.jspreadsheetTaskDataProperties = jspreadsheetTaskDataProperties;
         this.taskDataEntity = taskDataEntity;
+        this.relationFilter = relationFilter;
     }
 }
 class LocalStorageMessage extends ILocalStorageData {
