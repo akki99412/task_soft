@@ -182,10 +182,10 @@ const view = model => {
         end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
         progress: model.completionRate,
         dependencies: taskDataEntity
-            .filter(value => value.successorTaskId.includes(model.id))
+            .filter(value => relationFilter.successor?false:value.successorTaskId.includes(model.id))
             .map(value => value.id)
-            .concat(model.dependencyTaskId)
-            .concat(model.connotativeTaskId)
+            .concat(relationFilter.dependency?[]:model.dependencyTaskId)
+            .concat(relationFilter.connotative?[]:model.connotativeTaskId)
             .join(", "),
     }));
 
