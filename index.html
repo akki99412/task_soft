@@ -85,7 +85,8 @@
                         </li>
                         <li><button class="dropdown-item" type="button" id="$successorTaskDropdownMenu">後続タスク</button>
                         </li>
-                        <li><button class="dropdown-item disabled" type="button" id="$similarTasksDropdownMenu">類似タスク</button>
+                        <li><button class="dropdown-item disabled" type="button"
+                                id="$similarTasksDropdownMenu">類似タスク</button>
                         </li>
                     </ul>
                 </div>
@@ -103,7 +104,7 @@
         new Darkmode().showWidget();
     </script> -->
     <main class="container">
-
+        <div id="filterTable"></div>
         <div id="spreadsheet"></div>
         <div class="mermaid" id="mermaidSvgContainer"></div>
         <div id="mermaidWorkingContainer"></div>
@@ -160,6 +161,7 @@
     <script src="views/gantt.js" charset="UTF-8"></script>
     <script src="views/kanban.js" charset="UTF-8"></script>
     <script src="views/treeGraph.js" charset="UTF-8"></script>
+    <script src="views/filterTable.js" charset="utf-8"></script>
 
     <script src="elm/main.js" charset="UTF-8"></script>
     <script>

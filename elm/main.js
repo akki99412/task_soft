@@ -291,7 +291,7 @@ showSimilarTask.subscribe(
     }
 )
 
-const render = table => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => view => {
+const render = table => filterTable => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => view => {
     c.groupCollapsed("render");
     c.log(view);
     const tableView = new TableMessage({
@@ -865,7 +865,7 @@ const update = model => message => {
     return newModel;
 };
 const main = new ElmLike({
-    init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(showConnotativeTask)(showDependencyTask)(showSuccessorTask)(showSimilarTask)(view)
+    init, view, update, render: view => render(jspreadsheetObject)(filterJspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(showConnotativeTask)(showDependencyTask)(showSuccessorTask)(showSimilarTask)(view)
 });
 main.init();
 
