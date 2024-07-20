@@ -20,7 +20,7 @@ class IMainData {
     }
 }
 class ILocalStorageData {
-    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, relationFilter=null } = {}) {
+    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, relationFilter = null } = {}) {
         this.taskUiProperties = taskUiProperties;
         this.tableTaskDataProperties = tableTaskDataProperties;
         this.jspreadsheetTaskDataProperties = jspreadsheetTaskDataProperties;
@@ -121,6 +121,7 @@ const init = _ => {
 const view = model => {
     c.groupCollapsed("view");
     c.log(model);
+    const relationFilter = model.relationFilter;
     const taskUiProperties = model.taskUiProperties;
     const tableTaskDataProperties = model.tableTaskDataProperties;
     const jspreadsheetTaskDataProperties = model.jspreadsheetTaskDataProperties;
@@ -210,7 +211,8 @@ const view = model => {
 
         const header = `subgraph ${parentId}${datum.id} [${datum.title}]\n`;
         const body = datum.connotativeTaskId.map(value => buildTree(taskDependencies)(datum.id)(value)).join("\n");
-        return header + body + "\nend\n";
+
+        return relationFilter.connotative ? header + "end\n" + body + "\n" : header + body + "\nend\n";
 
     }
     const treeGraph = "flowchart LR\n"
@@ -223,10 +225,11 @@ const view = model => {
         + taskDependencies
             .map(data => {
                 // console.log(data.successorTaskId);
-                const successorTaskId = data.successorTaskId
+                const successorTaskId = relationFilter.successor ? "" : data.successorTaskId
                     .map(datum => datum === '' ? "" : `${data.id} ----> ${datum}`).join("\n");
-                const dependencyTaskId = data.dependencyTaskId
+                const dependencyTaskId = relationFilter.dependency ? "" : data.dependencyTaskId
                     .map(datum => datum === '' ? "" : `${datum} ====> ${data.id}`).join("\n");
+
                 return successorTaskId + dependencyTaskId;
             }
             )
@@ -235,7 +238,6 @@ const view = model => {
     // console.log(treeGraph);
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
     // console.log({ tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph });
-    const relationFilter = model.relationFilter;
     c.groupEnd();
     return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph, ...relationFilter, };
 };
@@ -358,19 +360,19 @@ const render = table => gantt => ganttTasks => calendar => kanban => saveTimeout
         treeGraph.notify({ value: view.treeGraph });
 
     }
-    if(showConnotativeTask!==view.connotative){
+    if (showConnotativeTask !== view.connotative) {
         c.log("update showConnotativeTask");
         showConnotativeTask.notify(view.connotative)
     }
-    if(showDependencyTask!==view.dependency){
+    if (showDependencyTask !== view.dependency) {
         c.log("update showDependencyTask");
         showDependencyTask.notify(view.dependency)
     }
-    if(showSuccessorTask!==view.successor){
+    if (showSuccessorTask !== view.successor) {
         c.log("update showSuccessorTask");
         showSuccessorTask.notify(view.successor)
     }
-    if(showSimilarTask!==view.similar){
+    if (showSimilarTask !== view.similar) {
         c.log("update showSimilarTask");
         showSimilarTask.notify(view.similar)
     }
