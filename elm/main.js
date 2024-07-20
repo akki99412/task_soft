@@ -102,10 +102,10 @@ const init = _ => {
         jspreadsheetTaskDataProperties: diContainer.container.JSPREADSHEET_TASK_DATA_TEMPLATES,
         taskDataEntity: [Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map(([key, value]) => [key, value.defaultValue]))],
         relationFilter: {
-            connotative: false,
-            dependency: false,
-            successor: false,
-            similar: false,
+            connotative: true,
+            dependency: true,
+            successor: true,
+            similar: true,
         }
     };
     const module = {
@@ -182,10 +182,10 @@ const view = model => {
         end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
         progress: model.completionRate,
         dependencies: taskDataEntity
-            .filter(value => relationFilter.successor?false:value.successorTaskId.includes(model.id))
+            .filter(value => relationFilter.successor ? value.successorTaskId.includes(model.id) : false)
             .map(value => value.id)
-            .concat(relationFilter.dependency?[]:model.dependencyTaskId)
-            .concat(relationFilter.connotative?[]:model.connotativeTaskId)
+            .concat(relationFilter.dependency ? model.dependencyTaskId : [])
+            .concat(relationFilter.connotative ? model.connotativeTaskId : [])
             .join(", "),
     }));
 
@@ -225,10 +225,10 @@ const view = model => {
         + taskDependencies
             .map(data => {
                 // console.log(data.successorTaskId);
-                const successorTaskId = relationFilter.successor ? "" : data.successorTaskId
-                    .map(datum => datum === '' ? "" : `${data.id} ----> ${datum}`).join("\n");
-                const dependencyTaskId = relationFilter.dependency ? "" : data.dependencyTaskId
-                    .map(datum => datum === '' ? "" : `${datum} ====> ${data.id}`).join("\n");
+                const successorTaskId = relationFilter.successor ? data.successorTaskId
+                    .map(datum => datum === '' ? "" : `${data.id} ----> ${datum}`).join("\n") : "";
+                const dependencyTaskId = relationFilter.dependency ? data.dependencyTaskId
+                    .map(datum => datum === '' ? "" : `${datum} ====> ${data.id}`).join("\n") : "";
 
                 return successorTaskId + dependencyTaskId;
             }
@@ -250,7 +250,7 @@ window.addEventListener('load',
         }
     )
 );
-const showConnotativeTask = new Observable(false);
+const showConnotativeTask = new Observable(true);
 showConnotativeTask.subscribe(
     value => {
         if (value) {
@@ -260,7 +260,7 @@ showConnotativeTask.subscribe(
         }
     }
 )
-const showDependencyTask = new Observable(false);
+const showDependencyTask = new Observable(true);
 showDependencyTask.subscribe(
     value => {
         if (value) {
@@ -270,7 +270,7 @@ showDependencyTask.subscribe(
         }
     }
 )
-const showSuccessorTask = new Observable(false);
+const showSuccessorTask = new Observable(true);
 showSuccessorTask.subscribe(
     value => {
         if (value) {
@@ -280,7 +280,7 @@ showSuccessorTask.subscribe(
         }
     }
 )
-const showSimilarTask = new Observable(false);
+const showSimilarTask = new Observable(true);
 showSimilarTask.subscribe(
     value => {
         if (value) {
