@@ -51,7 +51,7 @@ const createFilterJspreadsheet =
         c.log("create jspreadsheet");
         c.log(columns);
         isConstructingFilterJspreadsheetObject = true;
-        const element = document.getElementById('spreadsheet');
+        const element = document.getElementById('filterTable');
         while (element.firstChild) {
             element.removeChild(element.firstChild);
         };
@@ -150,6 +150,7 @@ const createFilterJspreadsheet =
         return filterJspreadsheetObject;
     };
 const updateFilterJspreadsheet = spreadsheet => nextData => columns => eventFunc => {
+    console.log("updateFilterJspreadsheet");
     const nowData = spreadsheet.getData();
     const nowColumns = spreadsheet.getConfig().columns;
     if (nowColumns !== columns && 0 < nowData[0].filter(datum => datum !== '').length) {

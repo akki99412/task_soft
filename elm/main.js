@@ -167,7 +167,28 @@ const view = model => {
     const jspreadsheetColumns =
         repository2jspreadsheetColumns(tableHeaderKeys)(taskUiProperties)(tableTaskDataProperties)(jspreadsheetTaskDataProperties);
     const jspreadsheetData = repository2jspreadsheetData(taskDataEntity)(tableHeaderKeys);
-    const header2Key = Object.fromEntries(Object.entries(taskUiProperties).map(([key, value]) => ([value.header, key])));
+
+    const filterJspreadsheetColumns = tableHeaderKeys.map(key => ({
+        title: taskUiProperties[key].header,
+        width: tableTaskDataProperties[key].width,
+        readOnly: tableTaskDataProperties[key].readOnly,
+        type: jspreadsheetTaskDataProperties[key].type,
+        editor: null,
+        source: jspreadsheetTaskDataProperties[key].source,
+        options: jspreadsheetTaskDataProperties[key].options,
+        autocomplete: jspreadsheetTaskDataProperties[key].autocomplete,
+        multiple: jspreadsheetTaskDataProperties[key].multiple,
+        "name": tableTaskDataProperties[key].colNum.toString(),
+        "allowEmpty": false,
+        "align": tableTaskDataProperties[key].align,
+    }));
+    const filterJspreadsheetData = 
+            [tableHeaderKeys.map(key => "")];
+    const filterTableView = new FilterTableView({ jspreadsheetData: filterJspreadsheetData, jspreadsheetColumns: filterJspreadsheetColumns })
+    // const header2Key = Object.fromEntries(Object.entries(taskUiProperties).map(([key, value]) => ([value.header, key])));
+
+
+
     // c.log(taskDataEntity.map(model => ));
     // c.log(taskDataEntity.map(model => model.limit));
 
@@ -239,7 +260,7 @@ const view = model => {
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
     // console.log({ tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph });
     c.groupEnd();
-    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph, ...relationFilter, };
+    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), filterTableView, ganttTasks, model, textarea, treeGraph, ...relationFilter, };
 };
 const textareaBuffer = new Observable("");
 window.addEventListener('load',
@@ -298,16 +319,24 @@ const render = table => filterTable => gantt => ganttTasks => calendar => kanban
         jspreadsheetData: JSON.parse(JSON.stringify(table.getData())),
         jspreadsheetColumns: JSON.parse(JSON.stringify(table.getConfig().columns)),
     });
+    const filterTableView = new FilterTableMessage({
+        jspreadsheetData: JSON.parse(JSON.stringify(filterTable.getData())),
+        jspreadsheetColumns: JSON.parse(JSON.stringify(filterTable.getConfig().columns)),
+    });
     // jspreadsheetObject.resetSelection(true);
     // isEqualObjectJson(view.tableView)(tableView);
     // secretKey.then(value => c.log(value));
 
     if (!isEqualObjectJson(view.tableView)(tableView)) {
-        c.log(JSON.stringify(view.tableView));
-        c.log(JSON.stringify(tableView));
+        // c.log(JSON.stringify(view.tableView));
+        // c.log(JSON.stringify(tableView));
         c.log("updateJspreadsheet");
         updateJspreadsheet(table)(view.tableView.jspreadsheetData)(view.tableView.jspreadsheetColumns)(jspreadsheetEventInnerFunc);
 
+    }
+    if (!isEqualObjectJson(view.filterTableView)(filterTableView)) {
+        c.log("updateFilterJspreadsheet");
+        updateFilterJspreadsheet(filterTable)(view.filterTableView.jspreadsheetData)(view.filterTableView.jspreadsheetColumns)(filterJspreadsheetEventInnerFunc);
     }
     if (!ganttTasks.isUpdate && !isEqualObjectJson(view.ganttTasks)(ganttTasks.data)) {
         c.log("update gantt");

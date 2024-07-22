@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html data-bs-theme="dark">
 
 <head>
     <meta charset="utf-8" />
@@ -63,7 +63,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.css">
     <!-- jKanban の .js ファイルを読み込む -->
     <script src="https://cdn.jsdelivr.net/npm/jkanban@1.3.1/dist/jkanban.min.js"></script>
-    <link rel="stylesheet" href="jkanban.css">
 
     <!-- mermaid -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
@@ -103,41 +102,142 @@
     <script>
         new Darkmode().showWidget();
     </script> -->
-    <main class="container">
-        <div id="filterTable"></div>
-        <div id="spreadsheet"></div>
-        <div class="mermaid" id="mermaidSvgContainer"></div>
-        <div id="mermaidWorkingContainer"></div>
-        <!-- <textarea id="svgCode"></textarea> -->
-        <div id="svgContainer"></div>
-        <div class='gantt-wrap gantt-target dark'>
-            <svg class="gantt-target dark" id="gantt"></svg>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="sidebar border border-right col-sm-3  p-0 bg-body-tertiary">
+                <div class="offcanvas-lg offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu"
+                    aria-labelledby="sidebarMenuLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="sidebarMenuLabel">Company name</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                            data-bs-target="#sidebarMenu" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2 active" aria-current="page" href="#">
+                                    Dashboard
+                                </a>
+                            </li>
+                        </ul>
+
+                        <h6
+                            class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body-secondary text-uppercase">
+                            <span>Saved reports</span>
+                            <a class="link-secondary" href="#" aria-label="Add a new report">
+                                <svg class="bi">
+                                    <use xlink:href="#plus-circle" />
+                                </svg>
+                            </a>
+                        </h6>
+                        <ul class="nav flex-column mb-auto">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2" href="#">
+                                    <svg class="bi">
+                                        <use xlink:href="#file-earmark-text" />
+                                    </svg>
+                                    Current month
+                                </a>
+                            </li>
+                        </ul>
+
+                        <hr class="my-3">
+
+                    </div>
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button type="button" class="accordion-button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    アコーディオン・アイテム #1
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show">
+                                <div class="accordion-body">
+                                    <input type="form-control" class="form-control bg-body-secondary text-body"
+                                        id="$filter1Title" list="$filterTitles">
+                                    <datalist id="$filterTitles">
+                                        <option value="San Francisco">
+                                        <option value="New York">
+                                        <option value="Seattle">
+                                        <option value="Los Angeles">
+                                        <option value="Chicago">
+                                    </datalist>
+                                    <input type="form-control" class="form-control bg-body-secondary text-body"
+                                        id="$filter1Value">
+                                    <input type="form-control" class="form-control bg-body-secondary text-body  "
+                                        id="$filter1Option">
+                                </div>
+                                <!-- <input id='calendar' /> -->
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    アコーディオン・アイテム #2
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <strong>これは2番目のアイテムのアコーディオン本体。</strong>...
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    アコーディオン・アイテム #3
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <strong>これは3番目のアイテムのアコーディオン本体。</strong>...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <main class="col-sm-9">
+                <div id="filterTable"></div>
+                <div id="spreadsheet"></div>
+                <div class="mermaid" id="mermaidSvgContainer"></div>
+                <div id="mermaidWorkingContainer"></div>
+                <!-- <textarea id="svgCode"></textarea> -->
+                <div id="svgContainer"></div>
+                <div class='gantt-wrap gantt-target dark'>
+                    <svg class="gantt-target dark" id="gantt"></svg>
+                </div>
+                <div id='calendar'></div>
+
+                <!-- ここにメッセージが表示される -->
+                <!-- <div id="show-message">&nbsp;</div> -->
+
+                <!-- ここにカンバンが表示される -->
+                <div id="kanban-canvas"></div>
+                <button type=button id="$saveButton">
+                    save
+                </button>
+                <button type=button id="$exportJsonButton">
+                    export JSON
+                </button>
+                <button type=button id="$importJsonButton">
+                    import JSON
+                </button>
+                <button type=button id="$loadButton">
+                    load
+                </button>
+                <div class="textarea">
+                    <textarea id="$textarea" cols="100" rows="50"></textarea>
+                </div>
+
+            </main>
         </div>
-        <div id='calendar'></div>
-
-        <!-- ここにメッセージが表示される -->
-        <!-- <div id="show-message">&nbsp;</div> -->
-
-        <!-- ここにカンバンが表示される -->
-        <div id="kanban-canvas"></div>
-        <button type=button id="$saveButton">
-            save
-        </button>
-        <button type=button id="$exportJsonButton">
-            export JSON
-        </button>
-        <button type=button id="$importJsonButton">
-            import JSON
-        </button>
-        <button type=button id="$loadButton">
-            load
-        </button>
-        <div class="textarea">
-            <textarea id="$textarea" cols="100" rows="50"></textarea>
-        </div>
-
-    </main>
-
+    </div>
 
 
     <script src="utilities/compose.js" charset="UTF-8"></script>
@@ -177,7 +277,15 @@
     <script>
         console.groupEnd();
     </script>
-
+    <script>
+        let instance = jSuites.calendar(document.getElementById('$filter1Value'), {
+            format: 'DD/MM/YYYY HH:MM',
+            time: true,
+            onchange: function () {
+                console.log(arguments)
+            }
+        });
+    </script>
     <script>
 
         $saveButton.onclick = function () {
@@ -286,11 +394,13 @@
     </script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="gantt.css">
-    <link href="navbar-fixed.css" rel="stylesheet">
+    <link rel="stylesheet" href="jkanban.css">
+    <link rel="stylesheet" href="navbar-fixed.css">
+    <link rel="stylesheet" href="calendar.css">
+    <link rel="stylesheet" href="jexcel.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="calendar.css">
     <!-- <script type="text/javascript">
         hotkeys('ctrl+z,ctrl+y', function (event, handler) {
             switch (handler.key) {
