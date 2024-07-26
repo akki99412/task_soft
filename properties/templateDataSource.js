@@ -108,8 +108,29 @@ diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
         rowNum = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
         implementationTime = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
     });
-
-
+const dataFilterTemplate=
+     {
+        title : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        id : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        receipt : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        memo : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        tag : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        limit : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        manHours : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        scheduledDateTime : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        completionDateTime : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        completionRate : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        implementationDate : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        state : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        similarTasksId : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        similarTasks : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        successorTaskId : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        dependencyTaskId : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        successorTask : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        connotativeTaskId : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        connotativeTask : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+        implementationTime : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value) },
+    };
 
 var clockEditor = {
     // Methods

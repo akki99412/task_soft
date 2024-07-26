@@ -10,13 +10,14 @@ const secretKey = (async _ => {
 })();
 
 class IMainData {
-    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, textarea = null, relationFilter = null } = {}) {
+    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, textarea = null, relationFilter = null, dataFilters = null } = {}) {
         this.taskUiProperties = taskUiProperties;
         this.tableTaskDataProperties = tableTaskDataProperties;
         this.jspreadsheetTaskDataProperties = jspreadsheetTaskDataProperties;
         this.taskDataEntity = taskDataEntity;
         this.textarea = textarea;
         this.relationFilter = relationFilter;
+        this.dataFilters = dataFilters;
     }
 }
 class ILocalStorageData {
@@ -44,6 +45,13 @@ class ImportJsonMessage {
         this.value = value;
     }
 }
+class DataFilterMessage {
+    constructor({ id = null, value = null, className = null } = {}) {
+        this.id = id;
+        this.value = value;
+        this.className = className;
+    }
+}
 
 
 // let timeoutID = {0};
@@ -52,7 +60,7 @@ saveTimeout.subscribe(value => {
     if (value.doneSave) {
         console.log("saved");
     } else {
-        console.warn("reset")
+        console.log("reset")
     }
 });
 
@@ -106,7 +114,15 @@ const init = _ => {
             dependency: true,
             successor: true,
             similar: true,
-        }
+        },
+        dataFilters: [
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+        ]
     };
     const module = {
         ...mainData,
@@ -182,8 +198,8 @@ const view = model => {
         "allowEmpty": false,
         "align": tableTaskDataProperties[key].align,
     }));
-    const filterJspreadsheetData = 
-            [tableHeaderKeys.map(key => "")];
+    const filterJspreadsheetData =
+        [tableHeaderKeys.map(key => "")];
     const filterTableView = new FilterTableView({ jspreadsheetData: filterJspreadsheetData, jspreadsheetColumns: filterJspreadsheetColumns })
     // const header2Key = Object.fromEntries(Object.entries(taskUiProperties).map(([key, value]) => ([value.header, key])));
 
@@ -259,8 +275,15 @@ const view = model => {
     // console.log(treeGraph);
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
     // console.log({ tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph });
+    const dataFilterTitles = tableHeaderKeys
+        .map(key => taskUiProperties[key].header)
+        .map(value => `<option value="${value}">`)
+        .join("");
+    // const dataFilters=model.dataFilters.map()
+    const dataFilters = "";
+
     c.groupEnd();
-    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), filterTableView, ganttTasks, model, textarea, treeGraph, ...relationFilter, };
+    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), filterTableView, ganttTasks, model, textarea, treeGraph, ...relationFilter, dataFilterTitles, dataFilters };
 };
 const textareaBuffer = new Observable("");
 window.addEventListener('load',
@@ -311,8 +334,43 @@ showSimilarTask.subscribe(
         }
     }
 )
+const dataFilterTitles = new Observable(`<option value="San Francisco"><option value="New York"><option value="Seattle"><option value="Los Angeles"><option value="Chicago">`);
+dataFilterTitles.subscribe(
+    value => {
+        $dataFilterTitles.innerHTML = value;
+    }
+);
+const dataFilterElements =
+    [
+        {
+            button: $dataFilter0Button,
+            switch: $dataFilter0Switch,
+            title: $dataFilter0Title,
+            value: $dataFilter0Value,
+            option: $dataFilter0Option,
+            optionList: $dataFilter0OptionList,
+        }
+    ];
+const dataFilters = new Observable(
+    [
+        {
+            button: $dataFilter0Button.value,
+            switch: $dataFilter0Switch.checked,
+            title: $dataFilter0Title.value,
+            value: $dataFilter0Value.value,
+            option: $dataFilter0Option.value,
+            optionList: $dataFilter0OptionList.value,
+        }
+    ]
+);
+dataFilters.subscribe(data => {
+    zip(data, dataFilterElements)
+        .map((datum, element) => Object.entries(datum)
+            .map(([key, value]) => key === "switch" ? element.switch.checked = value
+                : element[key].value = value));
+});
 
-const render = table => filterTable => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => view => {
+const render = table => filterTable => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => dataFilterTitles => dataFilters => view => {
     c.groupCollapsed("render");
     c.log(view);
     const tableView = new TableMessage({
@@ -382,6 +440,14 @@ const render = table => filterTable => gantt => ganttTasks => calendar => kanban
         textarea.notify(view.textarea);
 
     }
+    if (!isEqualObjectJson(dataFilterTitles.value)(view.dataFilterTitles)) {
+        c.log("update dataFilterTitles");
+        dataFilterTitles.notify(view.dataFilterTitles);
+    }
+    if (!isEqualObjectJson(dataFilters.value)(view.dataFilters)) {
+        c.log("update dataFilters");
+        dataFilters.notify(view.dataFilters);
+    }
     if ((treeGraph.value.value) !== (view.treeGraph)) {
         c.log("update treeGraph");
         // c.log(textarea.value);
@@ -405,6 +471,7 @@ const render = table => filterTable => gantt => ganttTasks => calendar => kanban
         c.log("update showSimilarTask");
         showSimilarTask.notify(view.similar)
     }
+
 
     c.log("render end");
     c.groupEnd();
@@ -673,6 +740,22 @@ const connotativeTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, r
 const dependencyTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, dependency: !model.relationFilter.dependency } });
 const successorTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, successor: !model.relationFilter.successor } });
 const similarTasksDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, similar: !model.relationFilter.similar } });
+const dataFilterUpdate = (model) => (message) => {
+    const index = message.className.includes("dataFilter0") ? 0 : null;
+    if (index === null) {
+        return model;
+    } else {
+        const dataFilter = model.dataFilters[index];
+        const bufferDataFilter = message.className.includes("dataFilterSwitch") ? { ...dataFilter, enable: message.value }
+            : message.className.includes("dataFilterTitle") ? { ...dataFilter, title: message.value }
+                : message.className.includes("dataFilterValue") ? { ...dataFilter, value: message.value }
+                    : message.className.includes("dataFilterOption") ? { ...dataFilter, option: message.value }
+                        : dataFilter;
+        const dstDataFilter = bufferDataFilter;
+        const dataFilters = model.dataFilters.map((value, i) => i === index ? dstDataFilter : value);
+        return { ...model, dataFilters, };
+    }
+};
 const update = model => message => {
     c.group("update");
     c.log(model);
@@ -731,6 +814,13 @@ const update = model => message => {
                     c.log("ImportJson");
                     const dstModel = importJsonUpdate(model)(message);
 
+                    c.log(dstModel);
+                    return dstModel;
+                }
+            case new DataFilterMessage().constructor.name:
+                {
+                    c.log("DataFIlter");
+                    const dstModel = dataFilterUpdate(model)(message);
                     c.log(dstModel);
                     return dstModel;
                 }
@@ -894,7 +984,7 @@ const update = model => message => {
     return newModel;
 };
 const main = new ElmLike({
-    init, view, update, render: view => render(jspreadsheetObject)(filterJspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(showConnotativeTask)(showDependencyTask)(showSuccessorTask)(showSimilarTask)(view)
+    init, view, update, render: view => render(jspreadsheetObject)(filterJspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(showConnotativeTask)(showDependencyTask)(showSuccessorTask)(showSimilarTask)(dataFilterTitles)(dataFilters)(view)
 });
 main.init();
 

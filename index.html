@@ -144,29 +144,43 @@
                         <hr class="my-3">
 
                     </div>
+                    <datalist id="$dataFilterTitles">
+                        <option value="San Francisco">
+                        <option value="New York">
+                        <option value="Seattle">
+                        <option value="Los Angeles">
+                        <option value="Chicago">
+                    </datalist>
                     <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    data-bs-target="#dataFilter0Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter0Collapse" id="$dataFilter0Button">
                                     アコーディオン・アイテム #1
                                 </button>
                             </h2>
-                            <div id="collapseOne" class="accordion-collapse collapse show">
+                            <div id="dataFilter0Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
-                                    <input type="form-control" class="form-control bg-body-secondary text-body"
-                                        id="$filter1Title" list="$filterTitles">
-                                    <datalist id="$filterTitles">
-                                        <option value="San Francisco">
-                                        <option value="New York">
-                                        <option value="Seattle">
-                                        <option value="Los Angeles">
-                                        <option value="Chicago">
+                                    <div class="form-check form-switch form-check-inline">
+                                        <input class="form-check-input dataFilter0 dataFilterSwitch" type="checkbox" role="switch"
+                                            id="$dataFilter0Switch"  autocomplete="off">
+                                        <label class="form-check-label" for="$dataFilter0Switch">無効/有効</label>
+                                    </div>
+                                    <input type="form-control"
+                                        class="form-control bg-body-secondary text-body dataFilter0 dataFilterTitle"
+                                        id="$dataFilter0Title" list="$dataFilterTitles">
+                                    <input type="form-control"
+                                        class="form-control bg-body-secondary text-body dataFilter0 dataFilterValue"
+                                        id="$dataFilter0Value">
+                                    <input type="form-control"
+                                        class="form-control bg-body-secondary text-body  dataFilter0 dataFilterOption"
+                                        id="$dataFilter0Option" list="$dataFilter0OptionList">
+                                    <datalist id="$dataFilter0OptionList">
+                                        <option value="dataFilter0Option1">
+                                        <option value="dataFilter0Option2">
+                                        <option value="dataFilter0Option3">
                                     </datalist>
-                                    <input type="form-control" class="form-control bg-body-secondary text-body"
-                                        id="$filter1Value">
-                                    <input type="form-control" class="form-control bg-body-secondary text-body  "
-                                        id="$filter1Option">
                                 </div>
                                 <!-- <input id='calendar' /> -->
                             </div>
@@ -278,13 +292,13 @@
         console.groupEnd();
     </script>
     <script>
-        let instance = jSuites.calendar(document.getElementById('$filter1Value'), {
-            format: 'DD/MM/YYYY HH:MM',
-            time: true,
-            onchange: function () {
-                console.log(arguments)
-            }
-        });
+        // let instance = jSuites.calendar(document.getElementById('$dataFilter0Value'), {
+        //     format: 'DD/MM/YYYY HH:MM',
+        //     time: true,
+        //     onchange: function () {
+        //         console.log(arguments)
+        //     }
+        // });
     </script>
     <script>
 
@@ -333,6 +347,11 @@
             // delayRepositoryUpdate(repositories.value);
             main.update(new ButtonMessage({ id: $saveButton }));
         };
+        // $dataFilter0Button
+        $dataFilter0Switch.onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Switch.id, value: $dataFilter0Switch.checked, className: $dataFilter0Switch.className.split(' ') }));
+        $dataFilter0Title.onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Title.id, value: value.target.value, className: $dataFilter0Title.className.split(' ') }));
+        $dataFilter0Value.onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: value.target.value, className: $dataFilter0Value.className.split(' ') }));
+        $dataFilter0Option.onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Option.id, value: value.target.value, className: $dataFilter0Option.className.split(' ') }));
         const unloadFunction = e => {
             e.preventDefault();
             e.returnValue = "ページを離れようとしています。よろしいですか？"

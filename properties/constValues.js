@@ -17,6 +17,26 @@ const LOCAL_STORAGE_KEY = "repositories";
 
 const saveTime = 3;//second
 
+const stringDataFilterOption = Object.freeze({
+    equal: "一致",
+    notEqual: "一致しない",
+    include: "含む",
+    notIncluded: "含まない",
+});
+const numericDataFilterOption = Object.freeze({
+    equal: "一致",
+    notEqual: "一致しない",
+    over: "以上",
+    under: "以下",
+});
+const dateAndTimeDataFilterOption = Object.freeze({
+    equal: "一致",
+    notEqual: "一致しない",
+    over: "以上",
+    under: "以下",
+});
+
+
 const boardList = [
     {
         "id": "SCHEDULED",
