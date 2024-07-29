@@ -60,7 +60,7 @@ saveTimeout.subscribe(value => {
     if (value.doneSave) {
         console.log("saved");
     } else {
-        console.log("reset")
+        console.log("reset");
     }
 });
 
@@ -132,34 +132,58 @@ const init = _ => {
     };
     console.log(module);
     console.groupEnd();
-    return (module)
+    return (module);
 };
 const view = model => {
     c.groupCollapsed("view");
     c.log(model);
-    const relationFilter = model.relationFilter;
-    const taskUiProperties = model.taskUiProperties;
-    const tableTaskDataProperties = model.tableTaskDataProperties;
-    const jspreadsheetTaskDataProperties = model.jspreadsheetTaskDataProperties;
-    const taskDependencies = model.taskDataEntity.map(
+    const title2key = Object.fromEntries(
+        Object.entries(dataFilterTemplate)
+            .map(([key, _]) => [model.taskUiProperties[key].header, key])
+    );
+
+
+    const dataFilters = model.dataFilters
+        .map(data => {
+            const { enable, title, value, option, valid } = data;
+            const button = `${enable ? "☑" : "□"} ${title} ${value} ${option}`;
+            c.log(dataFilterTemplate[title2key[title]]);
+            const optionList = title2key[title] !== undefined ? dataFilterTemplate[title2key[title]].options
+                .map(value => `<option value="${value}">`)
+                .join("")
+                : "";
+            return { button, enable, title, value, option, optionList, valid };
+        }
+        );
+    const extendDataEntity = model.taskDataEntity.map(
         data => {
-            const { title, id, similarTasksId, successorTaskId, dependencyTaskId, connotativeTaskId, } = data;
+            const { similarTasksId, successorTaskId, connotativeTaskId, } = data;
             const extensionTaskId = model.taskDataEntity.filter(value => value.connotativeTaskId.includes(data.id)).map(value => value.id);
             const completionRate = data.state === TASK_STATE.COMPLETED ? 100
                 : 0 < connotativeTaskId.filter(value => value !== '').length ? -1
                     : 0;
+            const similarTasks = model.taskDataEntity
+                .filter(value => similarTasksId.includes(value.id))
+                .map(value => value.title);
+            const successorTask = model.taskDataEntity
+                .filter(value => successorTaskId.includes(value.id))
+                .map(value => value.title);;
+            const connotativeTask = model.taskDataEntity
+                .filter(value => connotativeTaskId.includes(value.id))
+                .map(value => value.title);;
 
-            const dstData = { title, id, similarTasksId, successorTaskId, dependencyTaskId, connotativeTaskId, extensionTaskId, completionRate, };
-
+            const dstData = {
+                ...data, extensionTaskId, completionRate, similarTasks, successorTask, connotativeTask,
+            };
             return dstData;
         }
     );
-    // console.log({ taskDependencies });
+    // console.log({ extendDataEntity });
     //完了率の計算(木構造で、関数プログラミング的に書く方法が思いつかなかった)
-    for (let i = 0; taskDependencies.map(value => value.completionRate).includes(-1); i++) {
-        const data = taskDependencies[i % taskDependencies.length];
+    for (let i = 0; extendDataEntity.map(value => value.completionRate).includes(-1); i++) {
+        const data = extendDataEntity[i % extendDataEntity.length];
         if (data.completionRate !== -1) continue;
-        const connotativeTask = taskDependencies.filter(value => data.connotativeTaskId.includes(value.id));
+        const connotativeTask = extendDataEntity.filter(value => data.connotativeTaskId.includes(value.id));
         if (
             connotativeTask.some(value => value.completionRate === -1)) {
             continue;
@@ -171,7 +195,59 @@ const view = model => {
         const average = total / connotativeTask.length;
         data.completionRate = average;
     }
-    const taskDataEntity = model.taskDataEntity
+
+    const checkFilteredList = dataFilters
+        .filter(data => data.valid)
+        .map(filter => {
+            const key = title2key[filter.title];
+            const type = dataFilterTemplate[key].type;
+            const rawFunc = pipe(type)
+                (type => {
+                    switch (type) {
+                        case "string":
+                            return Object.entries(stringDataFilterOption)
+                                .filter(([_, datum]) => datum.value === filter.option)[0][1]
+                                .checkFiltered;
+                            break;
+                        case "numeric":
+                            return Object.entries(stringDataFilterOption)
+                                .filter(([_, datum]) => datum.value === filter.option)[0][1]
+                                .checkFiltered;
+                            break;
+                        case "dateAndTime":
+                            return Object.entries(stringDataFilterOption)
+                                .filter(([_, datum]) => datum.value === filter.option)[0][1]
+                                .checkFiltered;
+                            break;
+
+                    }
+                });
+            return data => rawFunc(filter.value)(data[key]);
+        }
+        );
+    const checkFiltered = data => checkFilteredList.reduce((accumulator, func) => func(data) && accumulator,
+        true
+    );
+
+
+    const filteredDataEntities = extendDataEntity
+        .filter(value => {
+            return checkFiltered(value);
+        });
+    c.log(filteredDataEntities);
+    const relationFilter = model.relationFilter;
+    const taskUiProperties = model.taskUiProperties;
+    const tableTaskDataProperties = model.tableTaskDataProperties;
+    const jspreadsheetTaskDataProperties = model.jspreadsheetTaskDataProperties;
+    const taskDependencies = filteredDataEntities;
+    console.log(taskDependencies);
+    // console.log({ taskDependencies });
+    //完了率の計算(木構造で、関数プログラミング的に書く方法が思いつかなかった)
+
+
+    // console.log(model.taskDataEntity);
+    const taskDataEntity = taskDependencies
+        .filter(value => true)
         .map(value => ({
             ...value,
             completionRate: taskDependencies.filter(data => data.id === value.id)[0].completionRate,
@@ -200,7 +276,7 @@ const view = model => {
     }));
     const filterJspreadsheetData =
         [tableHeaderKeys.map(key => "")];
-    const filterTableView = new FilterTableView({ jspreadsheetData: filterJspreadsheetData, jspreadsheetColumns: filterJspreadsheetColumns })
+    const filterTableView = new FilterTableView({ jspreadsheetData: filterJspreadsheetData, jspreadsheetColumns: filterJspreadsheetColumns });
     // const header2Key = Object.fromEntries(Object.entries(taskUiProperties).map(([key, value]) => ([value.header, key])));
 
 
@@ -236,7 +312,7 @@ const view = model => {
                         id: model.id,
                         title: model.title,
                         // class: 
-                    })
+                    });
                 })
         }));
     const textarea = model.textarea;
@@ -251,12 +327,12 @@ const view = model => {
 
         return relationFilter.connotative ? header + "end\n" + body + "\n" : header + body + "\nend\n";
 
-    }
+    };
     const treeGraph = "flowchart LR\n"
         + taskDependencies
             .filter(value => value.extensionTaskId.length === 0)
             .map(value => {
-                return buildTree(taskDependencies)("")(value.id)
+                return buildTree(taskDependencies)("")(value.id);
             })
             .join("\n")
         + taskDependencies
@@ -280,7 +356,7 @@ const view = model => {
         .map(value => `<option value="${value}">`)
         .join("");
     // const dataFilters=model.dataFilters.map()
-    const dataFilters = "";
+
 
     c.groupEnd();
     return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), filterTableView, ganttTasks, model, textarea, treeGraph, ...relationFilter, dataFilterTitles, dataFilters };
@@ -290,7 +366,7 @@ window.addEventListener('load',
     _ => textareaBuffer.subscribe(
         value => {
             // c.log(value);
-            $textarea.value = value
+            $textarea.value = value;
         }
     )
 );
@@ -303,7 +379,7 @@ showConnotativeTask.subscribe(
             $connotativeTaskDropdownMenu.classList.remove("active");
         }
     }
-)
+);
 const showDependencyTask = new Observable(true);
 showDependencyTask.subscribe(
     value => {
@@ -313,7 +389,7 @@ showDependencyTask.subscribe(
             $dependencyTaskDropdownMenu.classList.remove("active");
         }
     }
-)
+);
 const showSuccessorTask = new Observable(true);
 showSuccessorTask.subscribe(
     value => {
@@ -323,7 +399,7 @@ showSuccessorTask.subscribe(
             $successorTaskDropdownMenu.classList.remove("active");
         }
     }
-)
+);
 const showSimilarTask = new Observable(true);
 showSimilarTask.subscribe(
     value => {
@@ -333,7 +409,7 @@ showSimilarTask.subscribe(
             $similarTasksDropdownMenu.classList.remove("active");
         }
     }
-)
+);
 const dataFilterTitles = new Observable(`<option value="San Francisco"><option value="New York"><option value="Seattle"><option value="Los Angeles"><option value="Chicago">`);
 dataFilterTitles.subscribe(
     value => {
@@ -344,7 +420,7 @@ const dataFilterElements =
     [
         {
             button: $dataFilter0Button,
-            switch: $dataFilter0Switch,
+            enable: $dataFilter0Switch,
             title: $dataFilter0Title,
             value: $dataFilter0Value,
             option: $dataFilter0Option,
@@ -355,7 +431,7 @@ const dataFilters = new Observable(
     [
         {
             button: $dataFilter0Button.value,
-            switch: $dataFilter0Switch.checked,
+            enable: $dataFilter0Switch.checked,
             title: $dataFilter0Title.value,
             value: $dataFilter0Value.value,
             option: $dataFilter0Option.value,
@@ -364,10 +440,26 @@ const dataFilters = new Observable(
     ]
 );
 dataFilters.subscribe(data => {
+    console.log(data);
     zip(data, dataFilterElements)
-        .map((datum, element) => Object.entries(datum)
-            .map(([key, value]) => key === "switch" ? element.switch.checked = value
-                : element[key].value = value));
+        .forEach(([datum, element]) => Object.entries(datum)
+            .forEach(([key, value]) => {
+                switch (key) {
+                    case "valid":
+                        break;
+                    case "enable":
+                        element.enable.checked = value;
+                        break;
+                    case "button":
+                        element[key].innerText = value;
+                    case "optionList":
+                        element[key].innerHTML = value;
+                        break;
+                    default:
+                        element[key].value = value;
+                        break;
+                }
+            }));
 });
 
 const render = table => filterTable => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => dataFilterTitles => dataFilters => view => {
@@ -457,19 +549,19 @@ const render = table => filterTable => gantt => ganttTasks => calendar => kanban
     }
     if (showConnotativeTask !== view.connotative) {
         c.log("update showConnotativeTask");
-        showConnotativeTask.notify(view.connotative)
+        showConnotativeTask.notify(view.connotative);
     }
     if (showDependencyTask !== view.dependency) {
         c.log("update showDependencyTask");
-        showDependencyTask.notify(view.dependency)
+        showDependencyTask.notify(view.dependency);
     }
     if (showSuccessorTask !== view.successor) {
         c.log("update showSuccessorTask");
-        showSuccessorTask.notify(view.successor)
+        showSuccessorTask.notify(view.successor);
     }
     if (showSimilarTask !== view.similar) {
         c.log("update showSimilarTask");
-        showSimilarTask.notify(view.similar)
+        showSimilarTask.notify(view.similar);
     }
 
 
@@ -549,7 +641,7 @@ const TableUpdate = model => message => {
                             : data]
                 ));
         const oldData = model.taskDataEntity.filter(value => value.id === newData.id)[0];
-        return { ...oldData, ...newData }
+        return { ...oldData, ...newData };
     }
     );
 
@@ -590,7 +682,7 @@ const nop = model => message => {
     const taskDataRepository = fillDefaultTaskData(diContainer.container.TASK_DATA_TEMPLATES)(stateChange2implementationDate(model.taskDataEntity)(jspreadsheetDataUpdater.map(data => {
         const buffer = Object.fromEntries(data.map((datum, i) => ([tableHeaderKeys[i],
         tableHeaderKeys[i] === "implementationDate" ? string2ImplementationDate(datum) : datum
-        ])))
+        ])));
         // c.log(buffer);
         // if (buffer.id === "") return Object.fromEntries(Object.entries(taskDataProperties.value).map((obj) => { return [obj[0], obj[1].defaultValue] }));
         return buffer;
@@ -652,7 +744,7 @@ const ganttUpdate = model => message => {
     //             start: dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
     //                 end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
     // return JSON.parse(JSON.stringify(model));
-    return { ...model, taskDataEntity }
+    return { ...model, taskDataEntity };
 };
 const kanbanBoardUpdate = model => message => {
     return model;
@@ -674,10 +766,10 @@ const localStorageUpdate = model => message => {
     try {
         const srcModel = (message);
         const taskDataEntity = srcModel.taskDataEntity.map(value => {
-            const defaultTaskData = Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map((obj) => { return [obj[0], obj[1].defaultValue] }));
-            return { ...defaultTaskData, ...value }
+            const defaultTaskData = Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map((obj) => { return [obj[0], obj[1].defaultValue]; }));
+            return { ...defaultTaskData, ...value };
 
-        })
+        });
 
         const newModel = { ...model, ...srcModel, taskDataEntity };
         view(model);
@@ -692,10 +784,10 @@ const importJsonUpdate = model => message => {
     try {
         const srcModel = JSON.parse(message.value);
         const taskDataEntity = srcModel.taskDataEntity.map(value => {
-            const defaultTaskData = Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map((obj) => { return [obj[0], obj[1].defaultValue] }));
-            return { ...defaultTaskData, ...value }
+            const defaultTaskData = Object.fromEntries(Object.entries(diContainer.container.TASK_DATA_TEMPLATES).map((obj) => { return [obj[0], obj[1].defaultValue]; }));
+            return { ...defaultTaskData, ...value };
 
-        })
+        });
 
         const newModel = { ...model, ...srcModel, taskDataEntity };
         view(model);
@@ -708,24 +800,28 @@ const importJsonUpdate = model => message => {
 };
 const undoUpdate = model => message => {
     model.index = model.index > 0 ? model.index - 1 : 0;
-    const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity, } = model.history[model.index];
+    const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity, relationFilter, dataFilters, } = model.history[model.index];
     const mainData = {
         taskUiProperties,
         tableTaskDataProperties,
         jspreadsheetTaskDataProperties,
         taskDataEntity,
+        relationFilter,
+        dataFilters,
     };
     c.log("undo");
     return { ...model, ...mainData };
 };
 const redoUpdate = model => message => {
     model.index = model.index > model.history.length - 2 ? model.history.length - 1 : model.index = model.index + 1;
-    const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity, } = model.history[model.index];
+    const { taskUiProperties, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity, relationFilter, dataFilters, } = model.history[model.index];
     const mainData = {
         taskUiProperties,
         tableTaskDataProperties,
         jspreadsheetTaskDataProperties,
         taskDataEntity,
+        relationFilter,
+        dataFilters,
     };
     c.log("redo");
     return { ...model, ...mainData };
@@ -735,7 +831,7 @@ const isDuplicated = (elements) => {
     // Setを使って、配列の要素を一意にする
     const setElements = new Set(elements);
     return setElements.size !== elements.length;
-}
+};
 const connotativeTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, connotative: !model.relationFilter.connotative } });
 const dependencyTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, dependency: !model.relationFilter.dependency } });
 const successorTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, successor: !model.relationFilter.successor } });
@@ -751,7 +847,15 @@ const dataFilterUpdate = (model) => (message) => {
                 : message.className.includes("dataFilterValue") ? { ...dataFilter, value: message.value }
                     : message.className.includes("dataFilterOption") ? { ...dataFilter, option: message.value }
                         : dataFilter;
-        const dstDataFilter = bufferDataFilter;
+
+        const title2key = Object.fromEntries(
+            Object.entries(dataFilterTemplate)
+                .map(([key, _]) => [model.taskUiProperties[key].header, key])
+        );
+        const optionList = title2key[bufferDataFilter.title] !== undefined ? dataFilterTemplate[title2key[bufferDataFilter.title]].options
+            : [];
+        const valid = bufferDataFilter.enable && title2key[bufferDataFilter.title] !== undefined && optionList.includes(bufferDataFilter.option);
+        const dstDataFilter = { ...bufferDataFilter, valid };
         const dataFilters = model.dataFilters.map((value, i) => i === index ? dstDataFilter : value);
         return { ...model, dataFilters, };
     }
@@ -840,12 +944,12 @@ const update = model => message => {
                                 break;
                             }
                             case $importJsonButton: {
-                                c.log("importJsonButton")
+                                c.log("importJsonButton");
                                 return importJsonButtonUpdate(model)(message);
                                 break;
                             }
                             case $loadButton: {
-                                c.log("loadButton")
+                                c.log("loadButton");
                                 return loadButtonUpdate(model)(message);
                                 break;
                             }
@@ -873,12 +977,12 @@ const update = model => message => {
                                 break;
                             }
                             case $successorTaskDropdownMenu.id: {
-                                c.log("successorTaskDropdownMenu")
+                                c.log("successorTaskDropdownMenu");
                                 return successorTaskDropdownMenuUpdate(model)(message);
                                 break;
                             }
                             case $similarTasksDropdownMenu.id: {
-                                c.log("similarTasksDropdownMenu")
+                                c.log("similarTasksDropdownMenu");
                                 return similarTasksDropdownMenuUpdate(model)(message);
                                 break;
                             }
@@ -898,17 +1002,17 @@ const update = model => message => {
         }
     })(model);
     // c.log(JSON.stringify(dstModel));
-    c.log(isEqualObjectJson(new IMainData(dstModel))(new IMainData(model)))
+    c.log(isEqualObjectJson(new IMainData(dstModel))(new IMainData(model)));
     const newModel = (_ => {
         if (isEqualObjectJson(new IMainData(dstModel))(new IMainData(model))) {
             switch (message.constructor.name) {
                 case new Undo().constructor.name: {
-                    c.log("Undo")
+                    c.log("Undo");
                     return undoUpdate(model)(message);
                     break;
                 }
                 case new Redo().constructor.name: {
-                    c.log("Redo")
+                    c.log("Redo");
                     return redoUpdate(model)(message);
                     break;
                 }
@@ -929,14 +1033,14 @@ const update = model => message => {
                             const successorTaskId = datum.successorTaskId.filter(value => value !== datum.id);
                             const dependencyTaskId = datum.dependencyTaskId.filter(value => value !== datum.id);
                             const connotativeTaskId = datum.connotativeTaskId.filter(value => value !== datum.id);
-                            return { ...datum, successorTaskId, dependencyTaskId, connotativeTaskId }
+                            return { ...datum, successorTaskId, dependencyTaskId, connotativeTaskId };
                         })
                         )
                         ._(data => data)
                         ._(data => {
                             return [...data];
                         })
-                    )
+                    );
                 // (fillDefaultTaskData
                 // (diContainer.container.TASK_DATA_TEMPLATES)
                 // (stateChange2implementationDate
@@ -954,16 +1058,17 @@ const update = model => message => {
                             // const successorTaskId = { type, editor, source, options, autocomplete, multiple };
                             return { ...data, successorTaskId, dependencyTaskId, connotativeTaskId };
                         })
-                    )
+                    );
 
 
-                const { taskUiProperties, tableTaskDataProperties, relationFilter } = dstModel;
+                const { taskUiProperties, tableTaskDataProperties, relationFilter, dataFilters } = dstModel;
                 const mainData = {
                     taskUiProperties,
                     tableTaskDataProperties,
                     jspreadsheetTaskDataProperties,
                     taskDataEntity,
                     relationFilter,
+                    dataFilters,
                 };
                 const end = dstModel.index + 1;
                 const start = 0 < (end - HISTORY_LENGTH) ? end - HISTORY_LENGTH : 0;
@@ -972,7 +1077,7 @@ const update = model => message => {
                 const history = dstModel.history.slice(start, end).concat([mainData]);
                 const index = history.length - 1;
 
-                const bufferModel = { ...dstModel, taskDataEntity, jspreadsheetTaskDataProperties, history, index }
+                const bufferModel = { ...dstModel, taskDataEntity, jspreadsheetTaskDataProperties, history, index };
                 c.log({ bufferModel });
                 return bufferModel;
             })(dstModel);

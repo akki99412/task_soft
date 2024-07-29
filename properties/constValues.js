@@ -18,22 +18,22 @@ const LOCAL_STORAGE_KEY = "repositories";
 const saveTime = 3;//second
 
 const stringDataFilterOption = Object.freeze({
-    equal: "一致",
-    notEqual: "一致しない",
-    include: "含む",
-    notIncluded: "含まない",
+    equal: { value: "一致", checkFiltered: filter => data => filter === data },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => filter !== data },
+    include: { value: "含む", checkFiltered: filter => data => filter === data },
+    notIncluded: { value: "含まない", checkFiltered: filter => data => filter === data },
 });
 const numericDataFilterOption = Object.freeze({
-    equal: "一致",
-    notEqual: "一致しない",
-    over: "以上",
-    under: "以下",
+    equal: { value: "一致", checkFiltered: filter => data => filter === data },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => filter !== data },
+    over: { value: "以上", checkFiltered: filter => data => filter === data },
+    under: { value: "以下", checkFiltered: filter => data => filter === data },
 });
 const dateAndTimeDataFilterOption = Object.freeze({
-    equal: "一致",
-    notEqual: "一致しない",
-    over: "以上",
-    under: "以下",
+    equal: { value: "一致", checkFiltered: filter => data => filter === data },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => filter === data },
+    over: { value: "以上", checkFiltered: filter => data => filter === data },
+    under: { value: "以下", checkFiltered: filter => data => filter === data },
 });
 
 
