@@ -302,7 +302,7 @@ const view = model => {
     // const successorTask2dependencies = taskDataEntity.map(model => 
     //     model.successorTaskId,
     // );
-    const ganttTasks = taskDataEntity.map(model => ({
+    const ganttTasks = taskDataEntity.length > 0 ? taskDataEntity.map(model => ({
         id: model.id,
         name: model.title,
         description: model.memo,
@@ -315,7 +315,16 @@ const view = model => {
             .concat(relationFilter.dependency ? model.dependencyTaskId : [])
             .concat(relationFilter.connotative ? model.connotativeTaskId : [])
             .join(", "),
-    }));
+    }))
+        : [{
+            id: "dummy",
+            name: "ダミー",
+            description: "ダミー",
+            start: dayjs().tz(timeZone).format("YYYY-MM-DD"),
+            end: dayjs().tz(timeZone).format("YYYY-MM-DD"),
+            progress: 0,
+            dependencies: "",
+        }];
 
     const kanbanTasks =
         boardList.map(board => ({
@@ -679,7 +688,7 @@ const TableUpdate = model => message => {
     );
 
 
-    const taskDataEntity=nowDataEntities
+    const taskDataEntity = nowDataEntities
         .concat(filteredOutDataEntities
             .map(value => {
                 const {
@@ -788,39 +797,42 @@ const nop = model => message => {
     return repository;
 };
 const ganttUpdate = model => message => {
-    // c.log(message);
-    // c.log(model.taskDataEntity.find(data => data.id === message.id));
-    const srcTaskData = model.taskDataEntity.find(data => data.id === message.id);
-    const modelScheduledDateTime = dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone);
-    const modelLimit = dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone);
-    // c.log();
-    // c.log();
-    const id = message.id;
-    const title = message.name;
-    const memo = message.description;
-    const scheduledDateTime = dayjs(message.start).tz(timeZone)
-        .hour(modelScheduledDateTime.format("H"))
-        .minute(modelScheduledDateTime.format("m"))
-        .second(modelScheduledDateTime.format("s"))
-        .format(DEFAULT_FORMAT.DATE_TIME);
-    const limit = dayjs(message.end).tz(timeZone)
-        .hour(modelLimit.format("H"))
-        .minute(modelLimit.format("m"))
-        .second(modelLimit.format("s"))
-        .format(DEFAULT_FORMAT.DATE_TIME);
-    const dstTaskData = { ...srcTaskData, id, title, memo, scheduledDateTime, limit, };
-    const taskDataEntity = model.taskDataEntity.map(value => value.id === dstTaskData.id ? dstTaskData : value);
+    if (message.id === "dummy") {
+        return model;
+    } else {// c.log(message);
+        // c.log(model.taskDataEntity.find(data => data.id === message.id));
+        const srcTaskData = model.taskDataEntity.find(data => data.id === message.id);
+        const modelScheduledDateTime = dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone);
+        const modelLimit = dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone);
+        // c.log();
+        // c.log();
+        const id = message.id;
+        const title = message.name;
+        const memo = message.description;
+        const scheduledDateTime = dayjs(message.start).tz(timeZone)
+            .hour(modelScheduledDateTime.format("H"))
+            .minute(modelScheduledDateTime.format("m"))
+            .second(modelScheduledDateTime.format("s"))
+            .format(DEFAULT_FORMAT.DATE_TIME);
+        const limit = dayjs(message.end).tz(timeZone)
+            .hour(modelLimit.format("H"))
+            .minute(modelLimit.format("m"))
+            .second(modelLimit.format("s"))
+            .format(DEFAULT_FORMAT.DATE_TIME);
+        const dstTaskData = { ...srcTaskData, id, title, memo, scheduledDateTime, limit, };
+        const taskDataEntity = model.taskDataEntity.map(value => value.id === dstTaskData.id ? dstTaskData : value);
 
 
-    // taskData.progress = message.progress;
-    // taskData.dependencies = message.dependencies;
-    // taskData.customClass = message.customClass;
+        // taskData.progress = message.progress;
+        // taskData.dependencies = message.dependencies;
+        // taskData.customClass = message.customClass;
 
 
-    //             start: dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
-    //                 end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
-    // return JSON.parse(JSON.stringify(model));
-    return { ...model, taskDataEntity };
+        //             start: dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
+        //                 end: dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYY-MM-DD"),
+        // return JSON.parse(JSON.stringify(model));
+        return { ...model, taskDataEntity };
+    }
 };
 const kanbanBoardUpdate = model => message => {
     return model;

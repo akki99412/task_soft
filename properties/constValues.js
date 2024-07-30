@@ -35,6 +35,10 @@ const dateAndTimeDataFilterOption = Object.freeze({
     over: { value: "以上", checkFiltered: filter => data => filter === data },
     under: { value: "以下", checkFiltered: filter => data => filter === data },
 });
+const stateFilterOption = Object.freeze({
+    equal: { value: "一致", checkFiltered: filter => data => filter === data },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => filter === data },
+});
 
 
 const boardList = [
