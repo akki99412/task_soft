@@ -134,27 +134,7 @@ const init = _ => {
     console.groupEnd();
     return (module);
 };
-const view = model => {
-    c.groupCollapsed("view");
-    c.log(model);
-    const title2key = Object.fromEntries(
-        Object.entries(dataFilterTemplate)
-            .map(([key, _]) => [model.taskUiProperties[key].header, key])
-    );
-
-
-    const dataFilters = model.dataFilters
-        .map(data => {
-            const { enable, title, value, option, valid } = data;
-            const button = `${enable ? "☑" : "□"} ${title} ${value} ${option}`;
-            c.log(dataFilterTemplate[title2key[title]]);
-            const optionList = title2key[title] !== undefined ? dataFilterTemplate[title2key[title]].options
-                .map(value => `<option value="${value}">`)
-                .join("")
-                : "";
-            return { button, enable, title, value, option, optionList, valid };
-        }
-        );
+const model2extendData = model => {
     const extendDataEntity = model.taskDataEntity.map(
         data => {
             const { similarTasksId, successorTaskId, connotativeTaskId, } = data;
@@ -195,7 +175,27 @@ const view = model => {
         const average = total / connotativeTask.length;
         data.completionRate = average;
     }
+    return extendDataEntity;
+};
+const model2title2key = model => Object.fromEntries(
+    Object.entries(dataFilterTemplate)
+        .map(([key, _]) => [model.taskUiProperties[key].header, key])
+);
+const model2dataFilters = title2key => model => model.dataFilters
+    .map(data => {
+        const { enable, title, value, option, valid } = data;
+        const button = `${enable ? "☑" : "□"} ${title} ${value} ${option}`;
+        const optionList = title2key[title] !== undefined ? dataFilterTemplate[title2key[title]].options
+            .map(value => `<option value="${value}">`)
+            .join("")
+            : "";
+        return { button, enable, title, value, option, optionList, valid };
+    }
+    );
 
+const checkFiltered = model => data => {
+    const title2key = model2title2key(model);
+    const dataFilters = model2dataFilters(title2key)(model);
     const checkFilteredList = dataFilters
         .filter(data => data.valid)
         .map(filter => {
@@ -225,15 +225,30 @@ const view = model => {
             return data => rawFunc(filter.value)(data[key]);
         }
         );
-    const checkFiltered = data => checkFilteredList.reduce((accumulator, func) => func(data) && accumulator,
+    return checkFilteredList.reduce((accumulator, func) => func(data) && accumulator,
         true
     );
+};
+const view = model => {
+    c.groupCollapsed("view");
+    c.log(model);
+    const extendDataEntity = model2extendData(model);
+    const title2key = model2title2key(model);
+    const dataFilters = model2dataFilters(title2key)(model);
+
+
+
+
+
+
 
 
     const filteredDataEntities = extendDataEntity
         .filter(value => {
-            return checkFiltered(value);
+            return checkFiltered(model)(value);
         });
+
+
     c.log(filteredDataEntities);
     const relationFilter = model.relationFilter;
     const taskUiProperties = model.taskUiProperties;
@@ -579,6 +594,23 @@ const zip = (...args) => {
 // c.log(zip([1, 2], [3, 4, 5], [6, 7, 8, 9]));
 
 const TableUpdate = model => message => {
+    const extendDataEntity = model2extendData(model);
+    // const title2key = model2title2key(model);
+    // const dataFilters = model2dataFilters(title2key)(model);
+
+
+
+
+
+
+
+
+    const filteredOutDataEntities = extendDataEntity
+        .filter(value => {
+            return !checkFiltered(model)(value);
+        });
+    c.log(filteredOutDataEntities);
+
     // nop(model)(message);
     const header2Kye = generateHeader2Key(model.taskUiProperties);
     // c.log(header2Kye);
@@ -629,7 +661,7 @@ const TableUpdate = model => message => {
     //                         : data]
     //             ))
     // ));
-    const taskDataEntity = jspreadsheetData.map(row => {
+    const nowDataEntities = jspreadsheetData.map(row => {
         const newData = Object.fromEntries(
             zip(sortedKeys, row)
                 .filter(([key, _]) =>
@@ -643,9 +675,53 @@ const TableUpdate = model => message => {
         const oldData = model.taskDataEntity.filter(value => value.id === newData.id)[0];
         return { ...oldData, ...newData };
     }
+
     );
 
 
+    const taskDataEntity=nowDataEntities
+        .concat(filteredOutDataEntities
+            .map(value => {
+                const {
+                    title,
+                    id,
+                    receipt,
+                    memo,
+                    tag,
+                    limit,
+                    manHours,
+                    scheduledDateTime,
+                    completionDateTime,
+                    implementationDate,
+                    state,
+                    similarTasksId,
+                    successorTaskId,
+                    dependencyTaskId,
+                    connotativeTaskId,
+                    rowNum,
+                    implementationTime,
+                    kanbanNum, } = value;
+                return {
+                    title,
+                    id,
+                    receipt,
+                    memo,
+                    tag,
+                    limit,
+                    manHours,
+                    scheduledDateTime,
+                    completionDateTime,
+                    implementationDate,
+                    state,
+                    similarTasksId,
+                    successorTaskId,
+                    dependencyTaskId,
+                    connotativeTaskId,
+                    rowNum,
+                    implementationTime,
+                    kanbanNum,
+                };
+            }));
     // c.log(taskDataEntity);
 
     return { ...model, tableTaskDataProperties, jspreadsheetTaskDataProperties, taskDataEntity };
