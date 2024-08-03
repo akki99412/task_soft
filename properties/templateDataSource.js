@@ -82,55 +82,55 @@ diContainer.addForCallByValue("TABLE_TASK_DATA_TEMPLATES",
 
 diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
     class {
-        title = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        id = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        receipt = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete:false, multiple:false };
-        memo = { type: "html", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        tag = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        limit = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        manHours = { type: "numeric", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        scheduledDateTime = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        scheduledDate = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete:false, multiple:false };
-        scheduledTime = { type: "text", editor: clockEditor, source: [], options: { format: DEFAULT_FORMAT.TIME }, autocomplete:false, multiple:false };
-        completionDateTime = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        title = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        id = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        receipt = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete: false, multiple: false };
+        memo = { type: "html", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        tag = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        limit = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        manHours = { type: "numeric", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        scheduledDateTime = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        scheduledDate = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete: false, multiple: false };
+        scheduledTime = { type: "text", editor: clockEditor, source: [], options: { format: DEFAULT_FORMAT.TIME }, autocomplete: false, multiple: false };
+        completionDateTime = { type: "hidden", editor: null, source: [], options: [], autocomplete: false, multiple: false };
         completionDate = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE } };
         completionTime = { type: "text", editor: clockEditor, source: [], options: [], autocomplete: false, multiple: false };
         completionRate = { type: "numeric", editor: null, source: [], options: [], autocomplete: false, multiple: false };
-        implementationDate = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        state = { type: "dropdown", editor: null, source: Object.values(TASK_STATE), options: [], autocomplete:false, multiple:false };
-        similarTasksId = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        implementationDate = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        state = { type: "dropdown", editor: null, source: Object.values(TASK_STATE), options: [], autocomplete: false, multiple: false };
+        similarTasksId = { type: "hidden", editor: null, source: [], options: [], autocomplete: false, multiple: false };
         similarTasks = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
         successorTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
         dependencyTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
-        successorTask = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        connotativeTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete:true, multiple:true };
-        connotativeTask = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        rowNum = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        implementationTime = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        successorTask = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        connotativeTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
+        connotativeTask = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        rowNum = { type: "hidden", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        implementationTime = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
     });
-const dataFilterTemplate=
-     {
-        title : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        id : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        receipt : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        memo : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        tag : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        limit : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        manHours : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        scheduledDateTime : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        completionDateTime : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        completionRate : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        implementationDate : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        state : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        similarTasksId : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        similarTasks : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        successorTaskId : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        dependencyTaskId : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        successorTask : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        connotativeTaskId : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        connotativeTask : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-        implementationTime : { type:"string",options:Object.entries(stringDataFilterOption).map(([_, value])=>value.value) },
-    };
+const dataFilterTemplate =
+{
+    title: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    id: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    receipt: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    memo: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    tag: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    limit: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    manHours: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    scheduledDateTime: { type: "dateAndTime", options: Object.entries(dateAndTimeDataFilterOption).map(([_, value]) => value.value), editor: null },
+    completionDateTime: { type: "dateAndTime", options: Object.entries(dateAndTimeDataFilterOption).map(([_, value]) => value.value), editor: null },
+    completionRate: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    implementationDate: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    state: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    similarTasksId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    similarTasks: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    successorTaskId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    dependencyTaskId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    successorTask: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    connotativeTaskId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    connotativeTask: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    implementationTime: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+};
 
 var clockEditor = {
     // Methods
@@ -204,7 +204,7 @@ class interval {
         } else {
             return this.start.format() + "/" + this.end.format();
         }
-    }
+    };
 
     constructor(start) {
         let typeOfStart = Object.prototype.toString.call(start);

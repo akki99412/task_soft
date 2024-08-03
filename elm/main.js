@@ -185,11 +185,12 @@ const model2dataFilters = title2key => model => model.dataFilters
     .map(data => {
         const { enable, title, value, option, valid } = data;
         const button = `${enable ? "☑" : "□"} ${title} ${value} ${option}`;
+        const type = title2key[title] !== undefined ? dataFilterTemplate[title2key[title]].type : "";
         const optionList = title2key[title] !== undefined ? dataFilterTemplate[title2key[title]].options
             .map(value => `<option value="${value}">`)
             .join("")
             : "";
-        return { button, enable, title, value, option, optionList, valid };
+        return { button, enable, title, value, option, optionList, valid, type, };
     }
     );
 
@@ -210,18 +211,21 @@ const checkFiltered = model => data => {
                                 .checkFiltered;
                             break;
                         case "numeric":
-                            return Object.entries(stringDataFilterOption)
+                            return Object.entries(numericDataFilterOption)
                                 .filter(([_, datum]) => datum.value === filter.option)[0][1]
                                 .checkFiltered;
                             break;
                         case "dateAndTime":
-                            return Object.entries(stringDataFilterOption)
-                                .filter(([_, datum]) => datum.value === filter.option)[0][1]
-                                .checkFiltered;
+                            const existing = Object.entries(dateAndTimeDataFilterOption)
+                                .filter(([_, datum]) => datum.value === filter.option)[0];
+                            console.log({ existing });
+                            return existing[1].checkFiltered;
                             break;
 
                     }
                 });
+            console.log({ filter });
+            console.log({ data });
             return data => rawFunc(filter.value)(data[key]);
         }
         );
@@ -230,6 +234,14 @@ const checkFiltered = model => data => {
     );
 };
 const view = model => {
+    // const testFunction = filter => data => dayjs(filter).isValid() ? dayjs(filter).isSameOrAfter(dayjs(data)) : false;
+    // const afterDate = "2024/08/28 01:26:00";
+    // const beforeDate = "2024/08/29 01:26:00";
+    // console.log(testFunction("")(afterDate));
+    // console.log(testFunction(afterDate)(beforeDate));
+    // console.log(testFunction(beforeDate)(afterDate));
+    // console.log(testFunction(afterDate)(afterDate));
+    // console.log(testFunction(afterDate)(""));
     c.groupCollapsed("view");
     c.log(model);
     const extendDataEntity = model2extendData(model);
@@ -375,7 +387,9 @@ const view = model => {
     // console.log(treeGraph);
     const calendarTasks = taskData2calendarTasks(taskDataEntity);
     // console.log({ tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph });
-    const dataFilterTitles = tableHeaderKeys
+    c.log({ tableHeaderKeys });
+    c.log(Object.entries(title2key).map(([_, value]) => value));
+    const dataFilterTitles = Object.entries(title2key).map(([_, value]) => value)
         .map(key => taskUiProperties[key].header)
         .map(value => `<option value="${value}">`)
         .join("");
@@ -457,12 +471,12 @@ const dataFilters = new Observable(
             button: $dataFilter0Button.value,
             enable: $dataFilter0Switch.checked,
             title: $dataFilter0Title.value,
-            value: $dataFilter0Value.value,
+            value: $dataFilter0ValueInner.value,
             option: $dataFilter0Option.value,
             optionList: $dataFilter0OptionList.value,
         }
     ]
-);
+); let instance = null;
 dataFilters.subscribe(data => {
     console.log(data);
     zip(data, dataFilterElements)
@@ -470,12 +484,39 @@ dataFilters.subscribe(data => {
             .forEach(([key, value]) => {
                 switch (key) {
                     case "valid":
+                    case "type":
                         break;
+
                     case "enable":
                         element.enable.checked = value;
                         break;
                     case "button":
                         element[key].innerText = value;
+                        break;
+                    case "value":
+                        const innerElementId = element[key].id + "Inner";
+                        const innerElement=_ => document.getElementById(innerElementId);
+                        if (datum.type === "dateAndTime") {
+                            instance = jSuites.calendar(innerElement(), {
+                                format: DEFAULT_FORMAT.DATE_TIME,
+                                time: true,
+                                onchange: function () {
+                                    main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: arguments[1], className: innerElement().className.split(' ') }))
+                                }
+                            });
+                        } else {
+                            instance = null;
+                            element[key].innerHTML = `
+                                        <input type="form-control"
+                                            class="form-control bg-body-secondary text-body dataFilter0 dataFilterValue"
+                                            id="`
+                                + innerElementId
+                                + `">`;
+                            console.log({value});
+                            innerElement().value = value;
+                            document.getElementById(innerElementId).onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: value.target.value, className: innerElement().className.split(' ') }));
+                        }
+                        break;
                     case "optionList":
                         element[key].innerHTML = value;
                         break;

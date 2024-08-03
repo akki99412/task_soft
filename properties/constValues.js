@@ -20,8 +20,7 @@ const saveTime = 3;//second
 const stringDataFilterOption = Object.freeze({
     equal: { value: "一致", checkFiltered: filter => data => filter === data },
     notEqual: { value: "一致しない", checkFiltered: filter => data => filter !== data },
-    include: { value: "含む", checkFiltered: filter => data => filter === data },
-    notIncluded: { value: "含まない", checkFiltered: filter => data => filter === data },
+    regex: { value: "正規表現", checkFiltered: filter => data => new RegExp(filter, "g").test(data) },
 });
 const numericDataFilterOption = Object.freeze({
     equal: { value: "一致", checkFiltered: filter => data => filter === data },
@@ -32,12 +31,13 @@ const numericDataFilterOption = Object.freeze({
 const dateAndTimeDataFilterOption = Object.freeze({
     equal: { value: "一致", checkFiltered: filter => data => filter === data },
     notEqual: { value: "一致しない", checkFiltered: filter => data => filter === data },
-    over: { value: "以上", checkFiltered: filter => data => filter === data },
-    under: { value: "以下", checkFiltered: filter => data => filter === data },
+    after: { value: "以前", checkFiltered: filter => data => dayjs(filter).isValid()?dayjs(filter).isSameOrAfter(dayjs(data)):false },
+    before: { value: "以降", checkFiltered: filter => data => dayjs(filter).isValid()?dayjs(filter).isSameOrBefore(dayjs(data)):false },
 });
 const stateFilterOption = Object.freeze({
     equal: { value: "一致", checkFiltered: filter => data => filter === data },
     notEqual: { value: "一致しない", checkFiltered: filter => data => filter === data },
+    regex: { value: "正規表現", checkFiltered: filter => data => new RegExp(filter, "g").test(data) },
 });
 
 

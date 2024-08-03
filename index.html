@@ -22,7 +22,11 @@
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/customParseFormat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isSameOrAfter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isSameOrBefore.js"></script>
     <script>
+        dayjs.extend(window.dayjs_plugin_isSameOrAfter);
+        dayjs.extend(window.dayjs_plugin_isSameOrBefore);
         dayjs.extend(window.dayjs_plugin_utc);
         dayjs.extend(window.dayjs_plugin_timezone);
     </script>
@@ -163,16 +167,19 @@
                             <div id="dataFilter0Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter0 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter0Switch"  autocomplete="off">
+                                        <input class="form-check-input dataFilter0 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter0Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter0Switch">無効/有効</label>
                                     </div>
                                     <input type="form-control"
                                         class="form-control bg-body-secondary text-body dataFilter0 dataFilterTitle"
                                         id="$dataFilter0Title" list="$dataFilterTitles">
-                                    <input type="form-control"
-                                        class="form-control bg-body-secondary text-body dataFilter0 dataFilterValue"
-                                        id="$dataFilter0Value">
+                                    <div id="$dataFilter0Value">
+
+                                        <input type="form-control"
+                                            class="form-control bg-body-secondary text-body dataFilter0 dataFilterValue"
+                                            id="$dataFilter0ValueInner">
+                                    </div>
                                     <input type="form-control"
                                         class="form-control bg-body-secondary text-body  dataFilter0 dataFilterOption"
                                         id="$dataFilter0Option" list="$dataFilter0OptionList">
@@ -316,8 +323,8 @@
         $importJsonButton.onclick = _ => {
             // repositorySetter.next(JSON.parse($json.value));
             // main.update(new ButtonMessage({id: $importJsonButton }));
-            main.update(new ImportJsonMessage({ value: $textarea.value }))
-        }
+            main.update(new ImportJsonMessage({ value: $textarea.value }));
+        };
 
         $loadButton.onclick = function () {
             // clearTimeout(timeoutID);
@@ -331,16 +338,16 @@
         $connotativeTaskDropdownMenu.onclick = _ => {
             console.log($connotativeTaskDropdownMenu.id);
             main.update(new DropdownMenuMessage({ id: $connotativeTaskDropdownMenu.id }));
-        }
+        };
         $dependencyTaskDropdownMenu.onclick = _ => {
             main.update(new DropdownMenuMessage({ id: $dependencyTaskDropdownMenu.id }));
-        }
+        };
         $successorTaskDropdownMenu.onclick = _ => {
             main.update(new DropdownMenuMessage({ id: $successorTaskDropdownMenu.id }));
-        }
+        };
         $similarTasksDropdownMenu.onclick = _ => {
             main.update(new DropdownMenuMessage({ id: $similarTasksDropdownMenu.id }));
-        }
+        };
         $saveButton.onclick = function () {
             // clearTimeout(timeoutID);
             // c.log("timeoutID cleared")
@@ -350,11 +357,11 @@
         // $dataFilter0Button
         $dataFilter0Switch.onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Switch.id, value: $dataFilter0Switch.checked, className: $dataFilter0Switch.className.split(' ') }));
         $dataFilter0Title.onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Title.id, value: value.target.value, className: $dataFilter0Title.className.split(' ') }));
-        $dataFilter0Value.onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: value.target.value, className: $dataFilter0Value.className.split(' ') }));
+
         $dataFilter0Option.onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Option.id, value: value.target.value, className: $dataFilter0Option.className.split(' ') }));
         const unloadFunction = e => {
             e.preventDefault();
-            e.returnValue = "ページを離れようとしています。よろしいですか？"
+            e.returnValue = "ページを離れようとしています。よろしいですか？";
         };
         saveTimeout.subscribe(value => {
             if (value.doneSave) {
@@ -409,7 +416,6 @@
                 main.update(new Redo());
             }
         });
-
     </script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="gantt.css">
