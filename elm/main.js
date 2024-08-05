@@ -210,6 +210,11 @@ const checkFiltered = model => data => {
                                 .filter(([_, datum]) => datum.value === filter.option)[0][1]
                                 .checkFiltered;
                             break;
+                        case "state":
+                            return Object.entries(stateDataFilterOption)
+                                .filter(([_, datum]) => datum.value === filter.option)[0][1]
+                                .checkFiltered;
+                            break;
                         case "numeric":
                             return Object.entries(numericDataFilterOption)
                                 .filter(([_, datum]) => datum.value === filter.option)[0][1]
@@ -282,7 +287,8 @@ const view = model => {
 
 
     const tableHeaderKeys = generateTableHeaderKeys(tableTaskDataProperties);
-
+    console.log({ taskDataEntity });
+    console.log({ tableHeaderKeys });
     const jspreadsheetColumns =
         repository2jspreadsheetColumns(tableHeaderKeys)(taskUiProperties)(tableTaskDataProperties)(jspreadsheetTaskDataProperties);
     const jspreadsheetData = repository2jspreadsheetData(taskDataEntity)(tableHeaderKeys);
@@ -509,9 +515,9 @@ dataFilters.subscribe(data => {
                             element[key].innerHTML = `
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter0 dataFilterValue"
-                                            id="`
-                                + innerElementId
-                                + `">`;
+                                            id="${innerElementId}"`
+                                + (datum.type === "state" ? ` list="$dataFilterStates"` : " ")
+                                + `>`;
                             console.log({ value });
                             innerElement().value = value;
                             document.getElementById(innerElementId).onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: value.target.value, className: innerElement().className.split(' ') }));
@@ -721,10 +727,22 @@ const TableUpdate = model => message => {
                             : data]
                 )
         );
+
         const { title, id, receipt, memo, tag, limit, manHours, implementationDate, state, similarTasksId, successorTaskId, dependencyTaskId, connotativeTaskId, rowNum, implementationTime, kanbanNum, } = taskData;
-        const completionDateTime = `${dayjs.tz(taskData.completionDate, DEFAULT_FORMAT.DATE_TIME, timeZone).format(DEFAULT_FORMAT.DATE)} ${taskData.completionTime}`;
-        const scheduledDateTime = `${dayjs.tz(taskData.scheduledDate, DEFAULT_FORMAT.DATE_TIME, timeZone).format(DEFAULT_FORMAT.DATE)
-            } ${taskData.scheduledTime}`;
+
+        const { completionDateTime, scheduledDateTime } = (_ => {
+            if (taskData.id !== "") {
+                const completionDateTime = `${dayjs.tz(taskData.completionDate, DEFAULT_FORMAT.DATE_TIME, timeZone).format(DEFAULT_FORMAT.DATE)} ${taskData.completionTime}`;
+                const scheduledDateTime = `${dayjs.tz(taskData.scheduledDate, DEFAULT_FORMAT.DATE_TIME, timeZone).format(DEFAULT_FORMAT.DATE)
+                    } ${taskData.scheduledTime}`;
+                return { completionDateTime, scheduledDateTime };
+            } else {
+                const completionDateTime = "";
+                const scheduledDateTime = "";
+                return { completionDateTime, scheduledDateTime };
+            }
+        })();
+
         const newData = {
             title, id, receipt, memo, tag, limit, manHours, scheduledDateTime, completionDateTime, implementationDate, state, similarTasksId, successorTaskId, dependencyTaskId, connotativeTaskId, rowNum, implementationTime, kanbanNum,
         };

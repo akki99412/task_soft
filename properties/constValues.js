@@ -34,10 +34,9 @@ const dateAndTimeDataFilterOption = Object.freeze({
     after: { value: "以前", checkFiltered: filter => data => dayjs(filter).isValid()?dayjs(filter).isSameOrAfter(dayjs(data)):false },
     before: { value: "以降", checkFiltered: filter => data => dayjs(filter).isValid()?dayjs(filter).isSameOrBefore(dayjs(data)):false },
 });
-const stateFilterOption = Object.freeze({
+const stateDataFilterOption = Object.freeze({
     equal: { value: "一致", checkFiltered: filter => data => filter === data },
-    notEqual: { value: "一致しない", checkFiltered: filter => data => filter === data },
-    regex: { value: "正規表現", checkFiltered: filter => data => new RegExp(filter, "g").test(data) },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => filter !== data },
 });
 
 
