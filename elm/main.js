@@ -495,13 +495,13 @@ dataFilters.subscribe(data => {
                         break;
                     case "value":
                         const innerElementId = element[key].id + "Inner";
-                        const innerElement=_ => document.getElementById(innerElementId);
+                        const innerElement = _ => document.getElementById(innerElementId);
                         if (datum.type === "dateAndTime") {
                             instance = jSuites.calendar(innerElement(), {
                                 format: DEFAULT_FORMAT.DATE_TIME,
                                 time: true,
                                 onchange: function () {
-                                    main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: arguments[1], className: innerElement().className.split(' ') }))
+                                    main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: arguments[1], className: innerElement().className.split(' ') }));
                                 }
                             });
                         } else {
@@ -512,7 +512,7 @@ dataFilters.subscribe(data => {
                                             id="`
                                 + innerElementId
                                 + `">`;
-                            console.log({value});
+                            console.log({ value });
                             innerElement().value = value;
                             document.getElementById(innerElementId).onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: value.target.value, className: innerElement().className.split(' ') }));
                         }
@@ -684,7 +684,8 @@ const TableUpdate = model => message => {
         Object.entries(columns).map(([key, value]) => [
             key,
             (_ => {
-                const { type, editor, source, options, autocomplete, multiple } = { ...value };
+                const { type, source, options, autocomplete, multiple } = { ...value };
+                const editor = model.jspreadsheetTaskDataProperties[key].editor;
                 return ({ type, editor, source, options, autocomplete, multiple });
             })()
         ])
@@ -712,16 +713,22 @@ const TableUpdate = model => message => {
     //             ))
     // ));
     const nowDataEntities = jspreadsheetData.map(row => {
-        const newData = Object.fromEntries(
+        const taskData = Object.fromEntries(
             zip(sortedKeys, row)
-                .filter(([key, _]) =>
-                    taskDataKeys.includes(key)
-                )
                 .map(([key, data]) => [key,
                     key === "implementationDate" ? string2ImplementationDate(data)
                         : ["successorTaskId", "dependencyTaskId", "connotativeTaskId"].includes(key) ? data.split(";")
                             : data]
-                ));
+                )
+        );
+        const { title, id, receipt, memo, tag, limit, manHours, implementationDate, state, similarTasksId, successorTaskId, dependencyTaskId, connotativeTaskId, rowNum, implementationTime, kanbanNum, } = taskData;
+        const completionDateTime = `${dayjs.tz(taskData.completionDate, DEFAULT_FORMAT.DATE_TIME, timeZone).format(DEFAULT_FORMAT.DATE)} ${taskData.completionTime}`;
+        const scheduledDateTime = `${dayjs.tz(taskData.scheduledDate, DEFAULT_FORMAT.DATE_TIME, timeZone).format(DEFAULT_FORMAT.DATE)
+            } ${taskData.scheduledTime}`;
+        const newData = {
+            title, id, receipt, memo, tag, limit, manHours, scheduledDateTime, completionDateTime, implementationDate, state, similarTasksId, successorTaskId, dependencyTaskId, connotativeTaskId, rowNum, implementationTime, kanbanNum,
+        };
+        console.log(newData);
         const oldData = model.taskDataEntity.filter(value => value.id === newData.id)[0];
         return { ...oldData, ...newData };
     }
@@ -900,7 +907,7 @@ const localStorageUpdate = model => message => {
 
         });
 
-        const newModel = { ...model, ...srcModel, taskDataEntity };
+        const newModel = { ...model, ...srcModel, jspreadsheetTaskDataProperties: model.jspreadsheetTaskDataProperties, taskDataEntity };
         view(model);
         return newModel;
     } catch (e) {

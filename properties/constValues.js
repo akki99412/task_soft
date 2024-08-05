@@ -23,10 +23,10 @@ const stringDataFilterOption = Object.freeze({
     regex: { value: "正規表現", checkFiltered: filter => data => new RegExp(filter, "g").test(data) },
 });
 const numericDataFilterOption = Object.freeze({
-    equal: { value: "一致", checkFiltered: filter => data => filter === data },
-    notEqual: { value: "一致しない", checkFiltered: filter => data => filter !== data },
-    over: { value: "以上", checkFiltered: filter => data => filter === data },
-    under: { value: "以下", checkFiltered: filter => data => filter === data },
+    equal: { value: "一致", checkFiltered: filter => data => parseInt(filter, 10) === parseInt(data,10) },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => parseInt(filter, 10) !== parseInt(data, 10) },
+    over: { value: "以上", checkFiltered: filter => data => parseInt(filter, 10) <= parseInt(data, 10) },
+    under: { value: "以下", checkFiltered: filter => data => parseInt(filter, 10) >= parseInt(data, 10) },
 });
 const dateAndTimeDataFilterOption = Object.freeze({
     equal: { value: "一致", checkFiltered: filter => data => filter === data },

@@ -1,4 +1,59 @@
 const timeZone = "Asia/Tokyo";
+
+var clockEditor = {
+    // Methods
+    pickedTime: "00:00",
+    closeEditor: function (cell, save) {
+        var value = cell.children[0].value;
+        ;
+        cell.innerHTML = value;
+        console.log(value);
+        return value;
+    },
+    openEditor: function (cell) {
+        // Create input
+        var element = document.createElement('input');
+        element.value = cell.innerHTML;
+        // Update cell
+        cell.classList.add('editor');
+        cell.innerHTML = '';
+        cell.appendChild(element);
+        $(element).clockpicker({
+            afterHide: function () {
+                setTimeout(function () {
+                    // To avoid double call
+                    if (cell.children[0]) {
+                        jspreadsheetObject.closeEditor(cell, true);
+                    }
+                });
+            },
+        }).change(function () {
+            pickedTime = this.value;
+            console.log(cell);
+            console.log(pickedTime);
+            jspreadsheetObject.setValue(cell, pickedTime);
+            console.log({jspreadsheetData: jspreadsheetObject.getData()});
+            cell.innerHTML = pickedTime;
+            // taskTable.setValue(cell, this.pickedTime);
+            // cell.innerHTML = pickedTime;
+            // if (cell.children[0]) {
+            //     taskTable.closeEditor(cell, true);
+            // }
+            jspreadsheetEventInnerFunc();
+        });;
+        // Focus on the element
+        element.focus();
+        // console.log(element);
+        // console.log(document.getSelection())
+        // console.log(document.body.children[document.body.children.length-1]);
+    },
+    getValue: function (cell) {
+        return cell.innerHTML;
+    },
+    setValue: function (cell, value) {
+        cell.innerHTML = value;
+    }
+};
 diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
     class {
         title = { defaultValue: "概要", };
@@ -116,7 +171,7 @@ const dataFilterTemplate =
     memo: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
     tag: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
     limit: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
-    manHours: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    manHours: { type: "numeric", options: Object.entries(numericDataFilterOption).map(([_, value]) => value.value), editor: null },
     scheduledDateTime: { type: "dateAndTime", options: Object.entries(dateAndTimeDataFilterOption).map(([_, value]) => value.value), editor: null },
     completionDateTime: { type: "dateAndTime", options: Object.entries(dateAndTimeDataFilterOption).map(([_, value]) => value.value), editor: null },
     completionRate: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
@@ -129,61 +184,10 @@ const dataFilterTemplate =
     successorTask: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
     connotativeTaskId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
     connotativeTask: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
-    implementationTime: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    implementationTime: { type: "numeric", options: Object.entries(numericDataFilterOption).map(([_, value]) => value.value), editor: null },
 };
 
-var clockEditor = {
-    // Methods
-    pickedTime: "00:00",
-    closeEditor: function (cell, save) {
-        var value = cell.children[0].value;
-        ;
-        cell.innerHTML = value;
-        console.log(value);
-        return value;
-    },
-    openEditor: function (cell) {
-        // Create input
-        var element = document.createElement('input');
-        element.value = cell.innerHTML;
-        // Update cell
-        cell.classList.add('editor');
-        cell.innerHTML = '';
-        cell.appendChild(element);
-        $(element).clockpicker({
-            afterHide: function () {
-                setTimeout(function () {
-                    // To avoid double call
-                    if (cell.children[0]) {
-                        taskTable.closeEditor(cell, true);
-                    }
-                });
-            },
-        }).change(function () {
-            pickedTime = this.value;
-            console.log(cell);
-            taskTable.setValue(cell, pickedTime);
-            cell.innerHTML = pickedTime;
-            // taskTable.setValue(cell, this.pickedTime);
-            // cell.innerHTML = pickedTime;
-            // if (cell.children[0]) {
-            //     taskTable.closeEditor(cell, true);
-            // }
-            dataChangeCallback();
-        });;
-        // Focus on the element
-        element.focus();
-        // console.log(element);
-        // console.log(document.getSelection())
-        // console.log(document.body.children[document.body.children.length-1]);
-    },
-    getValue: function (cell) {
-        return cell.innerHTML;
-    },
-    setValue: function (cell, value) {
-        cell.innerHTML = value;
-    }
-};
+
 
 
 function updateDataTemplate() {
