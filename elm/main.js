@@ -123,6 +123,60 @@ const init = _ => {
                 value: "",
                 option: "",
             },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
+            {
+                enable: false,
+                title: "",
+                value: "",
+                option: "",
+            },
         ]
     };
     const module = {
@@ -470,7 +524,70 @@ const dataFilterElements =
             value: $dataFilter0Value,
             option: $dataFilter0Option,
             optionList: $dataFilter0OptionList,
-        }
+        }, {
+            button: $dataFilter1Button,
+            enable: $dataFilter1Switch,
+            title: $dataFilter1Title,
+            value: $dataFilter1Value,
+            option: $dataFilter1Option,
+            optionList: $dataFilter1OptionList,
+        }, {
+            button: $dataFilter2Button,
+            enable: $dataFilter2Switch,
+            title: $dataFilter2Title,
+            value: $dataFilter2Value,
+            option: $dataFilter2Option,
+            optionList: $dataFilter2OptionList,
+        }, {
+            button: $dataFilter3Button,
+            enable: $dataFilter3Switch,
+            title: $dataFilter3Title,
+            value: $dataFilter3Value,
+            option: $dataFilter3Option,
+            optionList: $dataFilter3OptionList,
+        }, {
+            button: $dataFilter4Button,
+            enable: $dataFilter4Switch,
+            title: $dataFilter4Title,
+            value: $dataFilter4Value,
+            option: $dataFilter4Option,
+            optionList: $dataFilter4OptionList,
+        }, {
+            button: $dataFilter5Button,
+            enable: $dataFilter5Switch,
+            title: $dataFilter5Title,
+            value: $dataFilter5Value,
+            option: $dataFilter5Option,
+            optionList: $dataFilter5OptionList,
+        }, {
+            button: $dataFilter6Button,
+            enable: $dataFilter6Switch,
+            title: $dataFilter6Title,
+            value: $dataFilter6Value,
+            option: $dataFilter6Option,
+            optionList: $dataFilter6OptionList,
+        }, {
+            button: $dataFilter7Button,
+            enable: $dataFilter7Switch,
+            title: $dataFilter7Title,
+            value: $dataFilter7Value,
+            option: $dataFilter7Option,
+            optionList: $dataFilter7OptionList,
+        }, {
+            button: $dataFilter8Button,
+            enable: $dataFilter8Switch,
+            title: $dataFilter8Title,
+            value: $dataFilter8Value,
+            option: $dataFilter8Option,
+            optionList: $dataFilter8OptionList,
+        }, {
+            button: $dataFilter9Button,
+            enable: $dataFilter9Switch,
+            title: $dataFilter9Title,
+            value: $dataFilter9Value,
+            option: $dataFilter9Option,
+            optionList: $dataFilter9OptionList,
+        },
     ];
 const dataFilters = new Observable(
     [
@@ -481,13 +598,85 @@ const dataFilters = new Observable(
             value: $dataFilter0ValueInner.value,
             option: $dataFilter0Option.value,
             optionList: $dataFilter0OptionList.value,
-        }
+        },
+        {
+            button: $dataFilter1Button.value,
+            enable: $dataFilter1Switch.checked,
+            title: $dataFilter1Title.value,
+            value: $dataFilter1ValueInner.value,
+            option: $dataFilter1Option.value,
+            optionList: $dataFilter1OptionList.value,
+        },
+        {
+            button: $dataFilter2Button.value,
+            enable: $dataFilter2Switch.checked,
+            title: $dataFilter2Title.value,
+            value: $dataFilter2ValueInner.value,
+            option: $dataFilter2Option.value,
+            optionList: $dataFilter2OptionList.value,
+        },
+        {
+            button: $dataFilter3Button.value,
+            enable: $dataFilter3Switch.checked,
+            title: $dataFilter3Title.value,
+            value: $dataFilter3ValueInner.value,
+            option: $dataFilter3Option.value,
+            optionList: $dataFilter3OptionList.value,
+        },
+        {
+            button: $dataFilter4Button.value,
+            enable: $dataFilter4Switch.checked,
+            title: $dataFilter4Title.value,
+            value: $dataFilter4ValueInner.value,
+            option: $dataFilter4Option.value,
+            optionList: $dataFilter4OptionList.value,
+        },
+        {
+            button: $dataFilter5Button.value,
+            enable: $dataFilter5Switch.checked,
+            title: $dataFilter5Title.value,
+            value: $dataFilter5ValueInner.value,
+            option: $dataFilter5Option.value,
+            optionList: $dataFilter5OptionList.value,
+        },
+        {
+            button: $dataFilter6Button.value,
+            enable: $dataFilter6Switch.checked,
+            title: $dataFilter6Title.value,
+            value: $dataFilter6ValueInner.value,
+            option: $dataFilter6Option.value,
+            optionList: $dataFilter6OptionList.value,
+        },
+        {
+            button: $dataFilter7Button.value,
+            enable: $dataFilter7Switch.checked,
+            title: $dataFilter7Title.value,
+            value: $dataFilter7ValueInner.value,
+            option: $dataFilter7Option.value,
+            optionList: $dataFilter7OptionList.value,
+        },
+        {
+            button: $dataFilter8Button.value,
+            enable: $dataFilter8Switch.checked,
+            title: $dataFilter8Title.value,
+            value: $dataFilter8ValueInner.value,
+            option: $dataFilter8Option.value,
+            optionList: $dataFilter8OptionList.value,
+        },
+        {
+            button: $dataFilter9Button.value,
+            enable: $dataFilter9Switch.checked,
+            title: $dataFilter9Title.value,
+            value: $dataFilter9ValueInner.value,
+            option: $dataFilter9Option.value,
+            optionList: $dataFilter9OptionList.value,
+        },
     ]
 ); let instance = null;
 dataFilters.subscribe(data => {
     console.log(data);
     zip(data, dataFilterElements)
-        .forEach(([datum, element]) => Object.entries(datum)
+        .forEach(([datum, element],index) => Object.entries(datum)
             .forEach(([key, value]) => {
                 switch (key) {
                     case "valid":
@@ -515,7 +704,7 @@ dataFilters.subscribe(data => {
                             instance = null;
                             element[key].innerHTML = `
                                         <input type="form-control"
-                                            class="form-control bg-body-secondary text-body dataFilter0 dataFilterValue"
+                                            class="form-control bg-body-secondary text-body dataFilter${index} dataFilterValue"
                                             id="${innerElementId}"`
                                 + (datum.type === "state" ? ` list="$dataFilterStates"` : " ")
                                 + `>`;
@@ -992,7 +1181,18 @@ const dependencyTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, re
 const successorTaskDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, successor: !model.relationFilter.successor } });
 const similarTasksDropdownMenuUpdate = (model) => (message) => ({ ...model, relationFilter: { ...model.relationFilter, similar: !model.relationFilter.similar } });
 const dataFilterUpdate = (model) => (message) => {
-    const index = message.className.includes("dataFilter0") ? 0 : null;
+    const index =
+        message.className.includes("dataFilter0") ? 0
+        :message.className.includes("dataFilter1") ? 1
+        :message.className.includes("dataFilter2") ? 2
+        :message.className.includes("dataFilter3") ? 3
+        :message.className.includes("dataFilter4") ? 4
+        :message.className.includes("dataFilter5") ? 5
+        :message.className.includes("dataFilter6") ? 6
+        :message.className.includes("dataFilter7") ? 7
+        :message.className.includes("dataFilter8") ? 8
+        :message.className.includes("dataFilter9") ? 9
+        : null;
     if (index === null) {
         return model;
     } else {
