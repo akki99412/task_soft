@@ -364,7 +364,6 @@ const view = model => {
     }));
     const filterJspreadsheetData =
         [tableHeaderKeys.map(key => "")];
-    const filterTableView = new FilterTableView({ jspreadsheetData: filterJspreadsheetData, jspreadsheetColumns: filterJspreadsheetColumns });
     // const header2Key = Object.fromEntries(Object.entries(taskUiProperties).map(([key, value]) => ([value.header, key])));
 
 
@@ -458,7 +457,7 @@ const view = model => {
 
 
     c.groupEnd();
-    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), filterTableView, ganttTasks, model, textarea, treeGraph, ...relationFilter, dataFilterTitles, dataFilters };
+    return { tableView: new TableView({ jspreadsheetData, jspreadsheetColumns }), ganttTasks, model, textarea, treeGraph, ...relationFilter, dataFilterTitles, dataFilters };
 };
 const textareaBuffer = new Observable("");
 window.addEventListener('load',
@@ -734,16 +733,12 @@ dataFilters.subscribe(data => {
             }));
 });
 
-const render = table => filterTable => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => dataFilterTitles => dataFilters => view => {
+const render = table  => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => dataFilterTitles => dataFilters => view => {
     c.groupCollapsed("render");
     c.log(view);
     const tableView = new TableMessage({
         jspreadsheetData: JSON.parse(JSON.stringify(table.getData())),
         jspreadsheetColumns: JSON.parse(JSON.stringify(table.getConfig().columns)),
-    });
-    const filterTableView = new FilterTableMessage({
-        jspreadsheetData: JSON.parse(JSON.stringify(filterTable.getData())),
-        jspreadsheetColumns: JSON.parse(JSON.stringify(filterTable.getConfig().columns)),
     });
     // jspreadsheetObject.resetSelection(true);
     // isEqualObjectJson(view.tableView)(tableView);
@@ -755,10 +750,6 @@ const render = table => filterTable => gantt => ganttTasks => calendar => kanban
         c.log("updateJspreadsheet");
         updateJspreadsheet(table)(view.tableView.jspreadsheetData)(view.tableView.jspreadsheetColumns)(jspreadsheetEventInnerFunc);
 
-    }
-    if (!isEqualObjectJson(view.filterTableView)(filterTableView)) {
-        c.log("updateFilterJspreadsheet");
-        updateFilterJspreadsheet(filterTable)(view.filterTableView.jspreadsheetData)(view.filterTableView.jspreadsheetColumns)(filterJspreadsheetEventInnerFunc);
     }
     if (!ganttTasks.isUpdate && !isEqualObjectJson(view.ganttTasks)(ganttTasks.data)) {
         c.log("update gantt");
@@ -1455,7 +1446,7 @@ const update = model => message => {
     return newModel;
 };
 const main = new ElmLike({
-    init, view, update, render: view => render(jspreadsheetObject)(filterJspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(showConnotativeTask)(showDependencyTask)(showSuccessorTask)(showSimilarTask)(dataFilterTitles)(dataFilters)(view)
+    init, view, update, render: view => render(jspreadsheetObject)(gantt)(ganttTasks)(calendar)(kanban)(saveTimeout)(textareaBuffer)(treeGraph)(showConnotativeTask)(showDependencyTask)(showSuccessorTask)(showSimilarTask)(dataFilterTitles)(dataFilters)(view)
 });
 main.init();
 
