@@ -17,6 +17,29 @@ const LOCAL_STORAGE_KEY = "repositories";
 
 const saveTime = 3;//second
 
+const stringDataFilterOption = Object.freeze({
+    equal: { value: "一致", checkFiltered: filter => data => filter === data },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => filter !== data },
+    regex: { value: "正規表現", checkFiltered: filter => data => new RegExp(filter, "g").test(data) },
+});
+const numericDataFilterOption = Object.freeze({
+    equal: { value: "一致", checkFiltered: filter => data => parseInt(filter, 10) === parseInt(data,10) },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => parseInt(filter, 10) !== parseInt(data, 10) },
+    over: { value: "以上", checkFiltered: filter => data => parseInt(filter, 10) <= parseInt(data, 10) },
+    under: { value: "以下", checkFiltered: filter => data => parseInt(filter, 10) >= parseInt(data, 10) },
+});
+const dateAndTimeDataFilterOption = Object.freeze({
+    equal: { value: "一致", checkFiltered: filter => data => filter === data },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => filter === data },
+    after: { value: "以前", checkFiltered: filter => data => dayjs(filter).isValid()?dayjs(filter).isSameOrAfter(dayjs(data)):false },
+    before: { value: "以降", checkFiltered: filter => data => dayjs(filter).isValid()?dayjs(filter).isSameOrBefore(dayjs(data)):false },
+});
+const stateDataFilterOption = Object.freeze({
+    equal: { value: "一致", checkFiltered: filter => data => filter === data },
+    notEqual: { value: "一致しない", checkFiltered: filter => data => filter !== data },
+});
+
+
 const boardList = [
     {
         "id": "SCHEDULED",

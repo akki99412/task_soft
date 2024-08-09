@@ -1,4 +1,59 @@
 const timeZone = "Asia/Tokyo";
+
+var clockEditor = {
+    // Methods
+    pickedTime: "00:00",
+    closeEditor: function (cell, save) {
+        var value = cell.children[0].value;
+        ;
+        cell.innerHTML = value;
+        console.log(value);
+        return value;
+    },
+    openEditor: function (cell) {
+        // Create input
+        var element = document.createElement('input');
+        element.value = cell.innerHTML;
+        // Update cell
+        cell.classList.add('editor');
+        cell.innerHTML = '';
+        cell.appendChild(element);
+        $(element).clockpicker({
+            afterHide: function () {
+                setTimeout(function () {
+                    // To avoid double call
+                    if (cell.children[0]) {
+                        jspreadsheetObject.closeEditor(cell, true);
+                    }
+                });
+            },
+        }).change(function () {
+            pickedTime = this.value;
+            console.log(cell);
+            console.log(pickedTime);
+            jspreadsheetObject.setValue(cell, pickedTime);
+            console.log({jspreadsheetData: jspreadsheetObject.getData()});
+            cell.innerHTML = pickedTime;
+            // taskTable.setValue(cell, this.pickedTime);
+            // cell.innerHTML = pickedTime;
+            // if (cell.children[0]) {
+            //     taskTable.closeEditor(cell, true);
+            // }
+            jspreadsheetEventInnerFunc();
+        });;
+        // Focus on the element
+        element.focus();
+        // console.log(element);
+        // console.log(document.getSelection())
+        // console.log(document.body.children[document.body.children.length-1]);
+    },
+    getValue: function (cell) {
+        return cell.innerHTML;
+    },
+    setValue: function (cell, value) {
+        cell.innerHTML = value;
+    }
+};
 diContainer.addForCallByValue("TASK_DATA_TEMPLATES",
     class {
         title = { defaultValue: "概要", };
@@ -82,87 +137,57 @@ diContainer.addForCallByValue("TABLE_TASK_DATA_TEMPLATES",
 
 diContainer.addForCallByValue("JSPREADSHEET_TASK_DATA_TEMPLATES",
     class {
-        title = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        id = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        receipt = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete:false, multiple:false };
-        memo = { type: "html", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        tag = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        limit = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        manHours = { type: "numeric", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        scheduledDateTime = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        scheduledDate = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete:false, multiple:false };
-        scheduledTime = { type: "text", editor: clockEditor, source: [], options: { format: DEFAULT_FORMAT.TIME }, autocomplete:false, multiple:false };
-        completionDateTime = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        title = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        id = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        receipt = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete: false, multiple: false };
+        memo = { type: "html", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        tag = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        limit = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        manHours = { type: "numeric", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        scheduledDateTime = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        scheduledDate = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE }, autocomplete: false, multiple: false };
+        scheduledTime = { type: "text", editor: clockEditor, source: [], options: { format: DEFAULT_FORMAT.TIME }, autocomplete: false, multiple: false };
+        completionDateTime = { type: "hidden", editor: null, source: [], options: [], autocomplete: false, multiple: false };
         completionDate = { type: "calendar", editor: null, source: [], options: { format: DEFAULT_FORMAT.DATE } };
         completionTime = { type: "text", editor: clockEditor, source: [], options: [], autocomplete: false, multiple: false };
         completionRate = { type: "numeric", editor: null, source: [], options: [], autocomplete: false, multiple: false };
-        implementationDate = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        state = { type: "dropdown", editor: null, source: Object.values(TASK_STATE), options: [], autocomplete:false, multiple:false };
-        similarTasksId = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        implementationDate = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        state = { type: "dropdown", editor: null, source: Object.values(TASK_STATE), options: [], autocomplete: false, multiple: false };
+        similarTasksId = { type: "hidden", editor: null, source: [], options: [], autocomplete: false, multiple: false };
         similarTasks = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
         successorTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
         dependencyTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
-        successorTask = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        connotativeTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete:true, multiple:true };
-        connotativeTask = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        rowNum = { type: "hidden", editor: null, source: [], options: [], autocomplete:false, multiple:false };
-        implementationTime = { type: "text", editor: null, source: [], options: [], autocomplete:false, multiple:false };
+        successorTask = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        connotativeTaskId = { type: "dropdown", editor: null, source: [], options: [], autocomplete: true, multiple: true };
+        connotativeTask = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        rowNum = { type: "hidden", editor: null, source: [], options: [], autocomplete: false, multiple: false };
+        implementationTime = { type: "text", editor: null, source: [], options: [], autocomplete: false, multiple: false };
     });
-
-
-
-var clockEditor = {
-    // Methods
-    pickedTime: "00:00",
-    closeEditor: function (cell, save) {
-        var value = cell.children[0].value;
-        ;
-        cell.innerHTML = value;
-        console.log(value);
-        return value;
-    },
-    openEditor: function (cell) {
-        // Create input
-        var element = document.createElement('input');
-        element.value = cell.innerHTML;
-        // Update cell
-        cell.classList.add('editor');
-        cell.innerHTML = '';
-        cell.appendChild(element);
-        $(element).clockpicker({
-            afterHide: function () {
-                setTimeout(function () {
-                    // To avoid double call
-                    if (cell.children[0]) {
-                        taskTable.closeEditor(cell, true);
-                    }
-                });
-            },
-        }).change(function () {
-            pickedTime = this.value;
-            console.log(cell);
-            taskTable.setValue(cell, pickedTime);
-            cell.innerHTML = pickedTime;
-            // taskTable.setValue(cell, this.pickedTime);
-            // cell.innerHTML = pickedTime;
-            // if (cell.children[0]) {
-            //     taskTable.closeEditor(cell, true);
-            // }
-            dataChangeCallback();
-        });;
-        // Focus on the element
-        element.focus();
-        // console.log(element);
-        // console.log(document.getSelection())
-        // console.log(document.body.children[document.body.children.length-1]);
-    },
-    getValue: function (cell) {
-        return cell.innerHTML;
-    },
-    setValue: function (cell, value) {
-        cell.innerHTML = value;
-    }
+const dataFilterTemplate =
+{
+    title: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    id: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    receipt: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    memo: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    tag: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    limit: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    manHours: { type: "numeric", options: Object.entries(numericDataFilterOption).map(([_, value]) => value.value), editor: null },
+    scheduledDateTime: { type: "dateAndTime", options: Object.entries(dateAndTimeDataFilterOption).map(([_, value]) => value.value), editor: null },
+    completionDateTime: { type: "dateAndTime", options: Object.entries(dateAndTimeDataFilterOption).map(([_, value]) => value.value), editor: null },
+    completionRate: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    implementationDate: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    state: { type: "state", options: Object.entries(stateDataFilterOption).map(([_, value]) => value.value), editor: null },
+    similarTasksId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    similarTasks: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    successorTaskId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    dependencyTaskId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    successorTask: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    connotativeTaskId: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    connotativeTask: { type: "string", options: Object.entries(stringDataFilterOption).map(([_, value]) => value.value), editor: null },
+    implementationTime: { type: "numeric", options: Object.entries(numericDataFilterOption).map(([_, value]) => value.value), editor: null },
 };
+
+
 
 
 function updateDataTemplate() {
@@ -183,7 +208,7 @@ class interval {
         } else {
             return this.start.format() + "/" + this.end.format();
         }
-    }
+    };
 
     constructor(start) {
         let typeOfStart = Object.prototype.toString.call(start);

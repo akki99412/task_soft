@@ -1,0 +1,701 @@
+{
+    "taskUiProperties": {
+        "title": {
+            "header": "名前"
+        },
+        "id": {
+            "header": "ID"
+        },
+        "receipt": {
+            "header": "受領日"
+        },
+        "memo": {
+            "header": "メモ"
+        },
+        "tag": {
+            "header": "タグ"
+        },
+        "limit": {
+            "header": "期限"
+        },
+        "manHours": {
+            "header": "予定工数"
+        },
+        "scheduledDateTime": {
+            "header": "着手予定日時"
+        },
+        "scheduledDate": {
+            "header": "着手予定日"
+        },
+        "scheduledTime": {
+            "header": "着手予定時間"
+        },
+        "completionDateTime": {
+            "header": "完了予定日時"
+        },
+        "completionDate": {
+            "header": "完了予定日"
+        },
+        "completionTime": {
+            "header": "完了予定時間"
+        },
+        "completionRate": {
+            "header": "完了率"
+        },
+        "implementationDate": {
+            "header": "実際の実施日時"
+        },
+        "state": {
+            "header": "ステータス"
+        },
+        "similarTasksId": {
+            "header": "類似タスクid"
+        },
+        "similarTasks": {
+            "header": "類似タスク"
+        },
+        "successorTaskId": {
+            "header": "後続タスクid"
+        },
+        "dependencyTaskId": {
+            "header": "依存タスクid"
+        },
+        "successorTask": {
+            "header": "後続タスク"
+        },
+        "connotativeTaskId": {
+            "header": "内包タスクid"
+        },
+        "connotativeTask": {
+            "header": "内包タスク"
+        },
+        "rowNum": {
+            "header": "テーブル番号"
+        },
+        "implementationTime": {
+            "header": "かかった時間"
+        }
+    },
+    "tableTaskDataProperties": {
+        "title": {
+            "width": 200,
+            "colNum": 0,
+            "readOnly": false,
+            "align": "left"
+        },
+        "id": {
+            "width": 200,
+            "colNum": 1,
+            "readOnly": true,
+            "align": "left"
+        },
+        "receipt": {
+            "width": 200,
+            "colNum": 2,
+            "readOnly": false,
+            "align": "left"
+        },
+        "memo": {
+            "width": 200,
+            "colNum": 3,
+            "readOnly": false,
+            "align": "left"
+        },
+        "tag": {
+            "width": 200,
+            "colNum": 4,
+            "readOnly": false,
+            "align": "left"
+        },
+        "limit": {
+            "width": 200,
+            "colNum": 5,
+            "readOnly": false,
+            "align": "left"
+        },
+        "manHours": {
+            "width": 200,
+            "colNum": 6,
+            "readOnly": false,
+            "align": "left"
+        },
+        "scheduledDate": {
+            "width": 200,
+            "colNum": 7,
+            "readOnly": false,
+            "align": "left"
+        },
+        "scheduledTime": {
+            "width": 200,
+            "colNum": 8,
+            "readOnly": false,
+            "align": "left"
+        },
+        "completionDate": {
+            "width": 200,
+            "colNum": 9,
+            "readOnly": false,
+            "align": "left"
+        },
+        "completionTime": {
+            "width": 200,
+            "colNum": 10,
+            "readOnly": false,
+            "align": "left"
+        },
+        "completionRate": {
+            "width": 200,
+            "colNum": 11,
+            "readOnly": true,
+            "align": "left"
+        },
+        "implementationDate": {
+            "width": 200,
+            "colNum": 12,
+            "readOnly": false,
+            "align": "left"
+        },
+        "state": {
+            "width": 200,
+            "colNum": 13,
+            "readOnly": false,
+            "align": "left"
+        },
+        "similarTasksId": {
+            "width": 200,
+            "colNum": 14,
+            "readOnly": false,
+            "align": "left"
+        },
+        "successorTaskId": {
+            "width": 200,
+            "colNum": 15,
+            "readOnly": false,
+            "align": "left"
+        },
+        "dependencyTaskId": {
+            "width": 200,
+            "colNum": 16,
+            "readOnly": false,
+            "align": "left"
+        },
+        "connotativeTaskId": {
+            "width": 200,
+            "colNum": 17,
+            "readOnly": false,
+            "align": "left"
+        },
+        "connotativeTask": {
+            "width": 200,
+            "colNum": 18,
+            "readOnly": false,
+            "align": "left"
+        },
+        "implementationTime": {
+            "width": 200,
+            "colNum": 19,
+            "readOnly": true,
+            "align": "left"
+        }
+    },
+    "jspreadsheetTaskDataProperties": {
+        "title": {
+            "type": "text",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "id": {
+            "type": "text",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "receipt": {
+            "type": "calendar",
+            "editor": null,
+            "source": [],
+            "options": {
+                "format": "YYYY/MM/DD"
+            },
+            "autocomplete": false,
+            "multiple": false
+        },
+        "memo": {
+            "type": "html",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "tag": {
+            "type": "text",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "limit": {
+            "type": "text",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "manHours": {
+            "type": "numeric",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "scheduledDate": {
+            "type": "calendar",
+            "editor": null,
+            "source": [],
+            "options": {
+                "format": "YYYY/MM/DD"
+            },
+            "autocomplete": false,
+            "multiple": false
+        },
+        "scheduledTime": {
+            "type": "text",
+            "editor": {
+                "pickedTime": "00:00"
+            },
+            "source": [],
+            "options": {
+                "format": "HH:mm:ss"
+            },
+            "autocomplete": false,
+            "multiple": false
+        },
+        "completionDate": {
+            "type": "calendar",
+            "editor": null,
+            "source": [],
+            "options": {
+                "format": "YYYY/MM/DD"
+            }
+        },
+        "completionTime": {
+            "type": "text",
+            "editor": {
+                "pickedTime": "00:00"
+            },
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "completionRate": {
+            "type": "numeric",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "implementationDate": {
+            "type": "text",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "state": {
+            "type": "dropdown",
+            "editor": null,
+            "source": [
+                "計画中",
+                "今日の予定",
+                "実施中",
+                "完了",
+                "延期"
+            ],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "similarTasksId": {
+            "type": "hidden",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "successorTaskId": {
+            "type": "dropdown",
+            "editor": null,
+            "source": [
+                {
+                    "id": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "name": "タスク１",
+                    "title": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "groupe": "task",
+                    "value": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "text": "タスク１"
+                },
+                {
+                    "id": "88836357-f82b-4071-be07-b6917699f08e",
+                    "name": "タスク2",
+                    "title": "88836357-f82b-4071-be07-b6917699f08e",
+                    "groupe": "task",
+                    "value": "88836357-f82b-4071-be07-b6917699f08e",
+                    "text": "タスク2"
+                },
+                {
+                    "id": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "name": "タスク３",
+                    "title": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "groupe": "task",
+                    "value": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "text": "タスク３"
+                },
+                {
+                    "id": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "name": "タスク4",
+                    "title": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "groupe": "task",
+                    "value": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "text": "タスク4"
+                },
+                {
+                    "id": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "name": "タスク５",
+                    "title": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "groupe": "task",
+                    "value": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "text": "タスク５"
+                },
+                {
+                    "id": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "name": "タスク６",
+                    "title": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "groupe": "task",
+                    "value": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "text": "タスク６"
+                }
+            ],
+            "options": [],
+            "autocomplete": true,
+            "multiple": true
+        },
+        "dependencyTaskId": {
+            "type": "dropdown",
+            "editor": null,
+            "source": [
+                {
+                    "id": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "name": "タスク１",
+                    "title": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "groupe": "task",
+                    "value": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "text": "タスク１"
+                },
+                {
+                    "id": "88836357-f82b-4071-be07-b6917699f08e",
+                    "name": "タスク2",
+                    "title": "88836357-f82b-4071-be07-b6917699f08e",
+                    "groupe": "task",
+                    "value": "88836357-f82b-4071-be07-b6917699f08e",
+                    "text": "タスク2"
+                },
+                {
+                    "id": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "name": "タスク３",
+                    "title": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "groupe": "task",
+                    "value": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "text": "タスク３"
+                },
+                {
+                    "id": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "name": "タスク4",
+                    "title": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "groupe": "task",
+                    "value": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "text": "タスク4"
+                },
+                {
+                    "id": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "name": "タスク５",
+                    "title": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "groupe": "task",
+                    "value": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "text": "タスク５"
+                },
+                {
+                    "id": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "name": "タスク６",
+                    "title": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "groupe": "task",
+                    "value": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "text": "タスク６"
+                }
+            ],
+            "options": [],
+            "autocomplete": true,
+            "multiple": true
+        },
+        "connotativeTaskId": {
+            "type": "dropdown",
+            "editor": null,
+            "source": [
+                {
+                    "id": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "name": "タスク１",
+                    "title": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "groupe": "task",
+                    "value": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+                    "text": "タスク１"
+                },
+                {
+                    "id": "88836357-f82b-4071-be07-b6917699f08e",
+                    "name": "タスク2",
+                    "title": "88836357-f82b-4071-be07-b6917699f08e",
+                    "groupe": "task",
+                    "value": "88836357-f82b-4071-be07-b6917699f08e",
+                    "text": "タスク2"
+                },
+                {
+                    "id": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "name": "タスク３",
+                    "title": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "groupe": "task",
+                    "value": "04ceb7a0-39b3-4232-a768-bac957911b44",
+                    "text": "タスク３"
+                },
+                {
+                    "id": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "name": "タスク4",
+                    "title": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "groupe": "task",
+                    "value": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+                    "text": "タスク4"
+                },
+                {
+                    "id": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "name": "タスク５",
+                    "title": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "groupe": "task",
+                    "value": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+                    "text": "タスク５"
+                },
+                {
+                    "id": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "name": "タスク６",
+                    "title": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "groupe": "task",
+                    "value": "077d9675-fa62-4b91-8caa-881536bb4cae",
+                    "text": "タスク６"
+                }
+            ],
+            "options": [],
+            "autocomplete": true,
+            "multiple": true
+        },
+        "connotativeTask": {
+            "type": "text",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        },
+        "implementationTime": {
+            "type": "text",
+            "editor": null,
+            "source": [],
+            "options": [],
+            "autocomplete": false,
+            "multiple": false
+        }
+    },
+    "taskDataEntity": [
+        {
+            "title": "タスク１",
+            "id": "45adc4d6-db7b-4546-bf23-749c2fe4c7c2",
+            "receipt": "2024/07/20 00:13:56",
+            "memo": "詳細",
+            "tag": "#タグ",
+            "limit": "2024/07/21 00:13:56",
+            "manHours": 1,
+            "scheduledDateTime": "2024/07/20 00:13:56",
+            "completionDateTime": "2024/07/21 00:13:56",
+            "implementationDate": [
+                {}
+            ],
+            "state": "計画中",
+            "similarTasksId": "",
+            "successorTaskId": [
+                "",
+                "88836357-f82b-4071-be07-b6917699f08e"
+            ],
+            "dependencyTaskId": [
+                ""
+            ],
+            "connotativeTaskId": [
+                ""
+            ],
+            "rowNum": "",
+            "implementationTime": "",
+            "kanbanNum": 0
+        },
+        {
+            "title": "タスク2",
+            "id": "88836357-f82b-4071-be07-b6917699f08e",
+            "receipt": "2024/07/20 00:47:24",
+            "memo": "詳細",
+            "tag": "#タグ",
+            "limit": "2024/07/21 00:47:24",
+            "manHours": 1,
+            "scheduledDateTime": "2024/07/20 00:47:24",
+            "completionDateTime": "2024/07/21 00:47:24",
+            "implementationDate": [
+                {}
+            ],
+            "state": "計画中",
+            "similarTasksId": "",
+            "successorTaskId": [
+                ""
+            ],
+            "dependencyTaskId": [
+                ""
+            ],
+            "connotativeTaskId": [
+                "",
+                "1486eb35-43ec-4d5e-acbd-51f2b229721b"
+            ],
+            "rowNum": "",
+            "implementationTime": "",
+            "kanbanNum": 0
+        },
+        {
+            "title": "タスク３",
+            "id": "04ceb7a0-39b3-4232-a768-bac957911b44",
+            "receipt": "2024/07/20 00:47:24",
+            "memo": "詳細",
+            "tag": "#タグ",
+            "limit": "2024/07/21 00:47:24",
+            "manHours": 1,
+            "scheduledDateTime": "2024/07/20 00:47:24",
+            "completionDateTime": "2024/07/21 00:47:24",
+            "implementationDate": [
+                {}
+            ],
+            "state": "計画中",
+            "similarTasksId": "",
+            "successorTaskId": [
+                ""
+            ],
+            "dependencyTaskId": [
+                "",
+                "88836357-f82b-4071-be07-b6917699f08e"
+            ],
+            "connotativeTaskId": [
+                ""
+            ],
+            "rowNum": "",
+            "implementationTime": "",
+            "kanbanNum": 0
+        },
+        {
+            "title": "タスク4",
+            "id": "1486eb35-43ec-4d5e-acbd-51f2b229721b",
+            "receipt": "2024/07/20 00:49:18",
+            "memo": "詳細",
+            "tag": "#タグ",
+            "limit": "2024/07/21 00:49:18",
+            "manHours": 1,
+            "scheduledDateTime": "2024/07/20 00:49:18",
+            "completionDateTime": "2024/07/21 00:49:18",
+            "implementationDate": [
+                {}
+            ],
+            "state": "計画中",
+            "similarTasksId": "",
+            "successorTaskId": [
+                ""
+            ],
+            "dependencyTaskId": [
+                ""
+            ],
+            "connotativeTaskId": [
+                ""
+            ],
+            "rowNum": "",
+            "implementationTime": "",
+            "kanbanNum": 0
+        },
+        {
+            "title": "タスク５",
+            "id": "af63f30e-c8eb-4fca-a12c-fd5170c2772f",
+            "receipt": "2024/07/20 00:50:29",
+            "memo": "詳細",
+            "tag": "#タグ",
+            "limit": "2024/07/21 00:50:29",
+            "manHours": 1,
+            "scheduledDateTime": "2024/07/20 00:50:29",
+            "completionDateTime": "2024/07/21 00:50:29",
+            "implementationDate": [
+                {}
+            ],
+            "state": "計画中",
+            "similarTasksId": "",
+            "successorTaskId": [
+                "",
+                "1486eb35-43ec-4d5e-acbd-51f2b229721b"
+            ],
+            "dependencyTaskId": [
+                ""
+            ],
+            "connotativeTaskId": [
+                ""
+            ],
+            "rowNum": "",
+            "implementationTime": "",
+            "kanbanNum": 0
+        },
+        {
+            "title": "タスク６",
+            "id": "077d9675-fa62-4b91-8caa-881536bb4cae",
+            "receipt": "2024/07/20 00:50:40",
+            "memo": "詳細",
+            "tag": "#タグ",
+            "limit": "2024/07/21 00:50:40",
+            "manHours": 1,
+            "scheduledDateTime": "2024/07/20 00:50:40",
+            "completionDateTime": "2024/07/21 00:50:40",
+            "implementationDate": [
+                {}
+            ],
+            "state": "計画中",
+            "similarTasksId": "",
+            "successorTaskId": [
+                ""
+            ],
+            "dependencyTaskId": [
+                "",
+                "1486eb35-43ec-4d5e-acbd-51f2b229721b"
+            ],
+            "connotativeTaskId": [
+                ""
+            ],
+            "rowNum": "",
+            "implementationTime": "",
+            "kanbanNum": 0
+        }
+    ]
+}
