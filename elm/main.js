@@ -21,7 +21,7 @@ class IMainData {
     }
 }
 class ILocalStorageData {
-    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, relationFilter = null, dataFilters=null } = {}) {
+    constructor({ taskUiProperties = null, tableTaskDataProperties = null, jspreadsheetTaskDataProperties = null, taskDataEntity = null, relationFilter = null, dataFilters = null } = {}) {
         this.taskUiProperties = taskUiProperties;
         this.tableTaskDataProperties = tableTaskDataProperties;
         this.jspreadsheetTaskDataProperties = jspreadsheetTaskDataProperties;
@@ -672,11 +672,19 @@ const dataFilters = new Observable(
             optionList: $dataFilter9OptionList.value,
         },
     ]
-); let instance = null;
+);
+
+
+const onchangeDataFilterButton = elementId => value => {
+    const innerElementId = elementId + "Inner";
+    const innerElement = _ => document.getElementById(innerElementId);
+    main.update(new DataFilterMessage({ id: elementId, value: innerElement().value, className: innerElement().className.split(' ') }));
+};
+let instance = null;
 dataFilters.subscribe(data => {
     console.log(data);
     zip(data, dataFilterElements)
-        .forEach(([datum, element],index) => Object.entries(datum)
+        .forEach(([datum, element], index) => Object.entries(datum)
             .forEach(([key, value]) => {
                 switch (key) {
                     case "valid":
@@ -702,15 +710,18 @@ dataFilters.subscribe(data => {
                             });
                         } else {
                             instance = null;
+
                             element[key].innerHTML = `
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter${index} dataFilterValue"
                                             id="${innerElementId}"`
                                 + (datum.type === "state" ? ` list="$dataFilterStates"` : " ")
-                                + `>`;
+                                + `>
+                                <button class="btn" type="button" id="button-addon2" onclick="{${innerElementId}.value='';onchangeDataFilterButton(${element[key].id}.id)()}" ><i
+                                                class="bi bi-x"></i></button>`;
                             console.log({ value });
                             innerElement().value = value;
-                            document.getElementById(innerElementId).onchange = value => main.update(new DataFilterMessage({ id: $dataFilter0Value.id, value: value.target.value, className: innerElement().className.split(' ') }));
+                            document.getElementById(innerElementId).onchange = onchangeDataFilterButton(element[key].id);
                         }
                         break;
                     case "optionList":
@@ -1183,16 +1194,16 @@ const similarTasksDropdownMenuUpdate = (model) => (message) => ({ ...model, rela
 const dataFilterUpdate = (model) => (message) => {
     const index =
         message.className.includes("dataFilter0") ? 0
-        :message.className.includes("dataFilter1") ? 1
-        :message.className.includes("dataFilter2") ? 2
-        :message.className.includes("dataFilter3") ? 3
-        :message.className.includes("dataFilter4") ? 4
-        :message.className.includes("dataFilter5") ? 5
-        :message.className.includes("dataFilter6") ? 6
-        :message.className.includes("dataFilter7") ? 7
-        :message.className.includes("dataFilter8") ? 8
-        :message.className.includes("dataFilter9") ? 9
-        : null;
+            : message.className.includes("dataFilter1") ? 1
+                : message.className.includes("dataFilter2") ? 2
+                    : message.className.includes("dataFilter3") ? 3
+                        : message.className.includes("dataFilter4") ? 4
+                            : message.className.includes("dataFilter5") ? 5
+                                : message.className.includes("dataFilter6") ? 6
+                                    : message.className.includes("dataFilter7") ? 7
+                                        : message.className.includes("dataFilter8") ? 8
+                                            : message.className.includes("dataFilter9") ? 9
+                                                : null;
     if (index === null) {
         return model;
     } else {
