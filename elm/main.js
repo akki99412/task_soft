@@ -1107,6 +1107,18 @@ const exportJsonButtonUpdate = model => message => {
     return { ...model, textarea };
 };
 const importJsonButtonUpdate = model => message => model;
+const exportICalenderButtonUpdate = model => message => {
+    const textarea = JSON.stringify({
+        taskUiProperties: model.taskUiProperties,
+        tableTaskDataProperties: model.tableTaskDataProperties,
+        jspreadsheetTaskDataProperties: model.jspreadsheetTaskDataProperties,
+        taskDataEntity: model.taskDataEntity,
+    });
+    return { ...model, textarea };
+};
+const importICalenderButtonUpdate = model => message => model;
+
+
 const loadButtonUpdate = model => message => model;
 const localStorageUpdate = model => message => {
     try {

@@ -70,6 +70,9 @@
 
     <!-- mermaid -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+    <!-- iCalender -->
+    <script src="https://cdn.jsdelivr.net/npm/ics@3.7.6/dist/index.min.js"></script>
 </head>
 
 <body>
@@ -130,16 +133,16 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter0Collapse" aria-expanded="true" aria-controls="dataFilter0Collapse"
-                                    id="$dataFilter0Button">
+                                    data-bs-target="#dataFilter0Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter0Collapse" id="$dataFilter0Button">
                                     アコーディオン・アイテム #0
                                 </button>
                             </h2>
                             <div id="dataFilter0Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter0 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter0Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter0 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter0Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter0Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -151,17 +154,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter0Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter0 dataFilterValue"
                                             id="$dataFilter0ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter0 dataFilterOption"
-                                            id="$dataFilter0Option" list="$dataFilter0OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter0Option" list="$dataFilter0OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter0Option.value='';onchangeDataFilterOption($dataFilter0Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -174,20 +178,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter1Collapse" aria-expanded="true" aria-controls="dataFilter1Collapse"
-                                    id="$dataFilter1Button">
+                                    data-bs-target="#dataFilter1Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter1Collapse" id="$dataFilter1Button">
                                     アコーディオン・アイテム #1
                                 </button>
                             </h2>
                             <div id="dataFilter1Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter1 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter1Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter1 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter1Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter1Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -199,17 +204,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter1Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter1 dataFilterValue"
                                             id="$dataFilter1ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter1 dataFilterOption"
-                                            id="$dataFilter1Option" list="$dataFilter1OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter1Option" list="$dataFilter1OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter1Option.value='';onchangeDataFilterOption($dataFilter1Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -222,20 +228,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter2Collapse" aria-expanded="true" aria-controls="dataFilter2Collapse"
-                                    id="$dataFilter2Button">
+                                    data-bs-target="#dataFilter2Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter2Collapse" id="$dataFilter2Button">
                                     アコーディオン・アイテム #2
                                 </button>
                             </h2>
                             <div id="dataFilter2Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter2 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter2Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter2 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter2Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter2Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -247,17 +254,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter2Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter2 dataFilterValue"
                                             id="$dataFilter2ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter2 dataFilterOption"
-                                            id="$dataFilter2Option" list="$dataFilter2OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter2Option" list="$dataFilter2OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter2Option.value='';onchangeDataFilterOption($dataFilter2Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -270,20 +278,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter3Collapse" aria-expanded="true" aria-controls="dataFilter3Collapse"
-                                    id="$dataFilter3Button">
+                                    data-bs-target="#dataFilter3Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter3Collapse" id="$dataFilter3Button">
                                     アコーディオン・アイテム #3
                                 </button>
                             </h2>
                             <div id="dataFilter3Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter3 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter3Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter3 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter3Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter3Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -295,17 +304,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter3Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter3 dataFilterValue"
                                             id="$dataFilter3ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter3 dataFilterOption"
-                                            id="$dataFilter3Option" list="$dataFilter3OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter3Option" list="$dataFilter3OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter3Option.value='';onchangeDataFilterOption($dataFilter3Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -318,20 +328,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter4Collapse" aria-expanded="true" aria-controls="dataFilter4Collapse"
-                                    id="$dataFilter4Button">
+                                    data-bs-target="#dataFilter4Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter4Collapse" id="$dataFilter4Button">
                                     アコーディオン・アイテム #4
                                 </button>
                             </h2>
                             <div id="dataFilter4Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter4 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter4Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter4 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter4Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter4Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -343,17 +354,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter4Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter4 dataFilterValue"
                                             id="$dataFilter4ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter4 dataFilterOption"
-                                            id="$dataFilter4Option" list="$dataFilter4OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter4Option" list="$dataFilter4OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter4Option.value='';onchangeDataFilterOption($dataFilter4Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -366,20 +378,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter5Collapse" aria-expanded="true" aria-controls="dataFilter5Collapse"
-                                    id="$dataFilter5Button">
+                                    data-bs-target="#dataFilter5Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter5Collapse" id="$dataFilter5Button">
                                     アコーディオン・アイテム #5
                                 </button>
                             </h2>
                             <div id="dataFilter5Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter5 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter5Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter5 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter5Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter5Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -391,17 +404,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter5Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter5 dataFilterValue"
                                             id="$dataFilter5ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter5 dataFilterOption"
-                                            id="$dataFilter5Option" list="$dataFilter5OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter5Option" list="$dataFilter5OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter5Option.value='';onchangeDataFilterOption($dataFilter5Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -414,20 +428,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter6Collapse" aria-expanded="true" aria-controls="dataFilter6Collapse"
-                                    id="$dataFilter6Button">
+                                    data-bs-target="#dataFilter6Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter6Collapse" id="$dataFilter6Button">
                                     アコーディオン・アイテム #0
                                 </button>
                             </h2>
                             <div id="dataFilter6Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter6 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter6Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter6 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter6Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter6Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -439,17 +454,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter6Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter6 dataFilterValue"
                                             id="$dataFilter6ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter6 dataFilterOption"
-                                            id="$dataFilter6Option" list="$dataFilter6OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter6Option" list="$dataFilter6OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter6Option.value='';onchangeDataFilterOption($dataFilter6Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -462,20 +478,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter7Collapse" aria-expanded="true" aria-controls="dataFilter7Collapse"
-                                    id="$dataFilter7Button">
+                                    data-bs-target="#dataFilter7Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter7Collapse" id="$dataFilter7Button">
                                     アコーディオン・アイテム #0
                                 </button>
                             </h2>
                             <div id="dataFilter7Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter7 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter7Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter7 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter7Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter7Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -487,17 +504,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter7Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter7 dataFilterValue"
                                             id="$dataFilter7ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter7 dataFilterOption"
-                                            id="$dataFilter7Option" list="$dataFilter7OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter7Option" list="$dataFilter7OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter7Option.value='';onchangeDataFilterOption($dataFilter7Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -510,20 +528,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter8Collapse" aria-expanded="true" aria-controls="dataFilter8Collapse"
-                                    id="$dataFilter8Button">
+                                    data-bs-target="#dataFilter8Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter8Collapse" id="$dataFilter8Button">
                                     アコーディオン・アイテム #0
                                 </button>
                             </h2>
                             <div id="dataFilter8Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter8 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter8Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter8 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter8Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter8Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -535,17 +554,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter8Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter8 dataFilterValue"
                                             id="$dataFilter8ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter8 dataFilterOption"
-                                            id="$dataFilter8Option" list="$dataFilter8OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter8Option" list="$dataFilter8OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter8Option.value='';onchangeDataFilterOption($dataFilter8Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -558,20 +578,21 @@
                                 <!-- <input id='calendar' /> -->
                             </div>
                         </div>
-                    </div><div class="accordion" id="accordionExample">
+                    </div>
+                    <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button type="button" class="accordion-button" data-bs-toggle="collapse"
-                                    data-bs-target="#dataFilter9Collapse" aria-expanded="true" aria-controls="dataFilter9Collapse"
-                                    id="$dataFilter9Button">
+                                    data-bs-target="#dataFilter9Collapse" aria-expanded="true"
+                                    aria-controls="dataFilter9Collapse" id="$dataFilter9Button">
                                     アコーディオン・アイテム #0
                                 </button>
                             </h2>
                             <div id="dataFilter9Collapse" class="accordion-collapse collapse show">
                                 <div class="accordion-body">
                                     <div class="form-check form-switch form-check-inline">
-                                        <input class="form-check-input dataFilter9 dataFilterSwitch" type="checkbox" role="switch"
-                                            id="$dataFilter9Switch" autocomplete="off">
+                                        <input class="form-check-input dataFilter9 dataFilterSwitch" type="checkbox"
+                                            role="switch" id="$dataFilter9Switch" autocomplete="off">
                                         <label class="form-check-label" for="$dataFilter9Switch">無効/有効</label>
                                     </div>
                                     <div class="input-group">
@@ -583,17 +604,18 @@
                                                 class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group" id="$dataFilter9Value">
-                    
+
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body dataFilter9 dataFilterValue"
                                             id="$dataFilter9ValueInner">
-                                        <button class="btn" type="button" id="button-addon2"><i class="bi bi-x"></i></button>
+                                        <button class="btn" type="button" id="button-addon2"><i
+                                                class="bi bi-x"></i></button>
                                     </div>
                                     <div class="input-group">
                                         <input type="form-control"
                                             class="form-control bg-body-secondary text-body  dataFilter9 dataFilterOption"
-                                            id="$dataFilter9Option" list="$dataFilter9OptionList"><button class="btn" type="button"
-                                            id="button-addon2"
+                                            id="$dataFilter9Option" list="$dataFilter9OptionList"><button class="btn"
+                                            type="button" id="button-addon2"
                                             onclick="{$dataFilter9Option.value='';onchangeDataFilterOption($dataFilter9Option)()}"><i
                                                 class="bi bi-x"></i></button>
                                     </div>
@@ -637,6 +659,12 @@
                 <button type=button id="$importJsonButton">
                     import JSON
                 </button>
+                <button type=button id="$exportICalenderButton">
+                    export iCalender
+                </button>
+                <!-- <button type=button id="$importICalenderButton">
+                    import iCalender
+                </button> -->
                 <button type=button id="$loadButton">
                     load
                 </button>
@@ -713,6 +741,16 @@
             main.update(new ImportJsonMessage({ value: $textarea.value }));
         };
 
+        $exportICalenderButton.onclick = function () {
+            // c.log(JSON.stringify(repositories.value));
+            // $textarea.value = (JSON.stringify(repositories.value));
+            main.update(new ButtonMessage({ id: $exportICalenderButton }));
+        };
+        // $importICalenderButton.onclick = _ => {
+        //     // repositorySetter.next(JSON.parse($json.value));
+        //     // main.update(new ButtonMessage({id: $importICalenderButton }));
+        //     main.update(new ButtonMessage({ id: $importICalenderButton }));
+        // };
         $loadButton.onclick = function () {
             // clearTimeout(timeoutID);
             // c.log("timeoutID cleared")
@@ -741,6 +779,7 @@
             // delayRepositoryUpdate(repositories.value);
             main.update(new ButtonMessage({ id: $saveButton }));
         };
+
         // $dataFilter0Button
         const onchangeDataFilterSwitch = element => _ => main.update(new DataFilterMessage({ id: element.id, value: element.checked, className: element.className.split(' ') }));
         const onchangeDataFIlterTitle = element => value => main.update(new DataFilterMessage({ id: element.id, value: element.value, className: element.className.split(' ') }));
