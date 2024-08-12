@@ -733,7 +733,7 @@ dataFilters.subscribe(data => {
             }));
 });
 
-const render = table  => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => dataFilterTitles => dataFilters => view => {
+const render = table => gantt => ganttTasks => calendar => kanban => saveTimeout => textarea => treeGraph => showConnotativeTask => showDependencyTask => showSuccessorTask => showSimilarTask => dataFilterTitles => dataFilters => view => {
     c.groupCollapsed("render");
     c.log(view);
     const tableView = new TableMessage({
@@ -1108,12 +1108,22 @@ const exportJsonButtonUpdate = model => message => {
 };
 const importJsonButtonUpdate = model => message => model;
 const exportICalenderButtonUpdate = model => message => {
-    const textarea = JSON.stringify({
-        taskUiProperties: model.taskUiProperties,
-        tableTaskDataProperties: model.tableTaskDataProperties,
-        jspreadsheetTaskDataProperties: model.jspreadsheetTaskDataProperties,
-        taskDataEntity: model.taskDataEntity,
-    });
+    const textarea =`
+BEGIN:VCALENDAR\r\n
+VERSION:2.0\r\n
+PRODID:-//akki99412//task_soft 1.0//JP\r\n`
+        + model.taskDataEntity.map(data =>`
+BEGIN:VEVENT\r\n
+DTSTART;TZID=${timeZone}:${dayjs.tz(model.scheduledDateTime, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYYMMDDTHHmmss")}\r\n
+DTEND;TZID=${timeZone}:${dayjs.tz(model.limit, DEFAULT_FORMAT.DATE_TIME, timeZone).format("YYYYMMDDTHHmmss")}\r\n
+SUMMARY:${data.title}\r\n
+END:VEVENT\r\n
+        `
+        ).join("")
+
+        + `
+END:VCALENDAR\r\n
+    `;
     return { ...model, textarea };
 };
 const importICalenderButtonUpdate = model => message => model;
@@ -1320,6 +1330,11 @@ const update = model => message => {
                             case $loadButton: {
                                 c.log("loadButton");
                                 return loadButtonUpdate(model)(message);
+                                break;
+                            }
+                            case $exportICalenderButton: {
+                                c.log("exportICalenderButton");
+                                return exportICalenderButtonUpdate(model)(message);
                                 break;
                             }
                         }
